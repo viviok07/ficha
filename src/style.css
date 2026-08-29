@@ -206,7 +206,7 @@ button { cursor: pointer; }
 .choice-card {
   position: relative;
   min-height: 178px;
-  padding: 14px;
+  padding: 14px 14px 52px;
   border: 1px solid #d8c5a7;
   border-radius: 12px;
   background: #fffaf1;
@@ -241,12 +241,19 @@ button { cursor: pointer; }
 .choice-card b {
   display: block;
   font-size: 18px;
+  overflow-wrap: anywhere;
+}
+
+.class-card b,
+.skill-card b {
+  padding-inline: 10px;
 }
 
 .choice-card small {
   display: block;
   margin-top: 8px;
   line-height: 1.35;
+  overflow-wrap: anywhere;
 }
 
 .choice-card em {
