@@ -524,3 +524,132 @@ button { cursor: pointer; }
 .file-input {
   display: none;
 }
+
+.integration-gate {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background: #170d09cc;
+  backdrop-filter: blur(5px);
+}
+
+.integration-card {
+  width: min(760px, 100%);
+  padding: clamp(20px, 3vw, 34px);
+  border: 2px solid var(--gold);
+  border-radius: 18px;
+  background: linear-gradient(145deg, #fff8eb, #f0d9b8);
+  box-shadow: 0 24px 80px #0007;
+}
+
+.integration-card h2 {
+  margin: 0 0 10px;
+  text-align: center;
+  font: 800 clamp(20px, 3vw, 28px) Cinzel, serif;
+}
+
+.integration-card p {
+  margin: 0 0 18px;
+  text-align: center;
+  line-height: 1.5;
+}
+
+.integration-card small {
+  display: block;
+  margin-top: 14px;
+  color: #5b2c17;
+  line-height: 1.45;
+}
+
+.integration-grid {
+  display: grid;
+  grid-template-columns: 1.2fr 0.9fr 0.9fr;
+  gap: 12px;
+}
+
+.field select {
+  width: 100%;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: #fffaf1;
+  padding: 12px;
+  color: var(--ink);
+  font-size: 16px;
+}
+
+.image-generator {
+  margin-top: 22px;
+  padding: 18px;
+  border: 1px solid #c6c798;
+  border-radius: 14px;
+  background: linear-gradient(90deg, #f5f8e7, #fbfbef);
+}
+
+.image-generator h3 {
+  margin: 0 0 8px;
+  font: 800 18px Cinzel, serif;
+}
+
+.image-generator p {
+  margin: 0 0 14px;
+  line-height: 1.5;
+}
+
+.image-generator button:disabled {
+  cursor: wait;
+  opacity: 0.75;
+}
+
+.loader {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 16px;
+  color: var(--purple-dark);
+}
+
+.loader span {
+  width: 28px;
+  height: 28px;
+  border: 4px solid #d9c5a5;
+  border-top-color: var(--purple);
+  border-radius: 50%;
+  animation: spin 0.9s linear infinite;
+}
+
+.image-error {
+  margin-top: 16px !important;
+  color: #8b1e14;
+  font-weight: 700;
+}
+
+.generated-image {
+  margin: 18px 0 0;
+}
+
+.generated-image img {
+  display: block;
+  width: min(100%, 520px);
+  margin: 0 auto;
+  border: 10px solid #fff8eb;
+  border-radius: 16px;
+  box-shadow: 0 12px 30px #5b2c1733;
+}
+
+.generated-image figcaption {
+  margin-top: 8px;
+  text-align: center;
+  color: #5b2c17;
+  font-size: 13px;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+@media (max-width: 980px) {
+  .integration-grid { grid-template-columns: 1fr; }
+}

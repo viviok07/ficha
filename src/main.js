@@ -118,6 +118,21 @@ const steps = [
   { id: 'story', number: 5, title: 'História', subtitle: 'Conte um pouco sobre você' },
 ];
 
+const integration = {
+  ready: false,
+  apiKey: '',
+  model: 'gpt-image-2',
+  size: '1024x1024',
+  quality: 'high',
+};
+
+const imageState = {
+  loading: false,
+  error: '',
+  dataUrl: '',
+  prompt: '',
+};
+
 const state = {
   step: 'race',
   name: 'Lirien',
@@ -163,6 +178,7 @@ const characterJson = () => ({
 function render() {
   $('#root').innerHTML = `
     <main class="page">
+      ${renderIntegrationGate()}
       <header class="hero-head">
         <div class="brand">
           <div class="sigil">✡</div>
@@ -187,6 +203,37 @@ function render() {
       </div>
     </main>`;
   bindEvents();
+}
+
+function renderIntegrationGate() {
+  if (integration.ready) return '';
+
+  return `<section class="integration-gate" aria-label="Configuração da integração com OpenAI">
+    <div class="integration-card">
+      <h2>✦ Integração com ChatGPT para imagem ✦</h2>
+      <p>Informe os dados da API para esta sessão. Nada será salvo: ao atualizar a página, você precisará preencher novamente.</p>
+      <label class="field">Chave da API OpenAI
+        <input type="password" autocomplete="off" data-integration="apiKey" placeholder="sk-..." value="${escapeHtml(integration.apiKey)}" />
+      </label>
+      <div class="integration-grid">
+        <label class="field">Modelo de imagem
+          <input data-integration="model" value="${escapeHtml(integration.model)}" />
+        </label>
+        <label class="field">Tamanho
+          <select data-integration="size">
+            ${['1024x1024', '1024x1536', '1536x1024'].map((size) => `<option value="${size}" ${integration.size === size ? 'selected' : ''}>${size}</option>`).join('')}
+          </select>
+        </label>
+        <label class="field">Qualidade
+          <select data-integration="quality">
+            ${['high', 'medium', 'low', 'auto'].map((quality) => `<option value="${quality}" ${integration.quality === quality ? 'selected' : ''}>${quality}</option>`).join('')}
+          </select>
+        </label>
+      </div>
+      <button class="primary" data-action="confirm-integration">OK</button>
+      <small>Recomendação: use esta tela apenas localmente. Em produção, faça a chamada por um backend para não expor a chave.</small>
+    </div>
+  </section>`;
 }
 
 function renderStepper() {
@@ -239,7 +286,15 @@ function renderAppearanceStep() {
 }
 
 function renderStoryStep() {
-  return `<section class="panel current-panel"><h2>✦ 5. HISTÓRIA ✦</h2><p>Conte quem é seu personagem.</p><label class="field">Nome do personagem<input data-field="name" value="${state.name}" /></label><label class="field">Jogador<input data-field="player" value="${state.player}" /></label><label class="field">Equipamento<input data-field="equipment" value="${state.equipment}" /></label><label class="field">Outras características<textarea data-field="otherCharacteristics">${state.otherCharacteristics}</textarea></label><label class="field">História<textarea data-field="story">${state.story}</textarea></label><div class="json-box"><h3>JSON do personagem</h3><pre>${JSON.stringify(characterJson(), null, 2)}</pre></div>${renderNavButtons(null, 'appearance')}</section>`;
+  return `<section class="panel current-panel"><h2>✦ 5. HISTÓRIA ✦</h2><p>Conte quem é seu personagem.</p><label class="field">Nome do personagem<input data-field="name" value="${escapeHtml(state.name)}" /></label><label class="field">Jogador<input data-field="player" value="${escapeHtml(state.player)}" /></label><label class="field">Equipamento<input data-field="equipment" value="${escapeHtml(state.equipment)}" /></label><label class="field">Outras características<textarea data-field="otherCharacteristics">${escapeHtml(state.otherCharacteristics)}</textarea></label><label class="field">História<textarea data-field="story">${escapeHtml(state.story)}</textarea></label><div class="image-generator"><h3>Retrato do personagem</h3><p>Gere uma imagem em aquarela, fantasia clássica e visual de livro de histórias usando o JSON atual e o equipamento informado acima.</p><button class="primary" data-action="generate-image" ${imageState.loading ? 'disabled' : ''}>${imageState.loading ? 'GERANDO...' : 'GERAR IMAGEM'}</button>${renderImageResult()}</div>${renderNavButtons(null, 'appearance')}</section>`;
+}
+
+function renderImageResult() {
+  if (imageState.loading) return '<div class="loader"><span></span><b>Preparando ilustração mágica...</b></div>';
+  if (imageState.error) return `<p class="image-error">${escapeHtml(imageState.error)}</p>`;
+  if (!imageState.dataUrl) return '';
+
+  return `<figure class="generated-image"><img src="${imageState.dataUrl}" alt="Imagem gerada do personagem ${escapeHtml(state.name)}" /><figcaption>Imagem gerada por IA a partir do prompt do personagem.</figcaption></figure>`;
 }
 
 function renderNavButtons(next, previous) {
@@ -270,6 +325,13 @@ function bindEvents() {
   document.querySelectorAll('[data-skill]').forEach((button) => button.addEventListener('click', () => toggleSkill(button.dataset.skill)));
   document.querySelectorAll('[data-appearance-key]').forEach((button) => button.addEventListener('click', () => { state.appearance[button.dataset.appearanceKey] = button.dataset.appearanceValue; render(); }));
   document.querySelectorAll('[data-field]').forEach((field) => field.addEventListener('input', () => { state[field.dataset.field] = field.value; render(); }));
+  document.querySelectorAll('[data-integration]').forEach((field) => {
+    const updateIntegration = () => { integration[field.dataset.integration] = field.value; };
+    field.addEventListener('input', updateIntegration);
+    field.addEventListener('change', updateIntegration);
+  });
+  $('[data-action="confirm-integration"]')?.addEventListener('click', confirmIntegration);
+  $('[data-action="generate-image"]')?.addEventListener('click', generateCharacterImage);
   $('[data-action="reset"]')?.addEventListener('click', () => window.location.reload());
   $('[data-action="save"]')?.addEventListener('click', downloadJson);
   $('[data-action="import"]')?.addEventListener('click', () => $('[data-file-input]')?.click());
@@ -327,6 +389,81 @@ function normalizeSkills(value) {
 function normalizeId(value, collection, fallback) {
   const id = typeof value === 'string' ? value : value?.id;
   return collection.some((item) => item.id === id) ? id : fallback;
+}
+
+function confirmIntegration() {
+  if (!integration.apiKey.trim()) {
+    alert('Informe a chave da API OpenAI para continuar.');
+    return;
+  }
+
+  integration.ready = true;
+  render();
+}
+
+function buildImagePrompt() {
+  const data = characterJson();
+  return `Crie uma ilustração vertical de personagem de RPG em fantasia clássica, aquarela delicada, pintura de storybook e desenho de livro infantil/juvenil de aventura.
+
+Personagem: ${data.name}, raça ${data.race.name}, classe ${data.class.name}.
+Aparência: pele ${data.appearance.skin}, cabelo ${data.appearance.hair.toLowerCase()} ${data.appearance.hairColor.toLowerCase()}, olhos ${data.appearance.eyes.toLowerCase()}, altura ${data.appearance.height.toLowerCase()}, corpo ${data.appearance.body.toLowerCase()}, marcas: ${data.appearance.marks.toLowerCase()}, acessório: ${data.appearance.accessory.toLowerCase()}, roupa/estilo: ${data.appearance.style.toLowerCase()}.
+Personalidade: ${data.personality.join(', ')}.
+Equipamentos obrigatórios da aba História: ${data.equipment}. Não substitua por equipamentos padrão de raça ou classe.
+Outras características: ${data.otherCharacteristics}.
+História e intenção dramática: ${data.story}.
+
+Composição: pose dinâmica e heroica em três quartos, corpo inteiro visível, expressão carismática coerente com a personalidade, cenário de fantasia suave relacionado à história, luz dourada cinematográfica, pinceladas de aquarela, contornos finos, textura de papel, cores harmoniosas, detalhes nos equipamentos, atmosfera mágica e acolhedora. Evite texto, assinatura, logotipos, marcas d'água, moldura, aparência fotorealista ou estilo sombrio adulto.
+
+JSON do personagem para fidelidade:
+${JSON.stringify(data, null, 2)}`;
+}
+
+async function generateCharacterImage() {
+  if (!integration.ready || !integration.apiKey.trim()) {
+    alert('Atualize a página e informe os dados da integração antes de gerar a imagem.');
+    return;
+  }
+
+  imageState.loading = true;
+  imageState.error = '';
+  imageState.dataUrl = '';
+  imageState.prompt = buildImagePrompt();
+  render();
+
+  try {
+    const response = await fetch('https://api.openai.com/v1/images/generations', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${integration.apiKey.trim()}`,
+      },
+      body: JSON.stringify({
+        model: integration.model.trim() || 'gpt-image-2',
+        prompt: imageState.prompt,
+        size: integration.size,
+        quality: integration.quality,
+        n: 1,
+      }),
+    });
+    const payload = await response.json();
+    if (!response.ok) throw new Error(payload.error?.message || 'A API recusou a solicitação de imagem.');
+    const imageBase64 = payload.data?.[0]?.b64_json;
+    if (!imageBase64) throw new Error('A resposta da API não trouxe uma imagem em base64.');
+    imageState.dataUrl = `data:image/png;base64,${imageBase64}`;
+  } catch (error) {
+    imageState.error = `Não foi possível gerar a imagem: ${error.message}`;
+  } finally {
+    imageState.loading = false;
+    render();
+  }
+}
+
+function escapeHtml(value) {
+  return String(value ?? '')
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('\"', '&quot;');
 }
 
 function downloadJson() {
