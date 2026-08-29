@@ -1,17 +1,21 @@
 const races = [
-  { id: 'humano', name: 'Humano', icon: '🧑', description: 'Versátil e curioso, aprende rápido e se adapta a qualquer aventura.', traits: ['Aprende uma perícia extra', 'Coragem em desafios', 'Bom em trabalho em equipe'] },
-  { id: 'elfo', name: 'Elfo', icon: '🌿', description: 'Gracioso e ligado à natureza, possui sentidos aguçados e passos silenciosos.', traits: ['Visão no escuro', 'Percepção aguçada', 'Afinidade com a natureza'] },
-  { id: 'anao', name: 'Anão', icon: '⛏️', description: 'Forte e leal, conhece pedras, túneis e segredos antigos.', traits: ['Resistente', 'Conhecimento de cavernas', 'Muito determinado'] },
-  { id: 'halfling', name: 'Halfling', icon: '🍀', description: 'Pequeno, alegre e sortudo, escapa de encrencas com um sorriso.', traits: ['Sorte especial', 'Furtividade', 'Coração valente'] },
-  { id: 'tiefling', name: 'Tiefling', icon: '🔥', description: 'Criativo e misterioso, transforma diferenças em poder mágico.', traits: ['Resiste ao fogo', 'Presença marcante', 'Magia instintiva'] },
-  { id: 'meio-elfo', name: 'Meio-Elfo', icon: '✨', description: 'Une mundos diferentes, fazendo amigos com facilidade.', traits: ['Diplomacia', 'Sentidos atentos', 'Talento artístico'] },
+  { id: 'humano', name: 'Humano', icon: '🧑', description: 'Igual a nós: determinado, aprende rápido e se adapta a qualquer profissão ou lugar do mundo.', traits: ['Aprende uma perícia extra', 'Bônus versátil em um atributo', 'Coragem para tentar de novo'] },
+  { id: 'anao', name: 'Anão', icon: '⛏️', description: 'Baixinho e forte como rocha, vive em montanhas e cria armas e armaduras excelentes.', traits: ['+1 Força', '+1 Sabedoria', 'Resistência de rocha'] },
+  { id: 'elfo', name: 'Elfo', icon: '🌿', description: 'Alto, elegante e de orelhas pontudas, vive nas florestas e se move sem fazer barulho.', traits: ['+1 Destreza', '+1 Inteligência', 'Visão no escuro'] },
+  { id: 'halfling', name: 'Halfling', icon: '🍀', description: 'Pequenino, ágil e corajoso; adora comida, bons amigos e tem muita sorte.', traits: ['+1 Destreza', '+1 Sabedoria', 'Sorte pequenina'] },
+  { id: 'draconato', name: 'Draconato', icon: '🐲', description: 'Um herói-dragão com escamas coloridas, cauda e uma baforada elemental impressionante.', traits: ['+2 Força', 'Baforada elemental', 'Escamas protetoras'] },
+  { id: 'tabaxi', name: 'Tabaxi', icon: '🐱', description: 'O povo-gato: curioso, veloz, com garras e talento para escalar lugares difíceis.', traits: ['+2 Destreza', 'Escalada felina', 'Corrida veloz'] },
+  { id: 'gnomo', name: 'Gnomo', icon: '🧠', description: 'Pequeno inventor de cabelos coloridos, mente brilhante, ilusões e piadas espertas.', traits: ['+2 Inteligência', 'Pequena ilusão', 'Inventor curioso'] },
 ];
 
 const classes = [
-  { id: 'arqueiro', name: 'Arqueiro', icon: '🏹', description: 'Acerta alvos distantes, protege amigos e conhece trilhas escondidas.', equipment: ['Arco longo', 'Aljava com flechas', 'Punhal', 'Capa da floresta'] },
-  { id: 'guerreiro', name: 'Guerreiro', icon: '⚔️', description: 'Defende o grupo com escudo firme e muita coragem.', equipment: ['Espada curta', 'Escudo', 'Armadura leve', 'Kit de acampamento'] },
-  { id: 'mago', name: 'Mago', icon: '🪄', description: 'Estuda livros encantados e resolve problemas com magia.', equipment: ['Cajado', 'Livro de feitiços', 'Cristal mágico', 'Manto estrelado'] },
-  { id: 'curandeiro', name: 'Curandeiro', icon: '💚', description: 'Cuida dos aliados, prepara ervas e mantém a esperança acesa.', equipment: ['Bolsa de ervas', 'Amuleto', 'Bandagens', 'Frasco de luz'] },
+  { id: 'guerreiro', name: 'Guerreiro', icon: '🛡️', description: 'O mestre das armas, vai para a linha de frente com espada, escudo e armadura pesada.', equipment: ['Espada longa', 'Escudo', 'Armadura pesada', 'Kit de treino'], attributes: { forca: 5, destreza: 3, inteligencia: 2, sabedoria: 3 } },
+  { id: 'barbaro', name: 'Bárbaro', icon: '💢', description: 'O guerreiro furioso que confia na força bruta, fica mais forte e quase não sente dor.', equipment: ['Machado grande', 'Peles de proteção', 'Amuleto tribal', 'Tambor de guerra'], attributes: { forca: 5, destreza: 3, inteligencia: 1, sabedoria: 4 } },
+  { id: 'ladino', name: 'Ladino', icon: '🗝️', description: 'Rápido, silencioso e esperto; abre fechaduras, desarma armadilhas e ataca de surpresa.', equipment: ['Adaga dupla', 'Ferramentas de ladrão', 'Capa escura', 'Corda fina'], attributes: { forca: 2, destreza: 5, inteligencia: 4, sabedoria: 3 } },
+  { id: 'patrulheiro', name: 'Patrulheiro', icon: '🏹', description: 'O protetor da natureza, arqueiro incrível que rastreia pegadas e sobrevive na floresta.', equipment: ['Arco longo', 'Aljava com flechas', 'Punhal', 'Apito do companheiro animal'], attributes: { forca: 3, destreza: 5, inteligencia: 3, sabedoria: 5 } },
+  { id: 'clerigo', name: 'Clérigo', icon: '✨', description: 'O guerreiro da cura, usa fé e magia de luz para ajudar amigos e afastar monstros sombrios.', equipment: ['Martelo leve', 'Símbolo sagrado', 'Kit de curativos', 'Livro de preces'], attributes: { forca: 3, destreza: 2, inteligencia: 3, sabedoria: 5 } },
+  { id: 'mago', name: 'Mago', icon: '🪄', description: 'O cientista da magia, estuda livros antigos e lança feitiços como fogo ou invisibilidade.', equipment: ['Cajado', 'Livro de feitiços', 'Cristal mágico', 'Manto estrelado'], attributes: { forca: 1, destreza: 3, inteligencia: 5, sabedoria: 4 } },
+  { id: 'bardo', name: 'Bardo', icon: '🎵', description: 'O artista do grupo, usa música, poemas e piadas para fortalecer amigos e confundir vilões.', equipment: ['Alaúde', 'Caderno de canções', 'Roupa colorida', 'Flauta encantada'], attributes: { forca: 2, destreza: 4, inteligencia: 4, sabedoria: 3 } },
 ];
 
 const appearanceGroups = [
@@ -38,7 +42,7 @@ const state = {
   name: 'Lirien',
   player: 'Maria Eduarda',
   race: 'elfo',
-  class: 'arqueiro',
+  class: 'patrulheiro',
   appearance: {
     skin: 'Morena clara',
     hair: 'Longo',
@@ -82,7 +86,9 @@ function render() {
         </div>
         <div class="actions">
           <button class="ghost" data-action="reset">↻ REINICIAR</button>
+          <button class="ghost" data-action="import">⇪ IMPORTAR JSON</button>
           <button class="primary" data-action="save">▣ SALVAR FICHA</button>
+          <input class="file-input" type="file" accept="application/json,.json" data-file-input />
         </div>
       </header>
       <div class="workspace">
@@ -143,7 +149,14 @@ function renderNavButtons(next, previous) {
 function renderSheet() {
   const race = selectedRace();
   const klass = selectedClass();
-  return `<aside class="sheet"><div class="ribbon">FICHA DO AVENTUREIRO</div><div class="row"><label>NOME DO PERSONAGEM<b>${state.name}</b></label><label>JOGADOR<b>${state.player}</b></label></div><div class="badges"><div>${race.icon}<span>RAÇA<b>${race.name}</b></span></div><div>${klass.icon}<span>CLASSE<b>${klass.name}</b></span></div></div><h3>✧ ATRIBUTOS ✧</h3><div class="attrs"><div><span>✊</span><small>FORÇA</small><b>3</b><em>MOD. +0</em></div><div><span>🍃</span><small>DESTREZA</small><b>5</b><em>MOD. +3</em></div><div><span>📖</span><small>INTELIGÊNCIA</small><b>3</b><em>MOD. +0</em></div><div><span>👁️</span><small>SABEDORIA</small><b>4</b><em>MOD. +1</em></div></div><h3>CARACTERÍSTICAS DA RAÇA</h3><p class="center">${race.traits.map((trait) => `• ${trait}`).join(' &nbsp; ')}</p><div class="cols"><section><h4>APARÊNCIA</h4>${Object.entries(state.appearance).map(([key, value]) => `<p>✹ ${labelForAppearance(key)}: ${value}</p>`).join('')}</section><section><h4>EQUIPAMENTOS</h4>${klass.equipment.map((item) => `<p>⚔ ${item}</p>`).join('')}</section></div><h3>PERSONALIDADE</h3><div class="chips">${state.personality.map((item) => `<span>${item}</span>`).join('')}</div><h3>HISTÓRIA</h3><p>${state.story}</p></aside>`;
+  const attributes = klass.attributes;
+  return `<aside class="sheet"><div class="ribbon">FICHA DO AVENTUREIRO</div><div class="row"><label>NOME DO PERSONAGEM<b>${state.name}</b></label><label>JOGADOR<b>${state.player}</b></label></div><div class="badges"><div>${race.icon}<span>RAÇA<b>${race.name}</b></span></div><div>${klass.icon}<span>CLASSE<b>${klass.name}</b></span></div></div><h3>✧ ATRIBUTOS ✧</h3><div class="attrs"><div><span>✊</span><small>FORÇA</small><b>${attributes.forca}</b><em>MOD. ${modifier(attributes.forca)}</em></div><div><span>🍃</span><small>DESTREZA</small><b>${attributes.destreza}</b><em>MOD. ${modifier(attributes.destreza)}</em></div><div><span>📖</span><small>INTELIGÊNCIA</small><b>${attributes.inteligencia}</b><em>MOD. ${modifier(attributes.inteligencia)}</em></div><div><span>👁️</span><small>SABEDORIA</small><b>${attributes.sabedoria}</b><em>MOD. ${modifier(attributes.sabedoria)}</em></div></div><h3>CARACTERÍSTICAS DA RAÇA</h3><p class="center">${race.traits.map((trait) => `• ${trait}`).join(' &nbsp; ')}</p><div class="cols"><section><h4>APARÊNCIA</h4>${Object.entries(state.appearance).map(([key, value]) => `<p>✹ ${labelForAppearance(key)}: ${value}</p>`).join('')}</section><section><h4>EQUIPAMENTOS</h4>${klass.equipment.map((item) => `<p>⚔ ${item}</p>`).join('')}</section></div><h3>PERSONALIDADE</h3><div class="chips">${state.personality.map((item) => `<span>${item}</span>`).join('')}</div><h3>HISTÓRIA</h3><p>${state.story}</p></aside>`;
+}
+
+function modifier(value) {
+  const score = Number(value) || 0;
+  const mod = Math.max(-1, score - 2);
+  return mod >= 0 ? `+${mod}` : `${mod}`;
 }
 
 function labelForAppearance(key) {
@@ -158,6 +171,40 @@ function bindEvents() {
   document.querySelectorAll('[data-field]').forEach((field) => field.addEventListener('input', () => { state[field.dataset.field] = field.value; render(); }));
   $('[data-action="reset"]')?.addEventListener('click', () => window.location.reload());
   $('[data-action="save"]')?.addEventListener('click', downloadJson);
+  $('[data-action="import"]')?.addEventListener('click', () => $('[data-file-input]')?.click());
+  $('[data-file-input]')?.addEventListener('change', importJson);
+}
+
+function importJson(event) {
+  const file = event.target.files?.[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+  reader.addEventListener('load', () => {
+    try {
+      const data = JSON.parse(reader.result);
+      loadCharacter(data);
+      render();
+    } catch (error) {
+      alert('Não consegui ler esse JSON. Verifique o arquivo e tente novamente.');
+    }
+  });
+  reader.readAsText(file);
+}
+
+function loadCharacter(data) {
+  state.name = data.name || state.name;
+  state.player = data.player || state.player;
+  state.race = normalizeId(data.race, races, state.race);
+  state.class = normalizeId(data.class, classes, state.class);
+  state.appearance = { ...state.appearance, ...(data.appearance || {}) };
+  state.personality = Array.isArray(data.personality) ? data.personality : state.personality;
+  state.story = data.story || state.story;
+}
+
+function normalizeId(value, collection, fallback) {
+  const id = typeof value === 'string' ? value : value?.id;
+  return collection.some((item) => item.id === id) ? id : fallback;
 }
 
 function downloadJson() {

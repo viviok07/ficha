@@ -511,3 +511,7 @@ button { cursor: pointer; }
   .cols,
   .attrs { grid-template-columns: 1fr; }
 }
+
+.file-input {
+  display: none;
+}
