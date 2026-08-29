@@ -1,5 +1,3 @@
-import './style.css';
-
 const races = ['Humano', 'Elfo', 'Anão', 'Halfling', 'Tiefling', 'Meio-Elfo'];
 const colors = ['#161513', '#412816', '#71461d', '#c9c7d2', '#a2342b', '#e8b653'];
 const swatches = (items, selected, round='') => items.map((c,i)=>`<button class="${round} ${i===selected?'selected':''}" style="background:${c}">${i===selected?'✓':''}</button>`).join('');
