@@ -85,6 +85,10 @@ quantidade de opções, ajuste também essa frase.
 - `buildImagePrompt()` referencia `skin`, `hair`, `hairColor`, `eyes`, `height`, `body`, `marks`,
   `accessory` e `style` **pelo nome**; grupos novos não entram no prompt automaticamente.
 
+> **Estatura ≠ Altura.** O grupo `height` se chama **"Estatura"** (Baixa/Média/Alta) e é diferente
+> do campo de texto livre `state.height` ("Altura", aba História). A chave continua `height` para
+> não quebrar fichas antigas, e `buildImagePrompt()` cita os dois com rótulos distintos.
+
 ## `steps` — [src/main.js:113](../src/main.js#L113)
 
 ```js
@@ -96,32 +100,44 @@ Só alimenta o stepper visual. A navegação real depende de `renderCurrentStep(
 
 ---
 
-## `state` — o personagem — [src/main.js:136](../src/main.js#L136)
+## `state` — o personagem — [src/main.js:137](../src/main.js#L137)
 
 ```js
 {
-  step: 'race',                  // id do passo ativo (UI, não serializado)
-  name: 'Lirien',                // string livre
-  player: 'Maria Eduarda',       // string livre
-  race: 'elfo',                  // race.id
-  class: 'patrulheiro',          // class.id
-  skills: ['tiro-marcado', 'passo-da-floresta'], // exatamente 2 skill.id da classe atual
-  appearance: { skin, hair, hairColor, eyes, height, body, marks, accessory, style }, // rótulos
-  personality: ['Observadora', 'Curiosa', ...], // array de strings; SEM UI de edição hoje
-  equipment: 'Arco longo, aljava ...',          // string livre (aba História)
-  otherCharacteristics: '...',                  // string livre
-  story: '...',                                 // string livre
+  step: 'race',            // id do passo ativo (UI, não serializado)
+  name: '',                // string livre
+  player: '',              // string livre
+  age: '',                 // texto livre (ex.: "12 anos")
+  gender: '',              // texto livre
+  height: '',              // texto livre (ex.: "1,45 m") — NÃO confundir com appearance.height
+  race: '',                // race.id, '' enquanto nada foi escolhido
+  class: '',               // class.id, '' enquanto nada foi escolhido
+  skills: [],              // até 2 skill.id da classe atual
+  appearance: { skin, hair, hairColor, eyes, height, body, marks, accessory, style }, // rótulos, '' quando vazio
+  personality: [],         // array de strings, editado por badges na aba História
+  personalityDraft: '',    // texto ainda não confirmado no input de personalidade (UI, não serializado)
+  equipment: '',           // string livre (aba História)
+  otherCharacteristics: '',
+  story: '',
 }
 ```
 
-Os valores iniciais são um personagem de exemplo já preenchido — a aplicação nunca começa vazia.
+**Tudo começa vazio.** A aplicação não pré-seleciona nada: nenhuma raça, classe, habilidade,
+opção de aparência ou texto vem preenchido. Blocos de informação exibem um texto de espera
+("Nenhuma raça escolhida ainda") e as seções vazias da ficha simplesmente não são renderizadas.
+Isso obriga todo consumidor de `state.race`/`state.class` a tolerar `undefined` — use
+`selectedRace()?.` / `selectedClass()?.` em vez de acessar direto.
 
-`state.personality` é renderizado como chips na ficha e entra no prompt de imagem, mas **não tem
-tela de edição**; hoje só muda via importação de JSON. É a lacuna mais óbvia para uma feature nova.
+`state.personality` é editado na aba História: vírgula (ou Enter, ou sair do campo) transforma o
+texto em badge, e cada badge tem um "×" que a remove. Traços são aparados, vazios são ignorados e
+repetidos (sem diferenciar maiúsculas) não entram duas vezes.
+
+`state.personalityDraft` é o texto pendente do input e **não** é exportado — como `state.step`,
+é estado de UI que mora dentro de `state`.
 
 ---
 
-## JSON exportado — `characterJson()` — [src/main.js:165](../src/main.js#L165)
+## JSON exportado — `characterJson()` — [src/main.js:170](../src/main.js#L170)
 
 `SALVAR FICHA` baixa `${state.name || 'personagem'}.json` com este formato (**objetos completos**
 para raça, classe e habilidades, não apenas ids):
@@ -130,6 +146,9 @@ para raça, classe e habilidades, não apenas ids):
 {
   "name": "Lirien",
   "player": "Maria Eduarda",
+  "age": "12 anos",
+  "gender": "menina",
+  "height": "1,45 m",
   "race":  { "id": "elfo", "name": "Elfo", "icon": "🌿", "description": "...", "traits": ["..."] },
   "class": { "id": "patrulheiro", "name": "Patrulheiro", "icon": "🏹", "description": "...",
              "equipment": ["..."], "attributes": { "forca": 3, "destreza": 5, "inteligencia": 3, "sabedoria": 5 } },
@@ -144,10 +163,15 @@ para raça, classe e habilidades, não apenas ids):
 }
 ```
 
+`race` e `class` saem como `null` enquanto nada foi escolhido, e `skills` pode vir com 0 ou 1
+item — o JSON de uma ficha incompleta continua válido e importável.
+
 Na importação, `loadCharacter()` aceita as duas formas — objeto completo ou id em string — para
 `race`, `class` e cada item de `skills`. Campos desconhecidos são ignorados; campos ausentes
-mantêm o valor atual.
+mantêm o valor atual. Fichas antigas (sem `age`/`gender`/`height`) importam normalmente: os
+campos novos ficam vazios.
 
 **Ao adicionar um campo novo ao personagem, atualize os três pontos:** `state` (valor padrão),
 `characterJson()` (exportação) e `loadCharacter()` (importação). Esquecer um deles gera perda
-silenciosa de dados.
+silenciosa de dados. Se o campo for obrigatório para gerar a imagem, acrescente-o também a
+`missingCharacterFields()`.

@@ -11,6 +11,7 @@ Este documento explica **como o recurso funciona por dentro**. Para o passo a pa
 3. Usuário preenche campos   -> data-integration muta o objeto `integration` a cada tecla
 4. Clique em OK              -> confirmIntegration(): exige apiKey não vazia; ready = true; render()
 5. Aba História -> GERAR IMAGEM
+5b. missingCharacterFields() -> se faltar algo, lista as pendências e NÃO chama a API
 6. generateCharacterImage()  -> imageState.loading = true; render()  (mostra o .loader)
 7. buildImagePrompt()        -> texto em pt-BR + JSON completo do personagem
 8. fetch POST api.openai.com/v1/images/generations
@@ -37,11 +38,12 @@ ou em qualquer requisição que não seja para `api.openai.com`.
 
 ## `imageState` — máquina de estados da geração
 
-`renderImageResult()` ([src/main.js:292](../src/main.js#L292)) despacha nesta ordem de prioridade:
+`renderImageResult()` ([src/main.js:344](../src/main.js#L344)) despacha nesta ordem de prioridade:
 
 | Condição | Render |
 | --- | --- |
 | `loading` | `<div class="loader">` com spinner e "Preparando ilustração mágica..." |
+| `checked` e há pendências | `<div class="image-error">` com a lista do que falta preencher |
 | `error` | `<p class="image-error">` com a mensagem (escapada) |
 | `dataUrl` vazio | nada |
 | caso contrário | `<figure class="generated-image">` com a imagem e legenda |
@@ -50,13 +52,22 @@ O botão GERAR IMAGEM fica `disabled` enquanto `loading` for `true`, o que imped
 concorrentes. `imageState.prompt` guarda o último prompt enviado — hoje só para depuração, não é
 exibido.
 
-## `buildImagePrompt()` — [src/main.js:404](../src/main.js#L404)
+## Pré-requisito: ficha completa — `missingCharacterFields()` — [src/main.js:551](../src/main.js#L551)
+
+O clique em GERAR IMAGEM primeiro confirma o traço de personalidade pendente
+(`commitPersonalityDraft()`), depois marca `imageState.checked = true` e exige **tudo**
+preenchido: raça, classe, as 2 habilidades, os 9 grupos de aparência, nome, jogador, idade,
+gênero, altura, equipamento, outras características, história e ao menos 1 traço de
+personalidade. Faltando qualquer item, a lista aparece abaixo do botão e nenhuma requisição é
+feita. A lista é recalculada a cada `render()`, então some conforme o usuário preenche.
+
+## `buildImagePrompt()` — [src/main.js:534](../src/main.js#L534)
 
 Monta um prompt em português com quatro blocos:
 
 1. **Estilo**: ilustração vertical de RPG, fantasia clássica, aquarela, storybook infantojuvenil.
-2. **Dados do personagem**: nome, raça, classe, cada chave de aparência, personalidade,
-   equipamento, outras características, história.
+2. **Dados do personagem**: nome, raça, classe, idade, gênero, altura informada, cada chave de
+   aparência, personalidade, equipamento, outras características, história.
 3. **Composição e negativos**: pose de três quartos, corpo inteiro, luz dourada; evitar texto,
    assinatura, logotipos, marca d'água, moldura, fotorrealismo e estilo sombrio adulto.
 4. **JSON do personagem** (`JSON.stringify(data, null, 2)`) anexado para fidelidade.
@@ -67,9 +78,11 @@ Decisões deliberadas que **não devem ser "corrigidas" sem pedido explícito**:
   *"Não substitua por equipamentos padrão de raça ou classe"*. `class.equipment` fica de fora.
 - As chaves de aparência são listadas **uma a uma, à mão**. Grupos novos em `appearanceGroups`
   não entram no prompt sozinhos — é preciso editar esta função.
+- Há **dois** dados de altura e o prompt os separa de propósito: `appearance.height` aparece como
+  "estatura (porte na escala baixa/média/alta)" e `state.height` como "altura informada".
 - O texto é todo em português; o modelo lida bem com isso e mantém a coerência com a UI.
 
-## A chamada HTTP — [src/main.js:421](../src/main.js#L421)
+## A chamada HTTP — [src/main.js:595](../src/main.js#L595)
 
 ```js
 POST https://api.openai.com/v1/images/generations

@@ -291,6 +291,13 @@ button { cursor: pointer; }
   font: 800 20px Cinzel, serif;
 }
 
+.info.empty {
+  border-color: var(--line);
+  background: #fbf4e6;
+  color: #6b543a;
+  font-style: italic;
+}
+
 .panel-actions {
   display: flex;
   flex-wrap: wrap;
@@ -361,6 +368,51 @@ button { cursor: pointer; }
   resize: vertical;
 }
 
+.traits {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.trait {
+  display: inline-flex;
+  gap: 8px;
+  align-items: center;
+  padding: 7px 8px 7px 12px;
+  border: 1px solid #d1b891;
+  border-radius: 999px;
+  background: #fbf0dc;
+  font-size: 14px;
+  font-weight: 400;
+}
+
+.trait-remove {
+  width: 22px;
+  height: 22px;
+  min-height: 22px;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: #e6d4b6;
+  color: var(--brown);
+  font-size: 15px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.trait-remove:hover {
+  background: var(--purple);
+  color: #fff6e7;
+}
+
+.traits-empty {
+  margin: 0;
+  color: #6b543a;
+  font-size: 14px;
+  font-style: italic;
+  font-weight: 400;
+}
+
 .json-box {
   margin-top: 18px;
   padding: 14px;
@@ -417,6 +469,10 @@ button { cursor: pointer; }
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 14px;
+}
+
+.row.details {
+  grid-template-columns: repeat(3, 1fr);
 }
 
 .sheet label {
@@ -519,6 +575,8 @@ button { cursor: pointer; }
   .badges,
   .cols,
   .attrs { grid-template-columns: 1fr; }
+
+  .row.details { grid-template-columns: 1fr; }
 }
 
 .file-input {
@@ -624,6 +682,19 @@ button { cursor: pointer; }
   margin-top: 16px !important;
   color: #8b1e14;
   font-weight: 700;
+}
+
+.image-error p {
+  margin: 0 0 8px;
+}
+
+.image-error ul {
+  margin: 0;
+  padding-left: 20px;
+}
+
+.image-error li {
+  margin: 3px 0;
 }
 
 .generated-image {

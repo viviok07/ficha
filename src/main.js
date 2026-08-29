@@ -103,7 +103,7 @@ const appearanceGroups = [
   { key: 'hair', title: 'Cabelo', icon: '💇', options: ['Curto', 'Cacheado', 'Longo', 'Trançado', 'Coque'] },
   { key: 'hairColor', title: 'Cor do cabelo', icon: '💧', options: ['Preto', 'Castanho', 'Ruivo', 'Prateado', 'Dourado'] },
   { key: 'eyes', title: 'Cor dos olhos', icon: '👁️', options: ['Castanhos', 'Verdes', 'Azuis', 'Cinzas', 'Roxos'] },
-  { key: 'height', title: 'Altura', icon: '📏', options: ['Baixa', 'Média', 'Alta'] },
+  { key: 'height', title: 'Estatura', icon: '📏', options: ['Baixa', 'Média', 'Alta'] },
   { key: 'body', title: 'Tipo físico', icon: '✿', options: ['Leve', 'Atlético', 'Forte', 'Robusto'] },
   { key: 'marks', title: 'Marcas e detalhes', icon: '✴', options: ['Nenhuma', 'Cicatriz no rosto', 'Sardas', 'Tatuagem mágica'] },
   { key: 'accessory', title: 'Acessório', icon: '○', options: ['Nenhum', 'Colar com pingente', 'Brinco', 'Óculos'] },
@@ -129,44 +129,52 @@ const integration = {
 const imageState = {
   loading: false,
   error: '',
+  checked: false,
   dataUrl: '',
   prompt: '',
 };
 
 const state = {
   step: 'race',
-  name: 'Lirien',
-  player: 'Maria Eduarda',
-  race: 'elfo',
-  class: 'patrulheiro',
-  skills: ['tiro-marcado', 'passo-da-floresta'],
+  name: '',
+  player: '',
+  age: '',
+  gender: '',
+  height: '',
+  race: '',
+  class: '',
+  skills: [],
   appearance: {
-    skin: 'Morena clara',
-    hair: 'Longo',
-    hairColor: 'Prateado',
-    eyes: 'Verdes',
-    height: 'Média',
-    body: 'Atlético',
-    marks: 'Cicatriz no rosto',
-    accessory: 'Colar com pingente',
-    style: 'Roupa da floresta',
+    skin: '',
+    hair: '',
+    hairColor: '',
+    eyes: '',
+    height: '',
+    body: '',
+    marks: '',
+    accessory: '',
+    style: '',
   },
-  personality: ['Observadora', 'Curiosa', 'Leal', 'Determinada'],
-  equipment: 'Arco longo, aljava com flechas, punhal e apito do companheiro animal.',
-  otherCharacteristics: 'Fala com animais pequenos e conhece trilhas escondidas na floresta.',
-  story: 'Lirien cresceu nas florestas, aprendendo com os animais e com as árvores. Seu objetivo é proteger a natureza e manter o equilíbrio entre todos os seres.',
+  personality: [],
+  personalityDraft: '',
+  equipment: '',
+  otherCharacteristics: '',
+  story: '',
 };
 
 const $ = (selector) => document.querySelector(selector);
 const selectedRace = () => races.find((item) => item.id === state.race);
 const selectedClass = () => classes.find((item) => item.id === state.class);
 const selectedSkillCatalog = () => skillCatalog[state.class];
-const selectedSkills = () => selectedSkillCatalog().options.filter((item) => state.skills.includes(item.id));
+const selectedSkills = () => (selectedSkillCatalog()?.options || []).filter((item) => state.skills.includes(item.id));
 const characterJson = () => ({
   name: state.name,
   player: state.player,
-  race: selectedRace(),
-  class: selectedClass(),
+  age: state.age,
+  gender: state.gender,
+  height: state.height,
+  race: selectedRace() || null,
+  class: selectedClass() || null,
   skills: selectedSkills(),
   appearance: state.appearance,
   personality: state.personality,
@@ -175,7 +183,11 @@ const characterJson = () => ({
   story: state.story,
 });
 
+let rendering = false;
+
 function render() {
+  const focus = captureFocus();
+  rendering = true;
   $('#root').innerHTML = `
     <main class="page">
       ${renderIntegrationGate()}
@@ -203,6 +215,37 @@ function render() {
       </div>
     </main>`;
   bindEvents();
+  restoreFocus(focus);
+  rendering = false;
+}
+
+function focusSelector(element) {
+  if (!element || !element.dataset) return '';
+  if (element.dataset.field) return `[data-field="${element.dataset.field}"]`;
+  if (element.dataset.integration) return `[data-integration="${element.dataset.integration}"]`;
+  if (element.hasAttribute('data-personality-input')) return '[data-personality-input]';
+  return '';
+}
+
+function captureFocus() {
+  const element = document.activeElement;
+  const selector = focusSelector(element);
+  if (!selector) return null;
+  return { selector, start: element.selectionStart, end: element.selectionEnd };
+}
+
+function restoreFocus(focus) {
+  if (!focus) return;
+  const element = $(focus.selector);
+  if (!element) return;
+  element.focus();
+  if (focus.start === null || focus.start === undefined) return;
+  const limit = element.value.length;
+  try {
+    element.setSelectionRange(Math.min(focus.start, limit), Math.min(focus.end ?? focus.start, limit));
+  } catch (error) {
+    // Alguns tipos de input não suportam seleção; manter só o foco.
+  }
 }
 
 function renderIntegrationGate() {
@@ -258,7 +301,7 @@ function renderRaceStep() {
   return `<section class="panel current-panel"><h2>✦ 1. ESCOLHA SUA RAÇA ✦</h2><p>Cada raça possui habilidades únicas.</p><div class="option-grid race-grid">${races.map((item, index) => `
     <button class="choice-card p${index} ${state.race === item.id ? 'selected' : ''}" data-race="${item.id}">
       <span class="choice-art">${item.icon}</span><b>${item.name}</b><em>${state.race === item.id ? '✓' : ''}</em>
-    </button>`).join('')}</div><div class="info"><h3>${race.icon} ${race.name.toUpperCase()}</h3><p>${race.description}</p><b>Vantagens:</b><ul>${race.traits.map((trait) => `<li>${trait}</li>`).join('')}</ul></div>${renderNavButtons('class')}</section>`;
+    </button>`).join('')}</div>${race ? `<div class="info"><h3>${race.icon} ${race.name.toUpperCase()}</h3><p>${race.description}</p><b>Vantagens:</b><ul>${race.traits.map((trait) => `<li>${trait}</li>`).join('')}</ul></div>` : '<div class="info empty"><p>Nenhuma raça escolhida ainda.</p></div>'}${renderNavButtons('class')}</section>`;
 }
 
 function renderClassStep() {
@@ -266,13 +309,17 @@ function renderClassStep() {
   return `<section class="panel current-panel"><h2>✦ 2. ESCOLHA SUA CLASSE ✦</h2><p>A classe mostra como seu herói ajuda o grupo.</p><div class="option-grid class-grid">${classes.map((item) => `
     <button class="choice-card class-card ${state.class === item.id ? 'selected' : ''}" data-class="${item.id}">
       <span class="choice-art">${item.icon}</span><b>${item.name}</b><small>${item.description}</small><em>${state.class === item.id ? '✓' : ''}</em>
-    </button>`).join('')}</div><div class="info"><h3>${klass.icon} ${klass.name.toUpperCase()}</h3><p>${klass.description}</p><b>Equipamentos:</b><ul>${klass.equipment.map((item) => `<li>${item}</li>`).join('')}</ul></div>${renderNavButtons('skills', 'race')}</section>`;
+    </button>`).join('')}</div>${klass ? `<div class="info"><h3>${klass.icon} ${klass.name.toUpperCase()}</h3><p>${klass.description}</p><b>Equipamentos:</b><ul>${klass.equipment.map((item) => `<li>${item}</li>`).join('')}</ul></div>` : '<div class="info empty"><p>Nenhuma classe escolhida ainda.</p></div>'}${renderNavButtons('skills', 'race')}</section>`;
 }
 
 function renderSkillsStep() {
   const klass = selectedClass();
   const catalog = selectedSkillCatalog();
   const selectedCount = state.skills.length;
+  if (!klass || !catalog) {
+    return `<section class="panel current-panel"><h2>✦ 3. HABILIDADES ✦</h2><p>As habilidades dependem da classe.</p><div class="info empty"><p>Nenhuma classe escolhida ainda. Volte ao passo 2 para escolher uma classe e ver as habilidades dela.</p></div>${renderNavButtons('appearance', 'class')}</section>`;
+  }
+
   return `<section class="panel current-panel"><h2>✦ 3. HABILIDADES DE ${klass.name.toUpperCase()} ✦</h2><p>${catalog.type === 'magias' ? 'Classes conjuradoras escolhem magias.' : 'Classes de contato físico escolhem manobras.'} Escolha 2 ${catalog.type} dentre as 5 disponíveis.</p><div class="option-grid skill-grid">${catalog.options.map((item) => `
     <button class="choice-card skill-card ${state.skills.includes(item.id) ? 'selected' : ''}" data-skill="${item.id}">
       <span class="choice-art">${item.icon}</span><b>${item.name}</b><small>${item.description}</small><em>${state.skills.includes(item.id) ? '✓' : ''}</em>
@@ -286,11 +333,18 @@ function renderAppearanceStep() {
 }
 
 function renderStoryStep() {
-  return `<section class="panel current-panel"><h2>✦ 5. HISTÓRIA ✦</h2><p>Conte quem é seu personagem.</p><label class="field">Nome do personagem<input data-field="name" value="${escapeHtml(state.name)}" /></label><label class="field">Jogador<input data-field="player" value="${escapeHtml(state.player)}" /></label><label class="field">Equipamento<input data-field="equipment" value="${escapeHtml(state.equipment)}" /></label><label class="field">Outras características<textarea data-field="otherCharacteristics">${escapeHtml(state.otherCharacteristics)}</textarea></label><label class="field">História<textarea data-field="story">${escapeHtml(state.story)}</textarea></label><div class="image-generator"><h3>Retrato do personagem</h3><p>Gere uma imagem em aquarela, fantasia clássica e visual de livro de histórias usando o JSON atual e o equipamento informado acima.</p><button class="primary" data-action="generate-image" ${imageState.loading ? 'disabled' : ''}>${imageState.loading ? 'GERANDO...' : 'GERAR IMAGEM'}</button>${renderImageResult()}</div>${renderNavButtons(null, 'appearance')}</section>`;
+  return `<section class="panel current-panel"><h2>✦ 5. HISTÓRIA ✦</h2><p>Conte quem é seu personagem.</p><label class="field">Nome do personagem<input data-field="name" value="${escapeHtml(state.name)}" /></label><label class="field">Jogador<input data-field="player" value="${escapeHtml(state.player)}" /></label><label class="field">Idade<input data-field="age" value="${escapeHtml(state.age)}" placeholder="Ex.: 12 anos" /></label><label class="field">Gênero<input data-field="gender" value="${escapeHtml(state.gender)}" placeholder="Ex.: menina, menino, não-binárie" /></label><label class="field">Altura<input data-field="height" value="${escapeHtml(state.height)}" placeholder="Ex.: 1,45 m" /></label>${renderPersonalityField()}<label class="field">Equipamento<input data-field="equipment" value="${escapeHtml(state.equipment)}" /></label><label class="field">Outras características<textarea data-field="otherCharacteristics">${escapeHtml(state.otherCharacteristics)}</textarea></label><label class="field">História<textarea data-field="story">${escapeHtml(state.story)}</textarea></label><div class="image-generator"><h3>Retrato do personagem</h3><p>Gere uma imagem em aquarela, fantasia clássica e visual de livro de histórias usando o JSON atual e o equipamento informado acima.</p><button class="primary" data-action="generate-image" ${imageState.loading ? 'disabled' : ''}>${imageState.loading ? 'GERANDO...' : 'GERAR IMAGEM'}</button>${renderImageResult()}</div>${renderNavButtons(null, 'appearance')}</section>`;
+}
+
+function renderPersonalityField() {
+  const traits = state.personality.map((trait, index) => `<span class="trait">${escapeHtml(trait)}<button type="button" class="trait-remove" data-personality-remove="${index}" aria-label="Remover ${escapeHtml(trait)}">×</button></span>`).join('');
+  return `<div class="field"><span>Personalidade</span>${traits ? `<div class="traits">${traits}</div>` : '<p class="traits-empty">Nenhum traço de personalidade ainda.</p>'}<input data-personality-input aria-label="Novo traço de personalidade" placeholder="Digite um traço e use vírgula ou Enter" value="${escapeHtml(state.personalityDraft)}" /></div>`;
 }
 
 function renderImageResult() {
   if (imageState.loading) return '<div class="loader"><span></span><b>Preparando ilustração mágica...</b></div>';
+  const missing = imageState.checked ? missingCharacterFields() : [];
+  if (missing.length) return `<div class="image-error"><p>Complete estes itens antes de gerar a imagem:</p><ul>${missing.map((item) => `<li>${escapeHtml(item)}</li>`).join('')}</ul></div>`;
   if (imageState.error) return `<p class="image-error">${escapeHtml(imageState.error)}</p>`;
   if (!imageState.dataUrl) return '';
 
@@ -304,8 +358,29 @@ function renderNavButtons(next, previous) {
 function renderSheet() {
   const race = selectedRace();
   const klass = selectedClass();
-  const attributes = klass.attributes;
-  return `<aside class="sheet"><div class="ribbon">FICHA DO AVENTUREIRO</div><div class="row"><label>NOME DO PERSONAGEM<b>${state.name}</b></label><label>JOGADOR<b>${state.player}</b></label></div><div class="badges"><div>${race.icon}<span>RAÇA<b>${race.name}</b></span></div><div>${klass.icon}<span>CLASSE<b>${klass.name}</b></span></div></div><h3>✧ ATRIBUTOS ✧</h3><div class="attrs"><div><span>✊</span><small>FORÇA</small><b>${attributes.forca}</b><em>MOD. ${modifier(attributes.forca)}</em></div><div><span>🍃</span><small>DESTREZA</small><b>${attributes.destreza}</b><em>MOD. ${modifier(attributes.destreza)}</em></div><div><span>📖</span><small>INTELIGÊNCIA</small><b>${attributes.inteligencia}</b><em>MOD. ${modifier(attributes.inteligencia)}</em></div><div><span>👁️</span><small>SABEDORIA</small><b>${attributes.sabedoria}</b><em>MOD. ${modifier(attributes.sabedoria)}</em></div></div><h3>CARACTERÍSTICAS DA RAÇA</h3><p class="center">${race.traits.map((trait) => `• ${trait}`).join(' &nbsp; ')}</p><div class="cols"><section><h4>APARÊNCIA</h4>${Object.entries(state.appearance).map(([key, value]) => `<p>✹ ${labelForAppearance(key)}: ${value}</p>`).join('')}</section><section><h4>EQUIPAMENTOS</h4>${klass.equipment.map((item) => `<p>⚔ ${item}</p>`).join('')}</section></div><h3>${selectedSkillCatalog().type.toUpperCase()}</h3><div class="chips">${selectedSkills().map((item) => `<span>${item.icon} ${item.name}</span>`).join('')}</div><h3>PERSONALIDADE</h3><div class="chips">${state.personality.map((item) => `<span>${item}</span>`).join('')}</div><h3>EQUIPAMENTO</h3><p>${state.equipment}</p><h3>OUTRAS CARACTERÍSTICAS</h3><p>${state.otherCharacteristics}</p><h3>HISTÓRIA</h3><p>${state.story}</p></aside>`;
+  const catalog = selectedSkillCatalog();
+  const skills = selectedSkills();
+  const attributes = klass?.attributes;
+  const identity = sheetLabels([['NOME DO PERSONAGEM', state.name], ['JOGADOR', state.player]]);
+  const details = sheetLabels([['IDADE', state.age], ['GÊNERO', state.gender], ['ALTURA', state.height]]);
+  const appearanceEntries = Object.entries(state.appearance).filter(([, value]) => String(value ?? '').trim());
+  const appearanceBlock = appearanceEntries.length
+    ? `<section><h4>APARÊNCIA</h4>${appearanceEntries.map(([key, value]) => `<p>✹ ${labelForAppearance(key)}: ${escapeHtml(value)}</p>`).join('')}</section>`
+    : '';
+  const equipmentBlock = klass ? `<section><h4>EQUIPAMENTOS</h4>${klass.equipment.map((item) => `<p>⚔ ${item}</p>`).join('')}</section>` : '';
+
+  return `<aside class="sheet"><div class="ribbon">FICHA DO AVENTUREIRO</div>${identity ? `<div class="row">${identity}</div>` : ''}${details ? `<div class="row details">${details}</div>` : ''}${race || klass ? `<div class="badges">${race ? `<div>${race.icon}<span>RAÇA<b>${race.name}</b></span></div>` : ''}${klass ? `<div>${klass.icon}<span>CLASSE<b>${klass.name}</b></span></div>` : ''}</div>` : ''}${attributes ? `<h3>✧ ATRIBUTOS ✧</h3><div class="attrs"><div><span>✊</span><small>FORÇA</small><b>${attributes.forca}</b><em>MOD. ${modifier(attributes.forca)}</em></div><div><span>🍃</span><small>DESTREZA</small><b>${attributes.destreza}</b><em>MOD. ${modifier(attributes.destreza)}</em></div><div><span>📖</span><small>INTELIGÊNCIA</small><b>${attributes.inteligencia}</b><em>MOD. ${modifier(attributes.inteligencia)}</em></div><div><span>👁️</span><small>SABEDORIA</small><b>${attributes.sabedoria}</b><em>MOD. ${modifier(attributes.sabedoria)}</em></div></div>` : ''}${race ? `<h3>CARACTERÍSTICAS DA RAÇA</h3><p class="center">${race.traits.map((trait) => `• ${trait}`).join(' &nbsp; ')}</p>` : ''}${appearanceBlock || equipmentBlock ? `<div class="cols">${appearanceBlock}${equipmentBlock}</div>` : ''}${skills.length && catalog ? `<h3>${catalog.type.toUpperCase()}</h3><div class="chips">${skills.map((item) => `<span>${item.icon} ${item.name}</span>`).join('')}</div>` : ''}${state.personality.length ? `<h3>PERSONALIDADE</h3><div class="chips">${state.personality.map((item) => `<span>${escapeHtml(item)}</span>`).join('')}</div>` : ''}${sheetText('EQUIPAMENTO', state.equipment)}${sheetText('OUTRAS CARACTERÍSTICAS', state.otherCharacteristics)}${sheetText('HISTÓRIA', state.story)}</aside>`;
+}
+
+function sheetLabels(pairs) {
+  return pairs
+    .filter(([, value]) => String(value ?? '').trim())
+    .map(([label, value]) => `<label>${label}<b>${escapeHtml(value)}</b></label>`)
+    .join('');
+}
+
+function sheetText(title, value) {
+  return String(value ?? '').trim() ? `<h3>${title}</h3><p>${escapeHtml(value)}</p>` : '';
 }
 
 function modifier(value) {
@@ -321,10 +396,27 @@ function labelForAppearance(key) {
 function bindEvents() {
   document.querySelectorAll('[data-step]').forEach((button) => button.addEventListener('click', () => { state.step = button.dataset.step; render(); }));
   document.querySelectorAll('[data-race]').forEach((button) => button.addEventListener('click', () => { state.race = button.dataset.race; render(); }));
-  document.querySelectorAll('[data-class]').forEach((button) => button.addEventListener('click', () => { state.class = button.dataset.class; state.skills = selectedSkillCatalog().options.slice(0, 2).map((item) => item.id); render(); }));
+  document.querySelectorAll('[data-class]').forEach((button) => button.addEventListener('click', () => { state.class = button.dataset.class; state.skills = []; render(); }));
   document.querySelectorAll('[data-skill]').forEach((button) => button.addEventListener('click', () => toggleSkill(button.dataset.skill)));
   document.querySelectorAll('[data-appearance-key]').forEach((button) => button.addEventListener('click', () => { state.appearance[button.dataset.appearanceKey] = button.dataset.appearanceValue; render(); }));
   document.querySelectorAll('[data-field]').forEach((field) => field.addEventListener('input', () => { state[field.dataset.field] = field.value; render(); }));
+  document.querySelectorAll('[data-personality-remove]').forEach((button) => button.addEventListener('click', () => { state.personality = state.personality.filter((item, index) => index !== Number(button.dataset.personalityRemove)); render(); }));
+  const personalityInput = $('[data-personality-input]');
+  if (personalityInput) {
+    personalityInput.addEventListener('input', () => { updatePersonalityDraft(personalityInput.value); render(); });
+    personalityInput.addEventListener('keydown', (event) => {
+      if (event.key !== 'Enter') return;
+      event.preventDefault();
+      commitPersonalityDraft();
+      render();
+    });
+    personalityInput.addEventListener('blur', () => {
+      if (rendering) return;
+      if (!commitPersonalityDraft()) return;
+      // Espera o foco assentar no próximo elemento antes de recriar o DOM.
+      setTimeout(render, 0);
+    });
+  }
   document.querySelectorAll('[data-integration]').forEach((field) => {
     const updateIntegration = () => { integration[field.dataset.integration] = field.value; };
     field.addEventListener('input', updateIntegration);
@@ -358,11 +450,17 @@ function importJson(event) {
 function loadCharacter(data) {
   state.name = data.name || state.name;
   state.player = data.player || state.player;
+  state.age = data.age || state.age;
+  state.gender = data.gender || state.gender;
+  state.height = data.height || state.height;
   state.race = normalizeId(data.race, races, state.race);
   state.class = normalizeId(data.class, classes, state.class);
   state.skills = normalizeSkills(data.skills);
   state.appearance = { ...state.appearance, ...(data.appearance || {}) };
-  state.personality = Array.isArray(data.personality) ? data.personality : state.personality;
+  state.personality = Array.isArray(data.personality)
+    ? data.personality.map((item) => String(item ?? '').trim()).filter(Boolean)
+    : state.personality;
+  state.personalityDraft = '';
   state.equipment = data.equipment || state.equipment;
   state.otherCharacteristics = data.otherCharacteristics || state.otherCharacteristics;
   state.story = data.story || state.story;
@@ -378,12 +476,44 @@ function toggleSkill(id) {
 }
 
 function normalizeSkills(value) {
-  const availableIds = selectedSkillCatalog().options.map((item) => item.id);
+  const availableIds = (selectedSkillCatalog()?.options || []).map((item) => item.id);
   const ids = Array.isArray(value)
     ? value.map((item) => (typeof item === 'string' ? item : item?.id))
     : [];
   const validIds = ids.filter((id, index) => availableIds.includes(id) && ids.indexOf(id) === index);
-  return validIds.length ? validIds.slice(0, 2) : availableIds.slice(0, 2);
+  return validIds.slice(0, 2);
+}
+
+function addPersonalityTrait(value) {
+  const trait = String(value ?? '').trim();
+  if (!trait) return false;
+  if (state.personality.some((item) => item.toLowerCase() === trait.toLowerCase())) return false;
+  state.personality = [...state.personality, trait];
+  return true;
+}
+
+function updatePersonalityDraft(value) {
+  if (!value.includes(',')) {
+    state.personalityDraft = value;
+    return;
+  }
+
+  const parts = value.split(',');
+  state.personalityDraft = parts.pop();
+  parts.forEach(addPersonalityTrait);
+}
+
+function commitPersonalityDraft() {
+  const draft = state.personalityDraft;
+  if (!draft.trim()) {
+    if (!draft) return false;
+    state.personalityDraft = '';
+    return true;
+  }
+
+  addPersonalityTrait(draft);
+  state.personalityDraft = '';
+  return true;
 }
 
 function normalizeId(value, collection, fallback) {
@@ -405,8 +535,8 @@ function buildImagePrompt() {
   const data = characterJson();
   return `Crie uma ilustração vertical de personagem de RPG em fantasia clássica, aquarela delicada, pintura de storybook e desenho de livro infantil/juvenil de aventura.
 
-Personagem: ${data.name}, raça ${data.race.name}, classe ${data.class.name}.
-Aparência: pele ${data.appearance.skin}, cabelo ${data.appearance.hair.toLowerCase()} ${data.appearance.hairColor.toLowerCase()}, olhos ${data.appearance.eyes.toLowerCase()}, altura ${data.appearance.height.toLowerCase()}, corpo ${data.appearance.body.toLowerCase()}, marcas: ${data.appearance.marks.toLowerCase()}, acessório: ${data.appearance.accessory.toLowerCase()}, roupa/estilo: ${data.appearance.style.toLowerCase()}.
+Personagem: ${data.name}, raça ${data.race.name}, classe ${data.class.name}, idade ${data.age}, gênero ${data.gender}, altura informada ${data.height}.
+Aparência: pele ${data.appearance.skin}, cabelo ${data.appearance.hair.toLowerCase()} ${data.appearance.hairColor.toLowerCase()}, olhos ${data.appearance.eyes.toLowerCase()}, estatura (porte na escala baixa/média/alta) ${data.appearance.height.toLowerCase()}, corpo ${data.appearance.body.toLowerCase()}, marcas: ${data.appearance.marks.toLowerCase()}, acessório: ${data.appearance.accessory.toLowerCase()}, roupa/estilo: ${data.appearance.style.toLowerCase()}.
 Personalidade: ${data.personality.join(', ')}.
 Equipamentos obrigatórios da aba História: ${data.equipment}. Não substitua por equipamentos padrão de raça ou classe.
 Outras características: ${data.otherCharacteristics}.
@@ -418,9 +548,43 @@ JSON do personagem para fidelidade:
 ${JSON.stringify(data, null, 2)}`;
 }
 
+function missingCharacterFields() {
+  const missing = [];
+  if (!selectedRace()) missing.push('Passo 1 — Raça');
+  if (!selectedClass()) missing.push('Passo 2 — Classe');
+  if (state.skills.length < 2) missing.push('Passo 3 — 2 habilidades');
+  appearanceGroups.forEach((group) => {
+    if (!String(state.appearance[group.key] ?? '').trim()) missing.push(`Passo 4 — ${group.title}`);
+  });
+  [
+    ['Nome do personagem', state.name],
+    ['Jogador', state.player],
+    ['Idade', state.age],
+    ['Gênero', state.gender],
+    ['Altura', state.height],
+    ['Equipamento', state.equipment],
+    ['Outras características', state.otherCharacteristics],
+    ['História', state.story],
+  ].forEach(([label, value]) => {
+    if (!String(value ?? '').trim()) missing.push(`Passo 5 — ${label}`);
+  });
+  if (!state.personality.length) missing.push('Passo 5 — pelo menos 1 traço de personalidade');
+  return missing;
+}
+
 async function generateCharacterImage() {
+  commitPersonalityDraft();
+
   if (!integration.ready || !integration.apiKey.trim()) {
     alert('Atualize a página e informe os dados da integração antes de gerar a imagem.');
+    render();
+    return;
+  }
+
+  imageState.checked = true;
+  if (missingCharacterFields().length) {
+    imageState.error = '';
+    render();
     return;
   }
 

@@ -17,12 +17,13 @@ da OpenAI direto do navegador.
 | Fato | Detalhe |
 | --- | --- |
 | Stack | HTML + CSS + **JavaScript puro (ES2021+)**. Zero frameworks, zero dependências. |
-| Arquivos de código | [index.html](index.html), [src/main.js](src/main.js) (~480 linhas), [src/style.css](src/style.css) (~655 linhas). É tudo. |
+| Arquivos de código | [index.html](index.html), [src/main.js](src/main.js) (~645 linhas), [src/style.css](src/style.css) (~725 linhas). É tudo. |
 | Build | Não existe bundler. `npm run build` roda apenas `node --check src/main.js` (checagem de sintaxe). |
 | Como rodar | Abrir `index.html` no navegador, ou servir a pasta (`python -m http.server`). |
 | Módulos | **Não há `import`/`export`.** `src/main.js` é um script clássico (`<script defer>`); todo o escopo é um único arquivo. |
 | Renderização | Reescrita total de `#root.innerHTML` a cada mudança de estado. Sem virtual DOM, sem diff. |
 | Persistência | Nenhuma. Nada de `localStorage`. Só download/upload manual de JSON. |
+| Estado inicial | **Vazio.** Nada de raça, classe, habilidade, aparência ou texto pré-selecionado. |
 | Idioma | Todo texto de UI, nomes de dados e commits em **português do Brasil**. |
 | Testes | Não existem. A validação é `npm run build` + verificação manual no navegador. |
 
@@ -62,7 +63,7 @@ A memória do projeto fica em [.claude/memoria/](.claude/memoria/MAPA.md): carre
 3. **Nunca mute o DOM diretamente** para refletir estado. Altere o objeto `state` (ou
    `integration` / `imageState`) e chame `render()`.
 4. **Toda string vinda do usuário interpolada em HTML deve passar por `escapeHtml()`.**
-   Ver a lista de pontos hoje desprotegidos em [docs/ARQUITETURA.md](docs/ARQUITETURA.md#armadilhas-conhecidas).
+   Hoje a ficha lateral e o passo 5 já escapam tudo; ver [docs/ARQUITETURA.md](docs/ARQUITETURA.md#armadilhas-conhecidas).
 5. **Ids são a chave de tudo** (`race.id`, `class.id`, `skill.id`). São kebab-case sem acento e
    nunca devem mudar depois de publicados — JSONs salvos por usuários referenciam esses ids.
 6. **Mantenha o texto acessível a crianças**: frases curtas, sem jargão de regras, tom acolhedor.
