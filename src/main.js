@@ -18,6 +18,86 @@ const classes = [
   { id: 'bardo', name: 'Bardo', icon: '🎵', description: 'O artista do grupo, usa música, poemas e piadas para fortalecer amigos e confundir vilões.', equipment: ['Alaúde', 'Caderno de canções', 'Roupa colorida', 'Flauta encantada'], attributes: { forca: 2, destreza: 4, inteligencia: 4, sabedoria: 3 } },
 ];
 
+const skillCatalog = {
+  guerreiro: {
+    type: 'manobras',
+    singular: 'manobra',
+    options: [
+      { id: 'golpe-preciso', name: 'Golpe preciso', icon: '🎯', description: 'Acerte um ponto fraco com sua arma e cause dano extra.' },
+      { id: 'proteger-aliado', name: 'Proteger aliado', icon: '🛡️', description: 'Entre na frente de um ataque para defender um amigo próximo.' },
+      { id: 'desarmar', name: 'Desarmar', icon: '⚔️', description: 'Tente derrubar a arma ou item perigoso da mão do inimigo.' },
+      { id: 'investida', name: 'Investida', icon: '🏃', description: 'Avance rapidamente e empurre o alvo para trás.' },
+      { id: 'postura-de-guarda', name: 'Postura de guarda', icon: '🧱', description: 'Fique firme, ganhando proteção até sua próxima ação.' },
+    ],
+  },
+  barbaro: {
+    type: 'manobras',
+    singular: 'manobra',
+    options: [
+      { id: 'golpe-brutal', name: 'Golpe brutal', icon: '💥', description: 'Ataque com toda a força para causar um impacto devastador.' },
+      { id: 'rugido-intimidador', name: 'Rugido intimidador', icon: '🗣️', description: 'Assuste inimigos próximos e chame a atenção deles para você.' },
+      { id: 'arremesso-poderoso', name: 'Arremesso poderoso', icon: '🪨', description: 'Arremesse uma pedra, arma ou objeto pesado contra um alvo.' },
+      { id: 'quebra-defesa', name: 'Quebra-defesa', icon: '🪓', description: 'Abra a guarda do inimigo para facilitar o próximo ataque aliado.' },
+      { id: 'salto-selvagem', name: 'Salto selvagem', icon: '🐾', description: 'Salte sobre obstáculos e caia atacando com fúria.' },
+    ],
+  },
+  ladino: {
+    type: 'manobras',
+    singular: 'manobra',
+    options: [
+      { id: 'ataque-furtivo', name: 'Ataque furtivo', icon: '🗡️', description: 'Apareça de surpresa e cause dano extra em um alvo distraído.' },
+      { id: 'rolamento-evasivo', name: 'Rolamento evasivo', icon: '🌀', description: 'Role para fora de perigo e se reposicione rapidamente.' },
+      { id: 'mao-leve', name: 'Mão leve', icon: '🖐️', description: 'Pegue ou esconda um item pequeno sem chamar atenção.' },
+      { id: 'poeira-nos-olhos', name: 'Poeira nos olhos', icon: '💨', description: 'Confunda um inimigo para escapar ou ajudar um aliado.' },
+      { id: 'passo-silencioso', name: 'Passo silencioso', icon: '🤫', description: 'Mova-se sem fazer barulho para chegar a um lugar seguro.' },
+    ],
+  },
+  patrulheiro: {
+    type: 'manobras',
+    singular: 'manobra',
+    options: [
+      { id: 'tiro-marcado', name: 'Tiro marcado', icon: '🏹', description: 'Mire com calma e guie seus aliados até o alvo certo.' },
+      { id: 'armadilha-rapida', name: 'Armadilha rápida', icon: '🪤', description: 'Monte uma armadilha simples para atrasar uma criatura.' },
+      { id: 'passo-da-floresta', name: 'Passo da floresta', icon: '🌲', description: 'Atravesse terreno difícil sem perder velocidade.' },
+      { id: 'corte-duplo', name: 'Corte duplo', icon: '⚔️', description: 'Ataque com duas armas leves em sequência.' },
+      { id: 'chamar-companheiro', name: 'Chamar companheiro', icon: '🐺', description: 'Peça ajuda de um animal aliado para rastrear ou distrair.' },
+    ],
+  },
+  clerigo: {
+    type: 'magias',
+    singular: 'magia',
+    options: [
+      { id: 'curar-ferimentos', name: 'Curar ferimentos', icon: '💚', description: 'Recupere a energia de um aliado machucado.' },
+      { id: 'luz-sagrada', name: 'Luz sagrada', icon: '✨', description: 'Crie uma luz que afasta sombras e criaturas assustadoras.' },
+      { id: 'escudo-da-fe', name: 'Escudo da fé', icon: '🛡️', description: 'Proteja alguém com uma barreira brilhante por alguns instantes.' },
+      { id: 'benção', name: 'Benção', icon: '🙏', description: 'Inspire o grupo para agir com mais confiança.' },
+      { id: 'chama-radiante', name: 'Chama radiante', icon: '🔥', description: 'Lance uma centelha de luz quente contra um inimigo.' },
+    ],
+  },
+  mago: {
+    type: 'magias',
+    singular: 'magia',
+    options: [
+      { id: 'bola-de-fogo', name: 'Bola de fogo', icon: '☄️', description: 'Crie uma explosão flamejante que ilumina o campo de batalha.' },
+      { id: 'missil-magico', name: 'Míssil mágico', icon: '🌠', description: 'Dispare pequenos projéteis de energia que perseguem o alvo.' },
+      { id: 'invisibilidade', name: 'Invisibilidade', icon: '👻', description: 'Fique oculto por pouco tempo para passar despercebido.' },
+      { id: 'sono', name: 'Sono', icon: '💤', description: 'Faça criaturas cansadas cochilarem por alguns minutos.' },
+      { id: 'escudo-arcano', name: 'Escudo arcano', icon: '🔮', description: 'Levante uma proteção mágica contra ataques perigosos.' },
+    ],
+  },
+  bardo: {
+    type: 'magias',
+    singular: 'magia',
+    options: [
+      { id: 'cancao-corajosa', name: 'Canção corajosa', icon: '🎶', description: 'Cante para encorajar aliados e afastar o medo.' },
+      { id: 'encantar-pessoa', name: 'Encantar pessoa', icon: '💞', description: 'Deixe alguém mais amigável durante uma conversa.' },
+      { id: 'ilusão-sonora', name: 'Ilusão sonora', icon: '🔔', description: 'Crie sons falsos para distrair ou impressionar.' },
+      { id: 'palavra-curativa', name: 'Palavra curativa', icon: '💬', description: 'Use uma frase mágica para ajudar um amigo a se recuperar.' },
+      { id: 'piada-desconcertante', name: 'Piada desconcertante', icon: '😄', description: 'Conte uma piada encantada que atrapalha a ação de um vilão.' },
+    ],
+  },
+};
+
 const appearanceGroups = [
   { key: 'skin', title: 'Tom de pele', icon: '🎨', options: ['Clara', 'Morena clara', 'Morena', 'Escura'] },
   { key: 'hair', title: 'Cabelo', icon: '💇', options: ['Curto', 'Cacheado', 'Longo', 'Trançado', 'Coque'] },
@@ -33,8 +113,9 @@ const appearanceGroups = [
 const steps = [
   { id: 'race', number: 1, title: 'Raça', subtitle: 'Escolha sua origem' },
   { id: 'class', number: 2, title: 'Classe', subtitle: 'Escolha sua profissão' },
-  { id: 'appearance', number: 3, title: 'Aparência', subtitle: 'Defina sua aparência' },
-  { id: 'story', number: 4, title: 'História', subtitle: 'Conte um pouco sobre você' },
+  { id: 'skills', number: 3, title: 'Habilidades', subtitle: 'Escolha 2 opções' },
+  { id: 'appearance', number: 4, title: 'Aparência', subtitle: 'Defina sua aparência' },
+  { id: 'story', number: 5, title: 'História', subtitle: 'Conte um pouco sobre você' },
 ];
 
 const state = {
@@ -43,6 +124,7 @@ const state = {
   player: 'Maria Eduarda',
   race: 'elfo',
   class: 'patrulheiro',
+  skills: ['tiro-marcado', 'passo-da-floresta'],
   appearance: {
     skin: 'Morena clara',
     hair: 'Longo',
@@ -61,11 +143,14 @@ const state = {
 const $ = (selector) => document.querySelector(selector);
 const selectedRace = () => races.find((item) => item.id === state.race);
 const selectedClass = () => classes.find((item) => item.id === state.class);
+const selectedSkillCatalog = () => skillCatalog[state.class];
+const selectedSkills = () => selectedSkillCatalog().options.filter((item) => state.skills.includes(item.id));
 const characterJson = () => ({
   name: state.name,
   player: state.player,
   race: selectedRace(),
   class: selectedClass(),
+  skills: selectedSkills(),
   appearance: state.appearance,
   personality: state.personality,
   story: state.story,
@@ -112,6 +197,7 @@ function renderStepper() {
 function renderCurrentStep() {
   if (state.step === 'race') return renderRaceStep();
   if (state.step === 'class') return renderClassStep();
+  if (state.step === 'skills') return renderSkillsStep();
   if (state.step === 'appearance') return renderAppearanceStep();
   return renderStoryStep();
 }
@@ -129,17 +215,27 @@ function renderClassStep() {
   return `<section class="panel current-panel"><h2>✦ 2. ESCOLHA SUA CLASSE ✦</h2><p>A classe mostra como seu herói ajuda o grupo.</p><div class="option-grid class-grid">${classes.map((item) => `
     <button class="choice-card class-card ${state.class === item.id ? 'selected' : ''}" data-class="${item.id}">
       <span class="choice-art">${item.icon}</span><b>${item.name}</b><small>${item.description}</small><em>${state.class === item.id ? '✓' : ''}</em>
-    </button>`).join('')}</div><div class="info"><h3>${klass.icon} ${klass.name.toUpperCase()}</h3><p>${klass.description}</p><b>Equipamentos:</b><ul>${klass.equipment.map((item) => `<li>${item}</li>`).join('')}</ul></div>${renderNavButtons('appearance', 'race')}</section>`;
+    </button>`).join('')}</div><div class="info"><h3>${klass.icon} ${klass.name.toUpperCase()}</h3><p>${klass.description}</p><b>Equipamentos:</b><ul>${klass.equipment.map((item) => `<li>${item}</li>`).join('')}</ul></div>${renderNavButtons('skills', 'race')}</section>`;
+}
+
+function renderSkillsStep() {
+  const klass = selectedClass();
+  const catalog = selectedSkillCatalog();
+  const selectedCount = state.skills.length;
+  return `<section class="panel current-panel"><h2>✦ 3. HABILIDADES DE ${klass.name.toUpperCase()} ✦</h2><p>${catalog.type === 'magias' ? 'Classes conjuradoras escolhem magias.' : 'Classes de contato físico escolhem manobras.'} Escolha 2 ${catalog.type} dentre as 5 disponíveis.</p><div class="option-grid skill-grid">${catalog.options.map((item) => `
+    <button class="choice-card skill-card ${state.skills.includes(item.id) ? 'selected' : ''}" data-skill="${item.id}">
+      <span class="choice-art">${item.icon}</span><b>${item.name}</b><small>${item.description}</small><em>${state.skills.includes(item.id) ? '✓' : ''}</em>
+    </button>`).join('')}</div><div class="info"><h3>${klass.icon} ${catalog.type.toUpperCase()} ESCOLHIDAS (${selectedCount}/2)</h3><p>Selecione exatamente 2 ${catalog.type} para personalizar seu personagem.</p><ul>${selectedSkills().map((item) => `<li>${item.icon} ${item.name}</li>`).join('') || '<li>Nenhuma habilidade escolhida ainda.</li>'}</ul></div>${renderNavButtons('appearance', 'class')}</section>`;
 }
 
 function renderAppearanceStep() {
-  return `<section class="panel current-panel"><h2>✦ 3. APARÊNCIA ✦</h2><p>Escolha como seu herói será.</p><div class="appearance-list">${appearanceGroups.map((group) => `
+  return `<section class="panel current-panel"><h2>✦ 4. APARÊNCIA ✦</h2><p>Escolha como seu herói será.</p><div class="appearance-list">${appearanceGroups.map((group) => `
     <div class="group"><h4><span>${group.icon}</span>${group.title}</h4><div class="opts">${group.options.map((option) => `
-      <button class="pill-choice ${state.appearance[group.key] === option ? 'selected' : ''}" data-appearance-key="${group.key}" data-appearance-value="${option}">${option}</button>`).join('')}</div></div>`).join('')}</div>${renderNavButtons('story', 'class')}</section>`;
+      <button class="pill-choice ${state.appearance[group.key] === option ? 'selected' : ''}" data-appearance-key="${group.key}" data-appearance-value="${option}">${option}</button>`).join('')}</div></div>`).join('')}</div>${renderNavButtons('story', 'skills')}</section>`;
 }
 
 function renderStoryStep() {
-  return `<section class="panel current-panel"><h2>✦ 4. HISTÓRIA ✦</h2><p>Conte quem é seu personagem.</p><label class="field">Nome do personagem<input data-field="name" value="${state.name}" /></label><label class="field">Jogador<input data-field="player" value="${state.player}" /></label><label class="field">História<textarea data-field="story">${state.story}</textarea></label><div class="json-box"><h3>JSON do personagem</h3><pre>${JSON.stringify(characterJson(), null, 2)}</pre></div>${renderNavButtons(null, 'appearance')}</section>`;
+  return `<section class="panel current-panel"><h2>✦ 5. HISTÓRIA ✦</h2><p>Conte quem é seu personagem.</p><label class="field">Nome do personagem<input data-field="name" value="${state.name}" /></label><label class="field">Jogador<input data-field="player" value="${state.player}" /></label><label class="field">História<textarea data-field="story">${state.story}</textarea></label><div class="json-box"><h3>JSON do personagem</h3><pre>${JSON.stringify(characterJson(), null, 2)}</pre></div>${renderNavButtons(null, 'appearance')}</section>`;
 }
 
 function renderNavButtons(next, previous) {
@@ -150,7 +246,7 @@ function renderSheet() {
   const race = selectedRace();
   const klass = selectedClass();
   const attributes = klass.attributes;
-  return `<aside class="sheet"><div class="ribbon">FICHA DO AVENTUREIRO</div><div class="row"><label>NOME DO PERSONAGEM<b>${state.name}</b></label><label>JOGADOR<b>${state.player}</b></label></div><div class="badges"><div>${race.icon}<span>RAÇA<b>${race.name}</b></span></div><div>${klass.icon}<span>CLASSE<b>${klass.name}</b></span></div></div><h3>✧ ATRIBUTOS ✧</h3><div class="attrs"><div><span>✊</span><small>FORÇA</small><b>${attributes.forca}</b><em>MOD. ${modifier(attributes.forca)}</em></div><div><span>🍃</span><small>DESTREZA</small><b>${attributes.destreza}</b><em>MOD. ${modifier(attributes.destreza)}</em></div><div><span>📖</span><small>INTELIGÊNCIA</small><b>${attributes.inteligencia}</b><em>MOD. ${modifier(attributes.inteligencia)}</em></div><div><span>👁️</span><small>SABEDORIA</small><b>${attributes.sabedoria}</b><em>MOD. ${modifier(attributes.sabedoria)}</em></div></div><h3>CARACTERÍSTICAS DA RAÇA</h3><p class="center">${race.traits.map((trait) => `• ${trait}`).join(' &nbsp; ')}</p><div class="cols"><section><h4>APARÊNCIA</h4>${Object.entries(state.appearance).map(([key, value]) => `<p>✹ ${labelForAppearance(key)}: ${value}</p>`).join('')}</section><section><h4>EQUIPAMENTOS</h4>${klass.equipment.map((item) => `<p>⚔ ${item}</p>`).join('')}</section></div><h3>PERSONALIDADE</h3><div class="chips">${state.personality.map((item) => `<span>${item}</span>`).join('')}</div><h3>HISTÓRIA</h3><p>${state.story}</p></aside>`;
+  return `<aside class="sheet"><div class="ribbon">FICHA DO AVENTUREIRO</div><div class="row"><label>NOME DO PERSONAGEM<b>${state.name}</b></label><label>JOGADOR<b>${state.player}</b></label></div><div class="badges"><div>${race.icon}<span>RAÇA<b>${race.name}</b></span></div><div>${klass.icon}<span>CLASSE<b>${klass.name}</b></span></div></div><h3>✧ ATRIBUTOS ✧</h3><div class="attrs"><div><span>✊</span><small>FORÇA</small><b>${attributes.forca}</b><em>MOD. ${modifier(attributes.forca)}</em></div><div><span>🍃</span><small>DESTREZA</small><b>${attributes.destreza}</b><em>MOD. ${modifier(attributes.destreza)}</em></div><div><span>📖</span><small>INTELIGÊNCIA</small><b>${attributes.inteligencia}</b><em>MOD. ${modifier(attributes.inteligencia)}</em></div><div><span>👁️</span><small>SABEDORIA</small><b>${attributes.sabedoria}</b><em>MOD. ${modifier(attributes.sabedoria)}</em></div></div><h3>CARACTERÍSTICAS DA RAÇA</h3><p class="center">${race.traits.map((trait) => `• ${trait}`).join(' &nbsp; ')}</p><div class="cols"><section><h4>APARÊNCIA</h4>${Object.entries(state.appearance).map(([key, value]) => `<p>✹ ${labelForAppearance(key)}: ${value}</p>`).join('')}</section><section><h4>EQUIPAMENTOS</h4>${klass.equipment.map((item) => `<p>⚔ ${item}</p>`).join('')}</section></div><h3>${selectedSkillCatalog().type.toUpperCase()}</h3><div class="chips">${selectedSkills().map((item) => `<span>${item.icon} ${item.name}</span>`).join('')}</div><h3>PERSONALIDADE</h3><div class="chips">${state.personality.map((item) => `<span>${item}</span>`).join('')}</div><h3>HISTÓRIA</h3><p>${state.story}</p></aside>`;
 }
 
 function modifier(value) {
@@ -166,7 +262,8 @@ function labelForAppearance(key) {
 function bindEvents() {
   document.querySelectorAll('[data-step]').forEach((button) => button.addEventListener('click', () => { state.step = button.dataset.step; render(); }));
   document.querySelectorAll('[data-race]').forEach((button) => button.addEventListener('click', () => { state.race = button.dataset.race; render(); }));
-  document.querySelectorAll('[data-class]').forEach((button) => button.addEventListener('click', () => { state.class = button.dataset.class; render(); }));
+  document.querySelectorAll('[data-class]').forEach((button) => button.addEventListener('click', () => { state.class = button.dataset.class; state.skills = selectedSkillCatalog().options.slice(0, 2).map((item) => item.id); render(); }));
+  document.querySelectorAll('[data-skill]').forEach((button) => button.addEventListener('click', () => toggleSkill(button.dataset.skill)));
   document.querySelectorAll('[data-appearance-key]').forEach((button) => button.addEventListener('click', () => { state.appearance[button.dataset.appearanceKey] = button.dataset.appearanceValue; render(); }));
   document.querySelectorAll('[data-field]').forEach((field) => field.addEventListener('input', () => { state[field.dataset.field] = field.value; render(); }));
   $('[data-action="reset"]')?.addEventListener('click', () => window.location.reload());
@@ -197,9 +294,28 @@ function loadCharacter(data) {
   state.player = data.player || state.player;
   state.race = normalizeId(data.race, races, state.race);
   state.class = normalizeId(data.class, classes, state.class);
+  state.skills = normalizeSkills(data.skills);
   state.appearance = { ...state.appearance, ...(data.appearance || {}) };
   state.personality = Array.isArray(data.personality) ? data.personality : state.personality;
   state.story = data.story || state.story;
+}
+
+function toggleSkill(id) {
+  if (state.skills.includes(id)) {
+    state.skills = state.skills.filter((item) => item !== id);
+  } else if (state.skills.length < 2) {
+    state.skills = [...state.skills, id];
+  }
+  render();
+}
+
+function normalizeSkills(value) {
+  const availableIds = selectedSkillCatalog().options.map((item) => item.id);
+  const ids = Array.isArray(value)
+    ? value.map((item) => (typeof item === 'string' ? item : item?.id))
+    : [];
+  const validIds = ids.filter((id, index) => availableIds.includes(id) && ids.indexOf(id) === index);
+  return validIds.length ? validIds.slice(0, 2) : availableIds.slice(0, 2);
 }
 
 function normalizeId(value, collection, fallback) {

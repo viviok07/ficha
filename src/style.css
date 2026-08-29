@@ -201,11 +201,12 @@ button { cursor: pointer; }
 
 .race-grid { grid-template-columns: repeat(3, minmax(120px, 1fr)); }
 .class-grid { grid-template-columns: repeat(2, minmax(180px, 1fr)); }
+.skill-grid { grid-template-columns: repeat(2, minmax(180px, 1fr)); }
 
 .choice-card {
   position: relative;
   min-height: 178px;
-  padding: 14px;
+  padding: 14px 14px 52px;
   border: 1px solid #d8c5a7;
   border-radius: 12px;
   background: #fffaf1;
@@ -240,12 +241,19 @@ button { cursor: pointer; }
 .choice-card b {
   display: block;
   font-size: 18px;
+  overflow-wrap: anywhere;
+}
+
+.class-card b,
+.skill-card b {
+  padding-inline: 10px;
 }
 
 .choice-card small {
   display: block;
   margin-top: 8px;
   line-height: 1.35;
+  overflow-wrap: anywhere;
 }
 
 .choice-card em {
@@ -500,12 +508,13 @@ button { cursor: pointer; }
   }
 
   .steps {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
+    grid-template-columns: repeat(5, minmax(0, 1fr));
   }
 
   .step { min-height: 120px; }
   .race-grid,
   .class-grid,
+  .skill-grid,
   .row,
   .badges,
   .cols,
