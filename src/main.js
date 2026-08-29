@@ -137,6 +137,8 @@ const state = {
     style: 'Roupa da floresta',
   },
   personality: ['Observadora', 'Curiosa', 'Leal', 'Determinada'],
+  equipment: 'Arco longo, aljava com flechas, punhal e apito do companheiro animal.',
+  otherCharacteristics: 'Fala com animais pequenos e conhece trilhas escondidas na floresta.',
   story: 'Lirien cresceu nas florestas, aprendendo com os animais e com as árvores. Seu objetivo é proteger a natureza e manter o equilíbrio entre todos os seres.',
 };
 
@@ -153,6 +155,8 @@ const characterJson = () => ({
   skills: selectedSkills(),
   appearance: state.appearance,
   personality: state.personality,
+  equipment: state.equipment,
+  otherCharacteristics: state.otherCharacteristics,
   story: state.story,
 });
 
@@ -235,7 +239,7 @@ function renderAppearanceStep() {
 }
 
 function renderStoryStep() {
-  return `<section class="panel current-panel"><h2>✦ 5. HISTÓRIA ✦</h2><p>Conte quem é seu personagem.</p><label class="field">Nome do personagem<input data-field="name" value="${state.name}" /></label><label class="field">Jogador<input data-field="player" value="${state.player}" /></label><label class="field">História<textarea data-field="story">${state.story}</textarea></label><div class="json-box"><h3>JSON do personagem</h3><pre>${JSON.stringify(characterJson(), null, 2)}</pre></div>${renderNavButtons(null, 'appearance')}</section>`;
+  return `<section class="panel current-panel"><h2>✦ 5. HISTÓRIA ✦</h2><p>Conte quem é seu personagem.</p><label class="field">Nome do personagem<input data-field="name" value="${state.name}" /></label><label class="field">Jogador<input data-field="player" value="${state.player}" /></label><label class="field">Equipamento<input data-field="equipment" value="${state.equipment}" /></label><label class="field">Outras características<textarea data-field="otherCharacteristics">${state.otherCharacteristics}</textarea></label><label class="field">História<textarea data-field="story">${state.story}</textarea></label><div class="json-box"><h3>JSON do personagem</h3><pre>${JSON.stringify(characterJson(), null, 2)}</pre></div>${renderNavButtons(null, 'appearance')}</section>`;
 }
 
 function renderNavButtons(next, previous) {
@@ -246,7 +250,7 @@ function renderSheet() {
   const race = selectedRace();
   const klass = selectedClass();
   const attributes = klass.attributes;
-  return `<aside class="sheet"><div class="ribbon">FICHA DO AVENTUREIRO</div><div class="row"><label>NOME DO PERSONAGEM<b>${state.name}</b></label><label>JOGADOR<b>${state.player}</b></label></div><div class="badges"><div>${race.icon}<span>RAÇA<b>${race.name}</b></span></div><div>${klass.icon}<span>CLASSE<b>${klass.name}</b></span></div></div><h3>✧ ATRIBUTOS ✧</h3><div class="attrs"><div><span>✊</span><small>FORÇA</small><b>${attributes.forca}</b><em>MOD. ${modifier(attributes.forca)}</em></div><div><span>🍃</span><small>DESTREZA</small><b>${attributes.destreza}</b><em>MOD. ${modifier(attributes.destreza)}</em></div><div><span>📖</span><small>INTELIGÊNCIA</small><b>${attributes.inteligencia}</b><em>MOD. ${modifier(attributes.inteligencia)}</em></div><div><span>👁️</span><small>SABEDORIA</small><b>${attributes.sabedoria}</b><em>MOD. ${modifier(attributes.sabedoria)}</em></div></div><h3>CARACTERÍSTICAS DA RAÇA</h3><p class="center">${race.traits.map((trait) => `• ${trait}`).join(' &nbsp; ')}</p><div class="cols"><section><h4>APARÊNCIA</h4>${Object.entries(state.appearance).map(([key, value]) => `<p>✹ ${labelForAppearance(key)}: ${value}</p>`).join('')}</section><section><h4>EQUIPAMENTOS</h4>${klass.equipment.map((item) => `<p>⚔ ${item}</p>`).join('')}</section></div><h3>${selectedSkillCatalog().type.toUpperCase()}</h3><div class="chips">${selectedSkills().map((item) => `<span>${item.icon} ${item.name}</span>`).join('')}</div><h3>PERSONALIDADE</h3><div class="chips">${state.personality.map((item) => `<span>${item}</span>`).join('')}</div><h3>HISTÓRIA</h3><p>${state.story}</p></aside>`;
+  return `<aside class="sheet"><div class="ribbon">FICHA DO AVENTUREIRO</div><div class="row"><label>NOME DO PERSONAGEM<b>${state.name}</b></label><label>JOGADOR<b>${state.player}</b></label></div><div class="badges"><div>${race.icon}<span>RAÇA<b>${race.name}</b></span></div><div>${klass.icon}<span>CLASSE<b>${klass.name}</b></span></div></div><h3>✧ ATRIBUTOS ✧</h3><div class="attrs"><div><span>✊</span><small>FORÇA</small><b>${attributes.forca}</b><em>MOD. ${modifier(attributes.forca)}</em></div><div><span>🍃</span><small>DESTREZA</small><b>${attributes.destreza}</b><em>MOD. ${modifier(attributes.destreza)}</em></div><div><span>📖</span><small>INTELIGÊNCIA</small><b>${attributes.inteligencia}</b><em>MOD. ${modifier(attributes.inteligencia)}</em></div><div><span>👁️</span><small>SABEDORIA</small><b>${attributes.sabedoria}</b><em>MOD. ${modifier(attributes.sabedoria)}</em></div></div><h3>CARACTERÍSTICAS DA RAÇA</h3><p class="center">${race.traits.map((trait) => `• ${trait}`).join(' &nbsp; ')}</p><div class="cols"><section><h4>APARÊNCIA</h4>${Object.entries(state.appearance).map(([key, value]) => `<p>✹ ${labelForAppearance(key)}: ${value}</p>`).join('')}</section><section><h4>EQUIPAMENTOS</h4>${klass.equipment.map((item) => `<p>⚔ ${item}</p>`).join('')}</section></div><h3>${selectedSkillCatalog().type.toUpperCase()}</h3><div class="chips">${selectedSkills().map((item) => `<span>${item.icon} ${item.name}</span>`).join('')}</div><h3>PERSONALIDADE</h3><div class="chips">${state.personality.map((item) => `<span>${item}</span>`).join('')}</div><h3>EQUIPAMENTO</h3><p>${state.equipment}</p><h3>OUTRAS CARACTERÍSTICAS</h3><p>${state.otherCharacteristics}</p><h3>HISTÓRIA</h3><p>${state.story}</p></aside>`;
 }
 
 function modifier(value) {
@@ -297,6 +301,8 @@ function loadCharacter(data) {
   state.skills = normalizeSkills(data.skills);
   state.appearance = { ...state.appearance, ...(data.appearance || {}) };
   state.personality = Array.isArray(data.personality) ? data.personality : state.personality;
+  state.equipment = data.equipment || state.equipment;
+  state.otherCharacteristics = data.otherCharacteristics || state.otherCharacteristics;
   state.story = data.story || state.story;
 }
 
