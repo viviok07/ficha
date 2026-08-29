@@ -201,6 +201,7 @@ button { cursor: pointer; }
 
 .race-grid { grid-template-columns: repeat(3, minmax(120px, 1fr)); }
 .class-grid { grid-template-columns: repeat(2, minmax(180px, 1fr)); }
+.skill-grid { grid-template-columns: repeat(2, minmax(180px, 1fr)); }
 
 .choice-card {
   position: relative;
@@ -500,12 +501,13 @@ button { cursor: pointer; }
   }
 
   .steps {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
+    grid-template-columns: repeat(5, minmax(0, 1fr));
   }
 
   .step { min-height: 120px; }
   .race-grid,
   .class-grid,
+  .skill-grid,
   .row,
   .badges,
   .cols,
