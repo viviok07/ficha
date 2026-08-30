@@ -36,6 +36,7 @@ retrato dentro dela.
 | Documento | Use quando precisar de… |
 | --- | --- |
 | [docs/ARQUITETURA.md](docs/ARQUITETURA.md) | Entender o ciclo render → bind → evento → estado → render, e onde cada função vive. |
+| [docs/ARMADILHAS.md](docs/ARMADILHAS.md) | As armadilhas já conhecidas do arquivo — o que já foi resolvido e o que continua valendo. |
 | [docs/MODELO_DE_DADOS.md](docs/MODELO_DE_DADOS.md) | Os catálogos: `races`, `classes`, `skillCatalog`, `appearanceGroups`, `personalityCatalog`, `equipmentCatalog`, `steps` e os limites. |
 | [docs/JSON_DA_FICHA.md](docs/JSON_DA_FICHA.md) | O objeto `state` e o schema do JSON salvo/importado. |
 | [docs/GUIA_DE_FEATURES.md](docs/GUIA_DE_FEATURES.md) | **Receitas prontas**: adicionar raça, classe, habilidade, campo, passo, ação do cabeçalho, etc. |
@@ -72,7 +73,7 @@ A memória do projeto fica em [.claude/memoria/](.claude/memoria/MAPA.md): carre
    `imageState`) e chame `render()`.
 4. **Toda string vinda do usuário interpolada em HTML deve passar por `escapeHtml()`.**
    Hoje a ficha lateral e os passos 5 e 6 já escapam tudo; ver
-   [docs/ARQUITETURA.md](docs/ARQUITETURA.md#armadilhas-conhecidas).
+   [docs/ARMADILHAS.md](docs/ARMADILHAS.md).
 5. **Ids são a chave de tudo** (`race.id`, `class.id`, `skill.id`, `personality.id`,
    `equipment.id`). São kebab-case sem acento e nunca devem mudar depois de publicados — JSONs
    salvos por usuários referenciam esses ids.

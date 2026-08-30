@@ -45,6 +45,9 @@ monta o prompt, não texto a enviar ao gerador.
 **inteira** (todos os grupos), por ordem explícita.
 **Como aplicar:** não "melhore" o estilo nem reintroduza o JSON sem pedido; ao criar campo novo,
 decida conscientemente se ele entra no prompt.
+**Pendente com o usuário (2026-08-30):** o Gemini só devolve JPEG, então o "fundo simples ou
+transparente" pedido no `IMAGE_STYLE` nunca sai transparente por esse caminho. Ele foi avisado e
+decide se quer reescrever o trecho; até lá, o texto fica como está.
 
 **O Guia do Aventureiro (`guia.html`) e o app são coisas separadas de propósito** (2026-08-30).
 O guia veio pronto de fora do repositório (foi escrito para virar um Artifact) e entrou como

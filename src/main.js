@@ -236,6 +236,11 @@ const GEMINI_ASPECTS = ['3:4', '2:3', '4:5', '9:16'];
 // Teto de 1K de propósito: 2K/4K virariam um data URL enorme atravessando o html2canvas.
 const GEMINI_SIZES = ['1K', '0.5K'];
 
+// NÃO troque por 'image/png': a Interactions API rejeita o pedido com "The value 'image/png' is
+// not supported for 'response_format.mime_type'. Supported values: 'image/jpeg'." JPEG não tem
+// canal alfa, então o retrato gerado nunca vem com fundo transparente — ver docs/INTEGRACAO_GEMINI.md.
+const GEMINI_IMAGE_MIME = 'image/jpeg';
+
 // error.code da Interactions API -> texto que a criança lê. Toda mensagem termina no caminho
 // manual, que continua disponível mesmo quando o Gemini falha.
 const GEMINI_ERRORS = {
@@ -882,7 +887,7 @@ function geminiRequestBody(prompt) {
     input: [{ type: 'text', text: prompt }],
     response_format: {
       type: 'image',
-      mime_type: 'image/png',
+      mime_type: GEMINI_IMAGE_MIME,
       aspect_ratio: gemini.aspectRatio,
       image_size: gemini.imageSize,
     },
@@ -897,7 +902,7 @@ function geminiImageFromPayload(payload) {
     if (step?.type !== 'model_output') continue;
     const content = Array.isArray(step.content) ? step.content : [];
     const image = content.find((item) => item?.type === 'image' && item?.data);
-    if (image) return `data:${image.mime_type || 'image/png'};base64,${image.data}`;
+    if (image) return `data:${image.mime_type || GEMINI_IMAGE_MIME};base64,${image.data}`;
   }
   return '';
 }
