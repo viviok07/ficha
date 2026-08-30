@@ -98,9 +98,9 @@ Exemplo: um campo `motivacao`.
    também já é preservado: `focusSelector()` reconhece qualquer `data-field`.
 3. `characterJson()` ([src/main.js:238](../src/main.js#L238)) — adicione `motivacao: state.motivacao`.
 4. `loadCharacter()` ([src/main.js:496](../src/main.js#L496)) — `state.motivacao = data.motivacao || state.motivacao;`.
-5. `renderSheet()` ([src/main.js:420](../src/main.js#L420)) — se o campo deve aparecer na ficha,
-   use `${sheetText('MOTIVAÇÃO', state.motivacao)}`, que já escapa o valor e omite a seção quando
-   ela está vazia.
+5. `renderSheet()` ([src/main.js:460](../src/main.js#L460)) — se o campo deve aparecer na ficha,
+   emita o bloco no próprio template e **passe o valor por `escapeHtml()`**. `sheetStory()` serve
+   só à história: é ela que marca os nós com `data-story` para o layout do PDF.
 6. Opcional: incluir no prompt em `buildImagePrompt()` — lá o texto é corrido, então monte a frase
    com `listar()` e só a acrescente quando tiver conteúdo; todo campo vazio é omitido.
 
@@ -179,8 +179,8 @@ Ver [INTEGRACAO_IMAGEM.md](INTEGRACAO_IMAGEM.md). Em resumo:
 - **Cópia**: `copyPrompt()` tem três degraus (`navigator.clipboard` → `execCommand` → textarea
   selecionado). Não reduza para um só: a página roda por `file://`.
 - **PDF**: `generatePdf()` depende de `window.html2canvas` e `window.jspdf`, carregados de
-  [vendor/](../vendor/README.md). O layout dos quadrantes vive em `placeInQuadrant()`, e a fonte da
-  imagem da ficha é o próprio `<aside class="sheet">` — mudou a ficha, mudou o PDF.
+  [vendor/](../vendor/README.md). O layout de página inteira é montado por `buildPdfSheet()` +
+  `fitPdfSheet()` sobre um clone do `<aside class="sheet">` — mudou a ficha, mudou o PDF.
 
 ---
 

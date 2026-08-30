@@ -63,6 +63,7 @@ horizontal de 6 colunas e colapsa os grids de cards (`.race-grid`, `.class-grid`
 | `.info` | passos 1–3 | Bloco de detalhe abaixo do grid |
 | `.panel-actions` | `renderNavButtons()` | Botões Voltar / Próximo |
 | `.file-input` | `render()` | Os dois `<input type="file">` escondidos, de JSON e de imagem (`display: none`) |
+| `.pdf-stage`, `.pdf-sheet`, `.pdf-body`, `.pdf-row`, `.pdf-main`, `.pdf-portrait`, `.pdf-story` | `buildPdfSheet()` | **Só no PDF.** Layout de página inteira montado fora da tela; nenhum elemento visível usa essas classes |
 
 ## Padrões de marcação a seguir
 
@@ -83,7 +84,7 @@ horizontal de 6 colunas e colapsa os grids de cards (`.race-grid`, `.class-grid`
    proposital.
 2. Acrescente as regras novas **no fim do bloco temático correspondente**, não no fim do arquivo
    (as seções de retrato e imagem já estão depois da media query, o que é uma exceção
-   histórica).
+   histórica). O bloco `.pdf-*`, no fim do arquivo, é do PDF — não mexa nele para ajustar a tela.
 3. Se criar um grid, verifique o comportamento abaixo de 980px.
 4. Mantenha alvos de toque com pelo menos 44px de altura (`.pill-choice` já define isso) — o
    público-alvo inclui crianças em tablets.

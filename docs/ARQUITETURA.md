@@ -75,13 +75,13 @@ O arquivo segue uma ordem consistente. Ao adicionar código, respeite o bloco co
 | Bloco | Linhas aprox. | Conteúdo | Responsabilidade |
 | --- | --- | --- | --- |
 | 1. Catálogos | 1–217 | `races`, `classes`, `skillCatalog`, `appearanceGroups`, `personalityCatalog`, `equipmentCatalog`, `steps`, os três `*_LIMIT` | Dados estáticos do jogo |
-| 2. Estado | 191–217 | `imageState`, `state` | Estado mutável |
-| 3. Derivados | 219–247 | `$`, `selectedRace`, `selectedClass`, `selectedSkillCatalog`, `selectedSkills`, `equipmentOptions`, `selectedEquipment`, `selectedPersonality`, `characterJson` | Leitura derivada do estado |
-| 4. Render | 249–458 | `render`, `focusSelector`, `captureFocus`, `restoreFocus`, `renderStepper`, `renderCurrentStep`, os seis `render*Step`, `renderPickGrid`, `renderPersonalityField`, `renderEquipmentField`, `renderPortraitBlock`, `renderCopyFeedback`, `renderUploadFeedback`, `renderNavButtons`, `renderSheet`, `sheetLabels`, `sheetText`, `modifier`, `labelForAppearance` | HTML como template string |
-| 5. Eventos | 460–477 | `bindEvents` | Único lugar que registra listeners |
-| 6. Domínio e IO | 479–558 | `importJson`, `loadCharacter`, `toggleChoice`, `normalizeChoices`, `normalizeId`, `normalizeAppearance` | Regras e importação |
-| 7. Retrato e PDF | 560–769 | `IMAGE_STYLE`, `listar`, `buildImagePrompt`, `copyPrompt`, `copyWithExecCommand`, `importImage`, `pdfPage`, `generatePdf`, `placeInQuadrant`, `loadImageElement`, `toJpegDataUrl` | Prompt, upload e PDF |
-| 8. Utilitários e bootstrap | 771–790 | `escapeHtml`, `downloadJson` e a chamada final `render()` | Helpers e inicialização |
+| 2. Estado | 219–252 | `imageState`, `state` | Estado mutável |
+| 3. Derivados | 254–275 | `$`, `selectedRace`, `selectedClass`, `selectedSkillCatalog`, `selectedSkills`, `equipmentOptions`, `selectedEquipment`, `selectedPersonality`, `characterJson` | Leitura derivada do estado |
+| 4. Render | 277–503 | `render`, `focusSelector`, `captureFocus`, `restoreFocus`, `renderStepper`, `renderCurrentStep`, os seis `render*Step`, `renderPickGrid`, `renderPersonalityField`, `renderEquipmentField`, `renderPortraitBlock`, `renderCopyFeedback`, `renderUploadFeedback`, `renderNavButtons`, `renderSheet`, `sheetLabels`, `sheetStory`, `modifier`, `labelForAppearance` | HTML como template string |
+| 5. Eventos | 505–522 | `bindEvents` | Único lugar que registra listeners |
+| 6. Domínio e IO | 524–593 | `importJson`, `loadCharacter`, `toggleChoice`, `normalizeChoices`, `normalizeId`, `normalizeAppearance` | Regras e importação |
+| 7. Retrato e PDF | 595–878 | `IMAGE_STYLE`, `listar`, `buildImagePrompt`, `copyPrompt`, `copyWithExecCommand`, `importImage`, `pdfPage`, `pdfLayout`, `generatePdf`, `buildPdfSheet`, `fitPdfSheet`, `fitsInBox`, `applyPrintTheme`, `loadImageElement` | Prompt, upload e PDF |
+| 8. Utilitários e bootstrap | 880–899 | `escapeHtml`, `downloadJson` e a chamada final `render()` | Helpers e inicialização |
 
 ## Estrutura visual montada por `render()`
 
