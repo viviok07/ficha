@@ -49,7 +49,7 @@ Pontos críticos desse modelo:
   `data-field` são reconhecidos ([src/main.js:342](../src/main.js#L342)): input novo fora dessa
   lista volta a perder o cursor.
 - **Quem guarda um nó do DOM antes de chamar `render()` fica com lixo.** É por isso que
-  `generatePdf()` ([src/main.js:983](../src/main.js#L983)) busca `.sheet` **depois** do render que
+  `generatePdf()` ([src/main.js:988](../src/main.js#L988)) busca `.sheet` **depois** do render que
   liga o estado de carregamento.
 
 ## Os três objetos de estado
@@ -72,14 +72,14 @@ O arquivo segue uma ordem consistente. Ao adicionar código, respeite o bloco co
 
 | Bloco | Linhas aprox. | Conteúdo | Responsabilidade |
 | --- | --- | --- | --- |
-| 1. Catálogos | 1–267 | `races`, `classes`, `skillCatalog`, `appearanceGroups`, `personalityCatalog`, `equipmentCatalog`, `steps`, os três `*_LIMIT`, as constantes `GEMINI_*` | Dados estáticos do jogo |
-| 2. Estado | 269–313 | `gemini`, `imageState`, `state` | Estado mutável |
-| 3. Derivados | 315–336 | `$`, `selectedRace`, `selectedClass`, `selectedSkillCatalog`, `selectedSkills`, `equipmentOptions`, `selectedEquipment`, `selectedPersonality`, `characterJson` | Leitura derivada do estado |
-| 4. Render | 338–633 | `render`, `focusSelector`, `captureFocus`, `restoreFocus`, `renderStepper`, `renderCurrentStep`, os seis `render*Step`, `renderPickGrid`, `renderPersonalityField`, `renderEquipmentField`, `renderGeminiModal`, `geminiModel`, `geminiReady`, `renderPortraitBlock`, `renderAiFeedback`, `renderCopyFeedback`, `renderUploadFeedback`, `renderNavButtons`, `renderSheet`, `sheetLabels`, `sheetStory`, `modifier`, `labelForAppearance` | HTML como template string |
-| 5. Eventos | 635–670 | `bindEvents` | Único lugar que registra listeners |
-| 6. Domínio e IO | 672–741 | `importJson`, `loadCharacter`, `toggleChoice`, `normalizeChoices`, `normalizeId`, `normalizeAppearance` | Regras e importação |
-| 7. Retrato, Gemini e PDF | 743–1127 | `IMAGE_STYLE`, `listar`, `buildImagePrompt`, `copyPrompt`, `copyWithExecCommand`, `importImage`, `scrubKey`, `geminiRequestBody`, `geminiImageFromPayload`, `geminiErrorMessage`, `generateGeminiImage`, `pdfPage`, `pdfLayout`, `generatePdf`, `buildPdfSheet`, `fitPdfSheet`, `fitsInBox`, `applyPrintTheme`, `loadImageElement` | Prompt, geração, upload e PDF |
-| 8. Utilitários e bootstrap | 1129–1148 | `escapeHtml`, `downloadJson` e a chamada final `render()` | Helpers e inicialização |
+| 1. Catálogos | 1–272 | `races`, `classes`, `skillCatalog`, `appearanceGroups`, `personalityCatalog`, `equipmentCatalog`, `steps`, os três `*_LIMIT`, as constantes `GEMINI_*` | Dados estáticos do jogo |
+| 2. Estado | 274–318 | `gemini`, `imageState`, `state` | Estado mutável |
+| 3. Derivados | 320–341 | `$`, `selectedRace`, `selectedClass`, `selectedSkillCatalog`, `selectedSkills`, `equipmentOptions`, `selectedEquipment`, `selectedPersonality`, `characterJson` | Leitura derivada do estado |
+| 4. Render | 343–638 | `render`, `focusSelector`, `captureFocus`, `restoreFocus`, `renderStepper`, `renderCurrentStep`, os seis `render*Step`, `renderPickGrid`, `renderPersonalityField`, `renderEquipmentField`, `renderGeminiModal`, `geminiModel`, `geminiReady`, `renderPortraitBlock`, `renderAiFeedback`, `renderCopyFeedback`, `renderUploadFeedback`, `renderNavButtons`, `renderSheet`, `sheetLabels`, `sheetStory`, `modifier`, `labelForAppearance` | HTML como template string |
+| 5. Eventos | 640–675 | `bindEvents` | Único lugar que registra listeners |
+| 6. Domínio e IO | 677–746 | `importJson`, `loadCharacter`, `toggleChoice`, `normalizeChoices`, `normalizeId`, `normalizeAppearance` | Regras e importação |
+| 7. Retrato, Gemini e PDF | 748–1132 | `IMAGE_STYLE`, `listar`, `buildImagePrompt`, `copyPrompt`, `copyWithExecCommand`, `importImage`, `scrubKey`, `geminiRequestBody`, `geminiImageFromPayload`, `geminiErrorMessage`, `generateGeminiImage`, `pdfPage`, `pdfLayout`, `generatePdf`, `buildPdfSheet`, `fitPdfSheet`, `fitsInBox`, `applyPrintTheme`, `loadImageElement` | Prompt, geração, upload e PDF |
+| 8. Utilitários e bootstrap | 1134–1153 | `escapeHtml`, `downloadJson` e a chamada final `render()` | Helpers e inicialização |
 
 ## Estrutura visual montada por `render()`
 
@@ -100,7 +100,7 @@ extra.
 
 ## Contrato de eventos: atributos `data-*`
 
-`bindEvents()` ([src/main.js:635](../src/main.js#L635)) é uma tabela de despacho baseada
+`bindEvents()` ([src/main.js:640](../src/main.js#L640)) é uma tabela de despacho baseada
 inteiramente em atributos `data-*`. **Para tornar um elemento interativo basta emitir o
 atributo certo no HTML — nenhum listener novo é preciso se você reutilizar um existente.**
 
@@ -137,7 +137,7 @@ faz para `state.personality`.
 ## Regras de domínio implementadas
 
 - **Três listas com limite, uma função só.** `toggleChoice(chave, id, limite)`
-  ([src/main.js:704](../src/main.js#L704)) atende habilidades (2), personalidade (3) e
+  ([src/main.js:709](../src/main.js#L709)) atende habilidades (2), personalidade (3) e
   equipamento (2): remove se já estiver na lista, adiciona enquanto couber. Não há mensagem de
   erro no limite — o clique simplesmente não faz nada.
 - **Nada vem pré-selecionado.** O `state` inicial é inteiramente vazio e nenhum caminho do código
@@ -151,7 +151,7 @@ faz para `state.personality`.
 - **Os atributos vêm da classe, não da raça.** `renderSheet()` lê `selectedClass().attributes`;
   `race.traits` e `class.traits` são texto livre, nunca bônus, e não afetam número nenhum.
 - **Modificador**: `modifier(score) = max(-1, score - 2)`, formatado com sinal
-  ([src/main.js:625](../src/main.js#L625)). A escala esperada de atributo é 1–5.
+  ([src/main.js:630](../src/main.js#L630)). A escala esperada de atributo é 1–5.
 - **Um conceito de equipamento só.** `equipmentCatalog[classeId]` é a única fonte: o passo 2 mostra
   as 9 opções como "o que essa classe costuma usar", o passo 5 deixa escolher até 2, e a ficha e o
   prompt exibem apenas as escolhidas. (Até a PR #9 havia dois conceitos concorrentes,
@@ -161,7 +161,7 @@ faz para `state.personality`.
 
 `importJson()` → `FileReader` → `JSON.parse` → `loadCharacter(data)` → `render()`.
 
-`loadCharacter()` ([src/main.js:689](../src/main.js#L689)) é tolerante: qualquer campo ausente
+`loadCharacter()` ([src/main.js:694](../src/main.js#L694)) é tolerante: qualquer campo ausente
 mantém o valor atual. Ele aceita tanto `"elfo"` quanto `{ "id": "elfo", ... }` graças a
 `normalizeId()` e `normalizeChoices()`.
 
@@ -175,26 +175,4 @@ Tolerante não é crédulo: todo dado importado passa por um filtro de catálogo
 
 ## Armadilhas conhecidas
 
-Documentadas para que agentes não as tratem como bugs novos nem as repitam:
-
-1. ~~Foco perdido ao digitar~~ — **resolvido** por `captureFocus()`/`restoreFocus()`. Volta a
-   acontecer se você criar um input que `focusSelector()` não reconheça.
-2. ~~HTML não escapado na ficha~~ — **resolvido**. `renderSheet()` escapa todos os valores vindos
-   do usuário. Textos de catálogo (nomes de raça, classe, habilidade, personalidade, equipamento)
-   não são escapados de propósito: são dados do próprio código.
-3. ~~`escapeHtml()` não escapa aspas simples~~ — **resolvido**. Agora trata `&`, `<`, `>`, `"` e
-   `'`. Nenhum atributo do arquivo usa `'` como delimitador, mas o retorno passou a ser seguro
-   caso algum passe a usar.
-4. **REINICIAR recarrega a página**, o que também descarta o retrato carregado.
-5. **A cópia do prompt falha em `file://` em vários navegadores.** `copyPrompt()` já tem três
-   degraus de fallback e o prompt fica visível na tela; não "simplifique" para só
-   `navigator.clipboard`.
-6. **Não há validação de tamanho nem de tipo profundo no JSON importado** — um arquivo
-   arbitrário pode, por exemplo, substituir `state.personality` por um array gigante.
-7. **O upload de imagem não tem limite de tamanho** (decisão do usuário). Só o tipo MIME é
-   checado, via `file.type.startsWith('image/')`. Um SVG sem dimensão intrínseca é barrado depois,
-   já dentro de `generatePdf()`.
-8. ~~Chave de `appearance` vinda de JSON chega crua ao `innerHTML`~~ — **resolvido em duas
-   camadas**: `normalizeAppearance()` ([src/main.js:731](../src/main.js#L731)) só aceita as chaves
-   de `appearanceGroups` na importação, e `renderSheet()` escapa `labelForAppearance(key)` no
-   ponto de interpolação. Chave desconhecida é descartada em silêncio, como nos outros catálogos.
+Foram para um arquivo próprio: [ARMADILHAS.md](ARMADILHAS.md).

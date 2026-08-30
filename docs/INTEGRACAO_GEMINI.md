@@ -46,7 +46,7 @@ Content-Type: application/json
   "model": "gemini-3.1-flash-image",
   "input": [{ "type": "text", "text": "<saída de buildImagePrompt(), sem alteração>" }],
   "response_format": {
-    "type": "image", "mime_type": "image/png",
+    "type": "image", "mime_type": "image/jpeg",
     "aspect_ratio": "3:4", "image_size": "1K"
   }
 }
@@ -55,6 +55,12 @@ Content-Type: application/json
 O prompt é exatamente o mesmo que o botão COPIAR PROMPT entrega — `buildImagePrompt()` não foi
 tocado. A chave viaja **só no header**, nunca no corpo.
 
+**`mime_type` só aceita `image/jpeg`.** Está na constante `GEMINI_IMAGE_MIME`, ao lado de
+`GEMINI_ASPECTS`/`GEMINI_SIZES`. Pedir `image/png` faz a API responder com erro
+`The value 'image/png' is not supported for 'response_format.mime_type'. Supported values:
+'image/jpeg'.`, que o usuário vê na tela pelo fallback de `geminiErrorMessage()`. Já aconteceu
+uma vez; não tente PNG de novo sem conferir a documentação da API.
+
 ### Resposta
 
 ```json
@@ -62,7 +68,7 @@ tocado. A chave viaja **só no header**, nunca no corpo.
   "steps": [
     { "type": "model_output", "status": "done",
       "content": [ { "type": "text", "text": "…" },
-                   { "type": "image", "mime_type": "image/png", "data": "<base64>" } ] } ] }
+                   { "type": "image", "mime_type": "image/jpeg", "data": "<base64>" } ] } ] }
 ```
 
 `geminiImageFromPayload()` procura o passo `model_output`, pega o primeiro item
@@ -70,7 +76,27 @@ tocado. A chave viaja **só no header**, nunca no corpo.
 para `imageState.dataUrl` — **o mesmo campo do upload manual**, então passo 6 e PDF não sabem a
 diferença. A imagem anterior é substituída sem perguntar, igual ao botão TROCAR IMAGEM.
 
+O `mime_type` usado no data URL é o que a **resposta** trouxer; `GEMINI_IMAGE_MIME` só entra
+como fallback quando o item vem sem esse campo.
+
 Nenhum item de imagem na resposta → mensagem "não mandou nenhuma imagem".
+
+### JPEG não tem fundo transparente
+
+Consequência direta do parágrafo acima: como a API só devolve JPEG, e JPEG não tem canal alfa,
+**o retrato gerado pelo Gemini sempre vem com algum fundo sólido**. O bloco `IMAGE_STYLE` do
+prompt ainda pede "fundo simples ou transparente" — a parte "transparente" é inalcançável por
+este caminho (continua válida para o upload manual, que aceita PNG/WEBP com alfa).
+
+Isso **não quebra nada**: o passo 6 mostra o retrato num `<img>` de `.generated-image`, e o PDF
+usa `.pdf-portrait` com `background-size: contain` sobre `background-color: #fff` — nos dois
+casos um fundo sólido apenas aparece, sem cortar nem esticar a imagem. Além disso o PDF já
+achatava qualquer transparência: o `html2canvas` roda com `backgroundColor: '#ffffff'` e o
+`pdf.addImage()` recebe um `canvas.toDataURL('image/jpeg', 0.95)`.
+
+Fica registrado para o usuário decidir depois se quer ajustar o `IMAGE_STYLE` (por exemplo,
+trocar "transparente" por uma cor de fundo pedida explicitamente). **Não mude esse texto por
+conta própria**: ele foi escrito palavra por palavra pelo usuário.
 
 ### Modelos
 
