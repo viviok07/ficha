@@ -116,8 +116,8 @@ Exemplo: um campo `motivacao`.
    final, que funciona como fallback.
 4. Ajuste os `renderNavButtons()` dos passos vizinhos para apontarem para o novo id.
 5. Ajuste as **duas** grades de `.steps`: `repeat(6, ...)` em
-   [src/style.css:548](../src/style.css#L548) (≤980px, uma faixa) e `repeat(3, ...)` em
-   [src/style.css:574](../src/style.css#L574) (≤650px, 3 x 2 — com 7 passos vira 3 x 3).
+   [src/style.css:552](../src/style.css#L552) (≤980px, uma faixa) e `repeat(2, ...)` em
+   [src/style.css:578](../src/style.css#L578) (≤650px, 2 x 3 — com 7 passos vira 2 x 4).
 
 Todo passo precisa funcionar com o estado vazio: mostre um texto de espera em `.info.empty` em
 vez de acessar `selectedRace().name` direto, e **não** bloqueie o botão PRÓXIMO PASSO.

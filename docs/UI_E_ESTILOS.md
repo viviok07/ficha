@@ -43,13 +43,16 @@ Dois pontos de quebra, nesta ordem:
    colunas e colapsa os grids de cards (`.race-grid`, `.class-grid`, `.skill-grid`,
    `.trait-grid`, `.equipment-grid`), `.row`, `.badges`, `.cols` e `.attrs` para uma coluna.
    **Se você adicionar um grid novo, inclua-o nessa lista.**
-2. `@media (max-width: 650px)` ([src/style.css:572](../src/style.css#L572)) — **toca só o
-   stepper**: a faixa de 6 colunas vira uma grade de 3 x 2 com número e título lado a lado e o
-   subtítulo (`.step p`) escondido. Motivo: com 6 colunas a célula mede `(largura - 110) / 6`,
-   então o círculo de 34px do número transborda abaixo de 434px e o alvo de toque cai abaixo de
-   44px em telas de 374px ou menos. Com 3 colunas a célula é `(largura - 60) / 3` — 100px num
-   celular de 360px. **Não acrescente aqui regras que não sejam do stepper**: o combinado é que
-   nada mude de 651px para cima.
+2. `@media (max-width: 650px)` ([src/style.css:576](../src/style.css#L576)) — **toca só o
+   stepper**: a faixa de 6 colunas vira uma grade de **2 x 3** com número e título lado a lado e
+   o subtítulo (`.step p`) escondido. Motivo: com 6 colunas a célula mede `(largura - 110) / 6`,
+   e o círculo de 34px do número transborda abaixo de 434px. A grade de 3 x 2 que veio antes
+   resolvia isso, mas ainda deixava só 29px para o título em 320px e quebrava "Habilidades" em
+   pedaços. Com 2 colunas a célula é `(largura - 10) / 2` — 135px em 320px, 77px livres para o
+   título e alvo de toque de 135 x 56px. **Custo: o stepper sobe de 122px para 188px de
+   altura**, e é por isso que o subtítulo continua oculto — reexibi-lo levaria o bloco a
+   236–290px. **Não acrescente aqui regras que não sejam do stepper**: o combinado é que nada
+   mude de 651px para cima.
 
 ## Classes por área
 

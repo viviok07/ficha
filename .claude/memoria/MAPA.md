@@ -11,8 +11,8 @@ Manutenção pela skill `memoria-do-projeto`.
 - [ambiente.md](ambiente.md) — remote SSH, `gh` ausente, como a PR é aberta aqui
 - [decisoes-tecnicas.md](decisoes-tecnicas.md) — sem npm/bundler, a exceção autorizada em `vendor/` (jsPDF + html2canvas), chave do Gemini no navegador (reversão de 2026-08-30) e por que a integração é opcional, retrato só em memória
 - [decisoes-de-produto.md](decisoes-de-produto.md) — ficha começa vazia, nada exige ficha completa, escolher em vez de digitar, Estatura x Altura, o layout do PDF, o prompt do retrato, o guia.html separado do app
-- [catalogos-e-pdf.md](catalogos-e-pdf.md) — traits sem bônus (raça e classe), PDF em P&B com
-  retrato colorido, "Dourado" trocado por "Loiro"
+- [catalogos-e-pdf.md](catalogos-e-pdf.md) — traits sem bônus e o critério "traço = cena
+  imaginável" (raça e classe), PDF em P&B com retrato colorido, "Dourado" trocado por "Loiro"
 - [processo.md](processo.md) — combinados de fluxo de trabalho com o usuário
 
 ## Onde está o resto
