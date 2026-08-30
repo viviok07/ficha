@@ -290,6 +290,7 @@ function render() {
         <div class="actions">
           <button class="ghost" data-action="reset">↻ REINICIAR</button>
           <button class="ghost" data-action="import">⇪ IMPORTAR JSON</button>
+          <a class="ghost ghost-link" href="./guia.html" target="_blank" rel="noopener">❖ GUIA DO AVENTUREIRO</a>
           <button class="primary" data-action="save">▣ SALVAR FICHA</button>
           <input class="file-input" type="file" accept="application/json,.json" data-file-input />
           <input class="file-input" type="file" accept="image/*" data-image-input />

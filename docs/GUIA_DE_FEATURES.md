@@ -137,6 +137,7 @@ por linha, sempre terminando em `render()`).
    O `?.` é intencional: o elemento não existe em todos os renders.
 3. Implemente `minhaAcao()` no bloco de domínio/IO (perto de `downloadJson`), terminando com
    `render()` se alterar estado.
+4. Só abre uma página? Use `<a class="ghost ghost-link">`, sem handler — ver `docs/UI_E_ESTILOS.md`.
 
 ## 9. Mexer nos multi-selects (personalidade e equipamento)
 

@@ -46,4 +46,13 @@ monta o prompt, não texto a enviar ao gerador.
 **Como aplicar:** não "melhore" o estilo nem reintroduza o JSON sem pedido; ao criar campo novo,
 decida conscientemente se ele entra no prompt.
 
-Relacionado: `docs/MODELO_DE_DADOS.md`, `docs/INTEGRACAO_IMAGEM.md`.
+**O Guia do Aventureiro (`guia.html`) e o app são coisas separadas de propósito** (2026-08-30).
+O guia veio pronto de fora do repositório (foi escrito para virar um Artifact) e entrou como
+página estática, com CSS e JS próprios; no repositório ele só ganhou o esqueleto HTML que faltava.
+**Por quê:** ele é material de leitura/impressão para a criança, não uma tela do app — e precisa
+abrir por `file://`, sem servidor.
+**Como aplicar:** não unifique o CSS dele com `src/style.css` nem o converta em passo do app. As
+quebras de página da impressão (2 folhas A4) dependem de `NOVA_FOLHA` e da ordem das classes:
+qualquer edição no conteúdo do guia exige reconferir o preview de impressão.
+
+Relacionado: `docs/MODELO_DE_DADOS.md`, `docs/INTEGRACAO_IMAGEM.md`, `docs/UI_E_ESTILOS.md`.

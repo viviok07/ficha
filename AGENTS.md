@@ -20,6 +20,7 @@ retrato dentro dela.
 | Stack | HTML + CSS + **JavaScript puro (ES2021+)**. Zero frameworks. |
 | Dependências | Nenhuma via npm. Duas bibliotecas locais em [vendor/](vendor/README.md), só para o PDF — ver regra 1. |
 | Arquivos de código | [index.html](index.html), [src/main.js](src/main.js) (~900 linhas), [src/style.css](src/style.css) (~710 linhas). É tudo. |
+| Página à parte | [guia.html](guia.html) — o *Guia do Aventureiro*, estático e **autossuficiente**: CSS e JS próprios embutidos, não carrega `src/main.js` nem `src/style.css` e não conhece o `state`. O app só o alcança por um `<a href="./guia.html">` no cabeçalho. |
 | Build | Não existe bundler. `npm run build` roda apenas `node --check src/main.js` (checagem de sintaxe). |
 | Como rodar | Abrir `index.html` no navegador, ou servir a pasta (`python -m http.server`). |
 | Módulos | **Não há `import`/`export`.** `src/main.js` é um script clássico (`<script defer>`); todo o escopo é um único arquivo. |

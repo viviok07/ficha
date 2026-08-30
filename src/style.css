@@ -82,6 +82,7 @@ button { cursor: pointer; }
 }
 
 .actions button,
+.actions .ghost-link,
 .secondary,
 .next {
   min-height: 48px;
@@ -96,6 +97,16 @@ button { cursor: pointer; }
 .secondary {
   background: #fff9ee;
   color: var(--ink);
+}
+
+/* Link do cabeçalho (GUIA DO AVENTUREIRO) desenhado como um botão .ghost:
+   um <a> não centraliza o texto na altura mínima nem descarta o sublinhado sozinho. */
+.actions .ghost-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  text-decoration: none;
 }
 
 .primary,

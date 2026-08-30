@@ -1,0 +1,450 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Guia do Aventureiro</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Cinzel:wght@700&family=Lora:wght@400;600&display=swap">
+<style>
+  :root {
+    color-scheme: light dark;
+    --paper: #fdf6e8;
+    --card: #fffdf7;
+    --ink: #2c1b10;
+    --soft: #7a6552;
+    --rule: #e3d3b8;
+    --raca: #3f7d4e;
+    --classe: #b03a2e;
+    --habil: #6b3fa0;
+    --apar: #2c6e9b;
+    --hist: #a8761a;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --paper: #191108; --card: #241a10; --ink: #f6ecdc; --soft: #b3a08a; --rule: #40311e;
+      --raca: #79c48c; --classe: #f0897a; --habil: #c3a2f2; --apar: #7cc0ea; --hist: #edbe5f;
+    }
+  }
+  :root[data-theme="dark"] {
+    --paper: #191108; --card: #241a10; --ink: #f6ecdc; --soft: #b3a08a; --rule: #40311e;
+    --raca: #79c48c; --classe: #f0897a; --habil: #c3a2f2; --apar: #7cc0ea; --hist: #edbe5f;
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font: 400 14px/1.45 Lora, Georgia, serif;
+  }
+  .wrap { max-width: 940px; margin: 0 auto; padding: 0 16px 48px; }
+
+  /* ---------- topo ---------- */
+  .hero { display: flex; align-items: baseline; gap: 14px; flex-wrap: wrap; padding: 26px 0 10px; }
+  .hero h1 { margin: 0; font: 800 clamp(26px, 4vw, 34px)/1 "Baloo 2", system-ui, sans-serif; }
+  .hero .eyebrow { font: 700 10px/1 Cinzel, serif; letter-spacing: 0.2em; color: var(--soft); text-transform: uppercase; }
+  .hero p { margin: 0; flex: 1 1 240px; min-width: 220px; color: var(--soft); font-size: 14px; }
+
+  nav {
+    position: sticky; top: 0; z-index: 5;
+    display: flex; flex-wrap: wrap; gap: 6px;
+    padding: 8px 0; margin-bottom: 14px;
+    background: color-mix(in srgb, var(--paper) 92%, transparent);
+    backdrop-filter: blur(6px);
+    border-bottom: 1px solid var(--rule);
+  }
+  nav a {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 5px 11px; border: 1px solid var(--rule); border-radius: 999px;
+    background: var(--card); color: var(--ink);
+    font: 700 12.5px/1 "Baloo 2", system-ui, sans-serif; text-decoration: none;
+  }
+  nav a b {
+    display: grid; place-items: center; width: 16px; height: 16px; border-radius: 50%;
+    background: var(--tone, var(--soft)); color: var(--card); font-size: 9.5px;
+  }
+  nav a:hover { border-color: var(--tone, var(--soft)); }
+  a:focus-visible, button:focus-visible { outline: 2px solid var(--tone, var(--habil)); outline-offset: 2px; }
+
+  /* ---------- seções ---------- */
+  section { padding: 14px 0 4px; scroll-margin-top: 56px; break-inside: auto; }
+  .head { display: flex; align-items: center; gap: 10px; margin-bottom: 5px; break-after: avoid; }
+  .num {
+    flex: none; display: grid; place-items: center; width: 30px; height: 30px; border-radius: 50%;
+    background: var(--tone); color: var(--card);
+    font: 800 16px/1 "Baloo 2", system-ui, sans-serif;
+  }
+  .head h2 { margin: 0; font: 800 22px/1.05 "Baloo 2", system-ui, sans-serif; color: var(--tone); }
+  .head .kicker { margin: 0; font: 700 9.5px/1 Cinzel, serif; letter-spacing: 0.16em; color: var(--soft); text-transform: uppercase; }
+  .lead { margin: 0 0 8px; max-width: 78ch; font-size: 13.5px; }
+
+  .tip {
+    margin: 0 0 10px; padding: 7px 11px;
+    border-left: 3px solid var(--tone); border-radius: 0 7px 7px 0;
+    background: color-mix(in srgb, var(--tone) 10%, var(--card));
+    font-size: 12.5px; line-height: 1.45;
+    break-inside: avoid;
+  }
+  .tip strong { color: var(--tone); }
+
+  /* ---------- cards compactos ---------- */
+  .grid { display: grid; gap: 8px; grid-template-columns: repeat(auto-fill, minmax(215px, 1fr)); }
+  .card {
+    padding: 9px 11px; border: 1px solid var(--rule); border-radius: 9px; background: var(--card);
+    break-inside: avoid;
+  }
+  .card h3 {
+    margin: 0 0 2px; display: flex; align-items: center; gap: 6px;
+    font: 700 15px/1.2 "Baloo 2", system-ui, sans-serif; color: var(--tone);
+  }
+  .card h3 em { font-style: normal; font-size: 17px; }
+  .card p { margin: 0; font-size: 12.5px; line-height: 1.4; }
+  .traits { margin: 3px 0 0; font-size: 11.5px; line-height: 1.4; color: var(--soft); }
+  .traits b { color: var(--tone); font-weight: 600; }
+
+  /* ---------- listas por classe ---------- */
+  .tabs { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
+  .tabs button {
+    display: inline-flex; align-items: center; gap: 5px;
+    padding: 6px 11px; border: 1px solid var(--rule); border-radius: 999px;
+    background: var(--card); color: var(--ink);
+    font: 700 13px/1 "Baloo 2", system-ui, sans-serif; cursor: pointer;
+  }
+  .tabs button[aria-selected="true"] { background: var(--tone); border-color: var(--tone); color: var(--card); }
+  .is-off { display: none; }
+  .pagebreak { display: none; }
+
+  .panel-head { display: none; }
+  .kindline {
+    margin: 0 0 7px; font: 600 12.5px/1.4 Lora, serif; color: var(--tone);
+  }
+  .list { display: grid; gap: 6px; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); }
+  .item {
+    display: grid; grid-template-columns: 20px 1fr; gap: 7px; align-items: baseline;
+    padding: 6px 9px; border: 1px solid var(--rule); border-radius: 8px; background: var(--card);
+    break-inside: avoid;
+  }
+  .item .face { font-size: 14px; }
+  .item b { font: 700 12.5px/1.3 "Baloo 2", system-ui, sans-serif; }
+  .item small { display: block; font-size: 11.5px; line-height: 1.35; color: var(--soft); }
+
+  /* linhas compactas: aparência e equipamento */
+  .rows { display: grid; gap: 5px; grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); }
+  .row {
+    padding: 6px 10px; border: 1px solid var(--rule); border-radius: 8px; background: var(--card);
+    font-size: 12px; line-height: 1.45; break-inside: avoid;
+  }
+  .row b {
+    display: inline; margin-right: 5px;
+    font: 700 12.5px/1.3 "Baloo 2", system-ui, sans-serif; color: var(--tone);
+  }
+  .row span { color: var(--soft); }
+
+  h3.block {
+    margin: 13px 0 5px; break-after: avoid;
+    font: 700 16px/1.2 "Baloo 2", system-ui, sans-serif;
+  }
+  h3.block i { font-style: normal; font-weight: 400; font-size: 12.5px; color: var(--soft); font-family: Lora, serif; }
+
+  .end {
+    margin-top: 16px; padding: 12px 16px; border-radius: 10px; break-inside: avoid;
+    background: color-mix(in srgb, var(--hist) 12%, var(--card)); border: 1px solid var(--rule);
+  }
+  .end b { font: 700 15px/1.2 "Baloo 2", system-ui, sans-serif; }
+  .end p { margin: 2px 0 0; font-size: 12.5px; }
+
+  .printhint {
+    margin: 10px 0 0; padding: 8px 12px; border: 1px dashed var(--rule); border-radius: 8px;
+    font-size: 12px; color: var(--soft);
+  }
+
+  html { scroll-behavior: smooth; }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+
+  /* ================= IMPRESSÃO — 2 páginas A4 ================= */
+  @media print {
+    @page { size: A4 portrait; margin: 9mm 10mm; }
+    :root {
+      --paper: #fff; --card: #fff; --ink: #000; --soft: #444; --rule: #b9b9b9;
+      --raca: #1d1d1d; --classe: #1d1d1d; --habil: #1d1d1d; --apar: #1d1d1d; --hist: #1d1d1d;
+    }
+    body { background: #fff; font-size: 7.6pt; line-height: 1.3; }
+    .wrap { max-width: none; padding: 0; }
+    nav, .printhint, .tabs { display: none; }
+
+    .hero { padding: 0 0 4px; gap: 8px; border-bottom: 1.5pt solid #000; margin-bottom: 6px; }
+    .hero h1 { font-size: 17pt; }
+    .hero p { font-size: 7.6pt; }
+
+    section { padding: 5px 0 0; }
+    .head { gap: 6px; margin-bottom: 2px; }
+    .num { width: 15pt; height: 15pt; font-size: 9pt; background: #000; color: #fff; }
+    .head h2 { font-size: 12.5pt; }
+    .head .kicker { font-size: 6pt; }
+    .lead { margin-bottom: 3px; font-size: 7.6pt; max-width: none; }
+    .tip { margin-bottom: 4px; padding: 3px 7px; font-size: 7.2pt; background: #f2f2f2; border-left-width: 2pt; border-left-color: #000; }
+
+    .grid { gap: 4px; grid-template-columns: repeat(4, 1fr); }
+    .card { padding: 5px 6px; border-radius: 4px; }
+    .card h3 { font-size: 9pt; gap: 4px; }
+    .card h3 em { font-size: 10pt; }
+    .card p { font-size: 7pt; line-height: 1.28; }
+    .traits { font-size: 6.4pt; line-height: 1.28; }
+
+    .is-off { display: block; }
+    .panel-head {
+      display: block; margin: 5px 0 2px; break-after: avoid;
+      font: 700 8.5pt/1.2 "Baloo 2", system-ui, sans-serif;
+    }
+    .panel-head span { font: 400 7pt/1 Lora, serif; color: #444; }
+    .kindline { display: none; }
+    .list { gap: 3px; grid-template-columns: repeat(5, 1fr); }
+    .item { padding: 3px 5px; border-radius: 4px; grid-template-columns: 14px 1fr; gap: 4px; }
+    .item .face { font-size: 9pt; }
+    .item b { font-size: 7.2pt; }
+    .item small { font-size: 6.3pt; line-height: 1.25; }
+
+    .rows { gap: 3px; grid-template-columns: repeat(3, 1fr); }
+    .row { padding: 3px 6px; font-size: 6.8pt; line-height: 1.3; border-radius: 4px; }
+    .row b { font-size: 7.2pt; }
+
+    h3.block { margin: 6px 0 2px; font-size: 9.5pt; }
+    h3.block i { font-size: 7pt; }
+    .end { margin-top: 6px; padding: 5px 8px; background: #f2f2f2; }
+    .end b { font-size: 9pt; }
+    .end p { font-size: 7.2pt; }
+
+    /* nada de bloco partido entre páginas */
+    .card, .item, .row, .tip, .end, .look { break-inside: avoid; page-break-inside: avoid; }
+    .head, h3.block, .panel-head { break-after: avoid; page-break-after: avoid; }
+    /* a lista de uma classe não se parte; o painel NÃO leva break-inside,
+       senão o Chrome descarta a quebra forçada que vem antes dele. */
+    [data-wrap] > [data-id] > .list { break-inside: avoid; page-break-inside: avoid; }
+    #habilidades { break-before: page; page-break-before: always; }
+
+    /* Quebras pedidas: separador real no fluxo — mais confiável que break-before
+       no próprio painel. Patrulheiro (habilidades) e Bárbaro (equipamento) abrem folha. */
+    .pagebreak {
+      display: block;
+      height: 0;
+      margin: 0;
+      border: 0;
+      break-after: page;
+      page-break-after: always;
+    }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="hero">
+    <div>
+      <div class="eyebrow">EducaRPG Kids</div>
+      <h1>Guia do Aventureiro</h1>
+    </div>
+    <p>Cinco passos para criar o herói que só existe na sua cabeça — até agora. Não existe resposta errada: o herói é seu.</p>
+  </div>
+
+  <nav aria-label="Passos da criação">
+    <a href="#raca" style="--tone: var(--raca)"><b>1</b> Raça</a>
+    <a href="#classe" style="--tone: var(--classe)"><b>2</b> Classe</a>
+    <a href="#habilidades" style="--tone: var(--habil)"><b>3</b> Habilidades</a>
+    <a href="#aparencia" style="--tone: var(--apar)"><b>4</b> Aparência</a>
+    <a href="#historia" style="--tone: var(--hist)"><b>5</b> História</a>
+  </nav>
+
+  <!-- ============ 1. RAÇA ============ -->
+  <section id="raca" style="--tone: var(--raca)">
+    <div class="head">
+      <div class="num">1</div>
+      <div><p class="kicker">Escolha sua origem</p><h2>Raça</h2></div>
+    </div>
+    <p class="lead">A raça diz de que <strong>povo</strong> o seu herói veio — se ele é gente como nós, se tem orelhas pontudas, escamas de dragão ou pelo de gato. Cada povo nasce com talentos próprios, que já vêm de berço. <strong>Dica:</strong> gosta de ser rápido e silencioso? Elfo ou tabaxi. Quer ser o mais forte? Anão ou draconato.</p>
+    <div class="grid">
+      <div class="card"><h3><em>🧑</em>Humano</h3><p>Igual a nós: determinado, aprende rápido e se adapta a qualquer lugar.</p><p class="traits"><b>Talentos:</b> aprende uma perícia extra · talento para qualquer coisa · coragem para tentar de novo · faz amizade rápido</p></div>
+      <div class="card"><h3><em>⛏️</em>Anão</h3><p>Baixinho e forte como rocha, vive nas montanhas e fabrica armas excelentes.</p><p class="traits"><b>Talentos:</b> braços de ferreiro · sabedoria das montanhas · resistência de rocha · visão nas minas</p></div>
+      <div class="card"><h3><em>🌿</em>Elfo</h3><p>Alto, elegante e de orelhas pontudas, anda pela floresta sem fazer barulho.</p><p class="traits"><b>Talentos:</b> passos silenciosos · memória de séculos · visão no escuro · ouvido afiado</p></div>
+      <div class="card"><h3><em>🍀</em>Halfling</h3><p>Pequenino, ágil e corajoso. Adora comida, bons amigos e tem muita sorte.</p><p class="traits"><b>Talentos:</b> escapa por qualquer fresta · sente o perigo chegando · sorte pequenina · coragem de gigante</p></div>
+      <div class="card"><h3><em>🐲</em>Draconato</h3><p>Um herói-dragão de escamas coloridas, com cauda e baforada de fogo.</p><p class="traits"><b>Talentos:</b> força sobre-humana · baforada elemental · escamas protetoras · cauda equilibrista</p></div>
+      <div class="card"><h3><em>🐱</em>Tabaxi</h3><p>O povo-gato: curioso, veloz, com garras e talento enorme para escalar.</p><p class="traits"><b>Talentos:</b> reflexos de gato · escalada felina · corrida veloz · cai sempre de pé</p></div>
+      <div class="card"><h3><em>🧠</em>Gnomo</h3><p>Pequeno inventor de cabelo colorido, cheio de ideias, ilusões e piadas.</p><p class="traits"><b>Talentos:</b> ideias que ninguém teve antes · pequena ilusão · inventor curioso · conversa com bichinhos</p></div>
+    </div>
+  </section>
+
+  <!-- ============ 2. CLASSE ============ -->
+  <section id="classe" style="--tone: var(--classe)">
+    <div class="head">
+      <div class="num">2</div>
+      <div><p class="kicker">Escolha sua profissão</p><h2>Classe</h2></div>
+    </div>
+    <p class="lead">Se a raça é de onde você veio, a <strong>classe</strong> é o que você aprendeu a fazer: lutar na frente, curar os amigos, lançar feitiços ou animar o grupo com música. <strong>Dica:</strong> pense em como você quer ajudar o grupo.</p>
+    <p class="tip"><strong>Atributos:</strong> a classe também decide quatro números que aparecem na ficha e mostram no que você é bom — <strong>Força</strong> (carregar e bater forte), <strong>Destreza</strong> (correr, pular, ter pontaria), <strong>Inteligência</strong> (saber coisas e resolver enigmas) e <strong>Sabedoria</strong> (perceber o que os outros não percebem). Você não escolhe esses números: eles já vêm prontos com a classe.</p>
+    <div class="grid">
+      <div class="card"><h3><em>🛡️</em>Guerreiro</h3><p>O mestre das armas. Vai na frente com espada, escudo e armadura pesada.</p><p class="traits"><b>Talentos:</b> treinado em toda arma · guarda que não abre · aguenta o tranco · anima a tropa</p></div>
+      <div class="card"><h3><em>💢</em>Bárbaro</h3><p>O guerreiro furioso. Confia na força bruta e quase não sente dor.</p><p class="traits"><b>Talentos:</b> fúria de tempestade · quase não sente dor · grito que arrepia · faro para o perigo</p></div>
+      <div class="card"><h3><em>🗝️</em>Ladino</h3><p>Rápido e esperto. Abre fechaduras, desarma armadilhas e ataca de surpresa.</p><p class="traits"><b>Talentos:</b> dedos de mestre · some nas sombras · ataca de surpresa · enxerga a armadilha</p></div>
+      <div class="card"><h3><em>🏹</em>Patrulheiro</h3><p>O protetor da natureza. Arqueiro incrível que rastreia pegadas.</p><p class="traits"><b>Talentos:</b> mira que não erra · lê pegadas no chão · amigo dos animais · em casa na floresta</p></div>
+      <div class="card"><h3><em>✨</em>Clérigo</h3><p>O guerreiro da cura. Usa fé e luz para ajudar amigos e afastar monstros.</p><p class="traits"><b>Talentos:</b> mãos que curam · luz que afasta sombras · fé inabalável · acalma quem tem medo</p></div>
+      <div class="card"><h3><em>🪄</em>Mago</h3><p>O cientista da magia. Estuda livros antigos e lança feitiços poderosos.</p><p class="traits"><b>Talentos:</b> memória de mil feitiços · lê línguas antigas · sente magia por perto · curiosidade sem fim</p></div>
+      <div class="card"><h3><em>🎵</em>Bardo</h3><p>O artista do grupo. Com música e piadas, fortalece amigos e confunde vilões.</p><p class="traits"><b>Talentos:</b> música que dá coragem · lábia para tudo · sabe toda história antiga · vira amigo de qualquer um</p></div>
+    </div>
+  </section>
+
+  <!-- ============ 3. HABILIDADES ============ -->
+  <section id="habilidades" style="--tone: var(--habil)">
+    <div class="head">
+      <div class="num">3</div>
+      <div><p class="kicker">Escolha 2 opções</p><h2>Habilidades</h2></div>
+    </div>
+    <p class="lead">Aqui você escolhe os <strong>dois truques especiais</strong> do seu herói. E tem uma regra divertida: <strong>o que você escolhe depende da classe</strong>. Quem luta com o corpo e com armas aprende <strong>manobras</strong>, que são golpes treinados. Quem estuda magia ou canta aprende <strong>magias</strong>, que são feitiços de verdade.</p>
+    <p class="tip"><strong>Manobras:</strong> guerreiro, bárbaro, ladino e patrulheiro. &nbsp;·&nbsp; <strong>Magias:</strong> clérigo, mago e bardo.</p>
+    <div class="tabs" role="tablist" aria-label="Classes" data-tabs="skills"></div>
+    <div data-wrap="skills"></div>
+  </section>
+
+  <!-- ============ 4. APARÊNCIA ============ -->
+  <section id="aparencia" style="--tone: var(--apar)">
+    <div class="head">
+      <div class="num">4</div>
+      <div><p class="kicker">Defina sua aparência</p><h2>Aparência</h2></div>
+    </div>
+    <p class="lead">Agora é a parte de <strong>desenhar seu herói com palavras</strong>. São nove escolhas, e em cada uma você marca uma opção. Não existe combinação errada: cabelo roxo com olhos laranja vale tanto quanto cabelo preto com olhos castanhos.</p>
+    <div class="rows">
+      <div class="row"><b>🎨 Tom de pele</b><span>Clara · Morena clara · Morena · Escura</span></div>
+      <div class="row"><b>💇 Cabelo</b><span>Curto · Cacheado · Longo · Trançado · Coque</span></div>
+      <div class="row"><b>💧 Cor do cabelo</b><span>Preto · Castanho · Ruivo · Prateado · Loiro · Azul · Roxo</span></div>
+      <div class="row"><b>👁️ Cor dos olhos</b><span>Castanhos · Verdes · Azuis · Cinzas · Roxos · Vermelhos · Pretos · Laranja</span></div>
+      <div class="row"><b>📏 Estatura</b><span>Baixa · Média · Alta</span></div>
+      <div class="row"><b>✿ Tipo físico</b><span>Leve · Atlético · Forte · Robusto</span></div>
+      <div class="row"><b>✴ Marcas e detalhes</b><span>Nenhuma · Cicatriz no rosto · Sardas · Tatuagem mágica</span></div>
+      <div class="row"><b>○ Acessório</b><span>Nenhum · Colar com pingente · Brinco · Óculos</span></div>
+      <div class="row"><b>🧥 Roupa / estilo</b><span>Roupa da floresta · Armadura leve · Manto mágico · Roupa de viagem</span></div>
+    </div>
+  </section>
+
+  <!-- ============ 5. HISTÓRIA ============ -->
+  <section id="historia" style="--tone: var(--hist)">
+    <div class="head">
+      <div class="num">5</div>
+      <div><p class="kicker">Conte um pouco sobre você</p><h2>História</h2></div>
+    </div>
+    <p class="lead">O último passo é o que transforma um monte de escolhas em <strong>alguém de verdade</strong>: o nome, o jeito de ser, o que carrega na mochila e o que aconteceu antes da aventura começar.</p>
+
+    <h3 class="block">Quem é você</h3>
+    <div class="rows">
+      <div class="row"><b>Nome do personagem</b><span>O nome do herói. Pode ser inventado!</span></div>
+      <div class="row"><b>Jogador</b><span>Seu nome de verdade, quem está jogando.</span></div>
+      <div class="row"><b>Idade</b><span>Quantos anos o herói tem.</span></div>
+      <div class="row"><b>Gênero</b><span>Menino, menina — ou o que você quiser escrever.</span></div>
+      <div class="row"><b>Altura</b><span>O tamanho dele, tipo 1,40 m.</span></div>
+      <div class="row"><b>A sua história</b><span>De onde ele veio e o que procura. Três linhas já bastam.</span></div>
+    </div>
+
+    <h3 class="block">Personalidade <i>— escolha até 3</i></h3>
+    <p class="lead">O jeito de ser do seu herói. Aparece na ficha e também na cara dele: alguém <strong>valente</strong> não faz a mesma expressão que alguém <strong>gentil</strong>.</p>
+    <div class="list">
+      <div class="item"><div class="face">🦁</div><div><b>Valente</b><small>Encara o medo e vai em frente mesmo tremendo.</small></div></div>
+      <div class="item"><div class="face">💛</div><div><b>Gentil</b><small>Trata todo mundo com carinho, até quem acabou de conhecer.</small></div></div>
+      <div class="item"><div class="face">🤝</div><div><b>Leal</b><small>Nunca abandona um amigo, nem no perigo.</small></div></div>
+      <div class="item"><div class="face">😄</div><div><b>Alegre</b><small>Sempre acha um motivo para rir e animar o grupo.</small></div></div>
+      <div class="item"><div class="face">🧠</div><div><b>Inteligente</b><small>Pensa rápido e acha saída para problemas difíceis.</small></div></div>
+      <div class="item"><div class="face">🐢</div><div><b>Paciente</b><small>Sabe esperar a hora certa sem se irritar.</small></div></div>
+      <div class="item"><div class="face">🗣️</div><div><b>Falante</b><small>Puxa conversa com qualquer um que aparecer.</small></div></div>
+      <div class="item"><div class="face">🌟</div><div><b>Otimista</b><small>Acredita que tudo vai dar certo no final.</small></div></div>
+      <div class="item"><div class="face">🧗</div><div><b>Persistente</b><small>Tenta de novo e de novo até conseguir.</small></div></div>
+      <div class="item"><div class="face">🧰</div><div><b>Responsável</b><small>Cuida das próprias coisas e das do grupo.</small></div></div>
+    </div>
+
+    <h3 class="block">Equipamento <i>— escolha até 2</i></h3>
+    <p class="lead">O que o herói leva com ele. Assim como as habilidades, as opções <strong>dependem da sua classe</strong> — um mago não sai por aí carregando armadura de placas. Muita gente pega <strong>uma roupa e uma arma</strong>, mas se você quiser duas armas, o herói é seu.</p>
+    <div class="tabs" role="tablist" aria-label="Classes" data-tabs="gear"></div>
+    <div data-wrap="gear"></div>
+  </section>
+
+  <div class="end">
+    <b>E pronto! 🎉</b>
+    <p>Com os cinco passos preenchidos, seu herói existe: tem nome, jeito, talentos e uma história para contar. Agora é só entrar na aventura.</p>
+  </div>
+
+  <p class="printhint">Para imprimir: use <strong>Ctrl+P</strong> (ou ⌘+P). O guia foi montado para caber em <strong>2 folhas A4</strong> — passos 1 e 2 na primeira, 3 a 5 na segunda — com todas as classes abertas e nenhum quadro partido no meio. Esta linha e os botões de classe não são impressos.</p>
+</div>
+
+<script>
+  const CLASSES = [
+    { id: 'guerreiro', name: 'Guerreiro', icon: '🛡️', kind: 'manobras' },
+    { id: 'barbaro', name: 'Bárbaro', icon: '💢', kind: 'manobras' },
+    { id: 'ladino', name: 'Ladino', icon: '🗝️', kind: 'manobras' },
+    { id: 'patrulheiro', name: 'Patrulheiro', icon: '🏹', kind: 'manobras' },
+    { id: 'clerigo', name: 'Clérigo', icon: '✨', kind: 'magias' },
+    { id: 'mago', name: 'Mago', icon: '🪄', kind: 'magias' },
+    { id: 'bardo', name: 'Bardo', icon: '🎵', kind: 'magias' },
+  ];
+
+  const SKILLS = {
+    guerreiro: [['🎯','Golpe preciso','Acerte um ponto fraco e cause dano extra.'],['🛡️','Proteger aliado','Entre na frente do ataque para defender um amigo.'],['⚔️','Desarmar','Derrube a arma da mão do inimigo.'],['🏃','Investida','Avance correndo e empurre o alvo para trás.'],['🧱','Postura de guarda','Fique firme e ganhe proteção.']],
+    barbaro: [['💥','Golpe brutal','Ataque com toda a força para causar um impacto enorme.'],['🗣️','Rugido intimidador','Assuste os inimigos e chame a atenção para você.'],['🪨','Arremesso poderoso','Jogue uma pedra ou objeto pesado no alvo.'],['🪓','Quebra-defesa','Abra a guarda do inimigo para o amigo atacar.'],['🐾','Salto selvagem','Pule sobre obstáculos e caia atacando.']],
+    ladino: [['🗡️','Ataque furtivo','Apareça de surpresa e cause dano extra.'],['🌀','Rolamento evasivo','Role para fora do perigo e se reposicione.'],['🖐️','Mão leve','Pegue ou esconda um item pequeno sem ninguém ver.'],['💨','Poeira nos olhos','Confunda um inimigo para escapar.'],['🤫','Passo silencioso','Ande sem fazer barulho até um lugar seguro.']],
+    patrulheiro: [['🏹','Tiro marcado','Mire com calma e guie seus amigos até o alvo.'],['🪤','Armadilha rápida','Monte uma armadilha para atrasar uma criatura.'],['🌲','Passo da floresta','Atravesse mato fechado sem perder velocidade.'],['⚔️','Corte duplo','Ataque com duas armas leves em sequência.'],['🐺','Chamar companheiro','Peça ajuda a um animal amigo.']],
+    clerigo: [['💚','Curar ferimentos','Recupere a energia de um amigo machucado.'],['✨','Luz sagrada','Crie uma luz que afasta sombras e criaturas.'],['🛡️','Escudo da fé','Proteja alguém com uma barreira brilhante.'],['🙏','Benção','Inspire o grupo a agir com mais confiança.'],['🔥','Chama radiante','Lance uma centelha de luz quente no inimigo.']],
+    mago: [['☄️','Bola de fogo','Crie uma explosão que ilumina tudo em volta.'],['🌠','Míssil mágico','Dispare raios de energia que perseguem o alvo.'],['👻','Invisibilidade','Fique invisível por um tempinho.'],['💤','Sono','Faça criaturas cansadas cochilarem.'],['🔮','Escudo arcano','Levante uma proteção mágica.']],
+    bardo: [['🎶','Canção corajosa','Cante para encorajar os amigos e afastar o medo.'],['💞','Encantar pessoa','Deixe alguém mais amigável na conversa.'],['🔔','Ilusão sonora','Crie sons falsos para distrair.'],['💬','Palavra curativa','Uma frase mágica que ajuda um amigo.'],['😄','Piada desconcertante','Uma piada encantada que atrapalha o vilão.']],
+  };
+
+  const GEAR = {
+    guerreiro: [['⚔️','Espada longa'],['🛡️','Escudo de aço'],['🪖','Armadura de placas'],['🔨','Martelo de guerra'],['🧣','Capa do regimento'],['🔱','Lança de torneio'],['🗡️','Espada curta de reserva'],['⛑️','Elmo com viseira'],['🥾','Botas reforçadas']],
+    barbaro: [['🪓','Machado enorme'],['🐻','Peles de urso'],['🪨','Clava de pedra'],['🦴','Amuleto de osso'],['🥁','Tambor de guerra'],['🔱','Lança de caça'],['🛡️','Escudo de madeira'],['🧤','Braceletes de couro'],['🐺','Capuz de pele de lobo']],
+    ladino: [['🗡️','Par de adagas'],['🧥','Capa escura com capuz'],['🗝️','Ferramentas de fechadura'],['🪢','Corda fina com gancho'],['🎭','Máscara de meio rosto'],['🎯','Besta de mão'],['🪨','Estilingue de bolso'],['👢','Botas macias de feltro'],['🧤','Luvas sem dedos']],
+    patrulheiro: [['🏹','Arco longo e aljava'],['🍃','Capa camuflada'],['🔪','Punhal de caça'],['🐺','Apito do companheiro'],['🥾','Botas de trilha'],['🔱','Lança de arremesso'],['🪨','Funda de couro'],['🦺','Gibão de couro'],['👒','Chapéu de abas largas']],
+    clerigo: [['🔨','Martelo abençoado'],['☀️','Símbolo sagrado do sol'],['🧵','Bolsa de curativos'],['📖','Livro de preces'],['👘','Túnica branca bordada'],['⚒️','Maça de peregrino'],['🛡️','Escudo com o símbolo'],['🧥','Manto de lã com capuz'],['🕯️','Incensário de bronze']],
+    mago: [['🪄','Cajado antigo'],['📕','Livro de feitiços'],['🔮','Cristal mágico'],['🌌','Manto estrelado'],['🎩','Chapéu pontudo'],['💎','Varinha de cristal'],['🗡️','Adaga ritual'],['👘','Túnica com runas'],['🎒','Bolsa de componentes']],
+    bardo: [['🪕','Alaúde de cordas brilhantes'],['🪈','Flauta encantada'],['📓','Caderno de canções'],['🧥','Casaco de artista'],['🪶','Chapéu com pluma'],['🤺','Rapieira elegante'],['🗡️','Adaga escondida no alaúde'],['👢','Botas de veludo'],['🧣','Capa de cetim']],
+  };
+
+  // Classe que abre folha nova na impressão (a anterior fecha a folha).
+  const NOVA_FOLHA = { skills: 'patrulheiro', gear: 'barbaro' };
+
+  function panelHtml(group, klass) {
+    if (group === 'skills') {
+      const frase = klass.kind === 'magias'
+        ? 'O ' + klass.name + ' usa magia, então escolhe 2 magias:'
+        : 'O ' + klass.name + ' luta de perto, então escolhe 2 manobras:';
+      const itens = SKILLS[klass.id].map(([icon, name, text]) =>
+        '<div class="item"><div class="face">' + icon + '</div><div><b>' + name + '</b><small>' + text + '</small></div></div>'
+      ).join('');
+      return '<p class="panel-head">' + klass.icon + ' ' + klass.name + ' <span>— escolhe 2 ' + klass.kind + '</span></p>'
+        + '<p class="kindline">' + frase + '</p><div class="list">' + itens + '</div>';
+    }
+    const itens = GEAR[klass.id].map(([icon, name]) =>
+      '<div class="item"><div class="face">' + icon + '</div><div><b>' + name + '</b></div></div>'
+    ).join('');
+    return '<p class="panel-head">' + klass.icon + ' ' + klass.name + ' <span>— escolhe 2</span></p>'
+      + '<div class="list">' + itens + '</div>';
+  }
+
+  ['skills', 'gear'].forEach((group) => {
+    const strip = document.querySelector('[data-tabs="' + group + '"]');
+    const host = document.querySelector('[data-wrap="' + group + '"]');
+
+    strip.innerHTML = CLASSES.map((klass, index) =>
+      '<button role="tab" data-id="' + klass.id + '" aria-selected="' + (index === 0) + '">'
+      + '<span>' + klass.icon + '</span>' + klass.name + '</button>'
+    ).join('');
+
+    // Todos os painéis ficam no documento: na tela mostramos um, na impressão todos.
+    // Antes da classe marcada em NOVA_FOLHA entra um separador que força a quebra no papel.
+    host.innerHTML = CLASSES.map((klass, index) =>
+      (NOVA_FOLHA[group] === klass.id ? '<div class="pagebreak" aria-hidden="true"></div>' : '')
+      + '<div data-id="' + klass.id + '" class="' + (index === 0 ? '' : 'is-off') + '">'
+      + panelHtml(group, klass) + '</div>'
+    ).join('');
+
+    strip.addEventListener('click', (event) => {
+      const button = event.target.closest('button');
+      if (!button) return;
+      strip.querySelectorAll('button').forEach((other) => other.setAttribute('aria-selected', String(other === button)));
+      host.querySelectorAll('[data-id]').forEach((panel) => panel.classList.toggle('is-off', panel.dataset.id !== button.dataset.id));
+    });
+  });
+</script>
+</body>
+</html>
