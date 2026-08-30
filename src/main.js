@@ -1,21 +1,21 @@
 const races = [
-  { id: 'humano', name: 'Humano', icon: '🧑', description: 'Igual a nós: determinado, aprende rápido e se adapta a qualquer profissão ou lugar do mundo.', traits: ['Aprende uma perícia extra', 'Bônus versátil em um atributo', 'Coragem para tentar de novo'] },
-  { id: 'anao', name: 'Anão', icon: '⛏️', description: 'Baixinho e forte como rocha, vive em montanhas e cria armas e armaduras excelentes.', traits: ['+1 Força', '+1 Sabedoria', 'Resistência de rocha'] },
-  { id: 'elfo', name: 'Elfo', icon: '🌿', description: 'Alto, elegante e de orelhas pontudas, vive nas florestas e se move sem fazer barulho.', traits: ['+1 Destreza', '+1 Inteligência', 'Visão no escuro'] },
-  { id: 'halfling', name: 'Halfling', icon: '🍀', description: 'Pequenino, ágil e corajoso; adora comida, bons amigos e tem muita sorte.', traits: ['+1 Destreza', '+1 Sabedoria', 'Sorte pequenina'] },
-  { id: 'draconato', name: 'Draconato', icon: '🐲', description: 'Um herói-dragão com escamas coloridas, cauda e uma baforada elemental impressionante.', traits: ['+2 Força', 'Baforada elemental', 'Escamas protetoras'] },
-  { id: 'tabaxi', name: 'Tabaxi', icon: '🐱', description: 'O povo-gato: curioso, veloz, com garras e talento para escalar lugares difíceis.', traits: ['+2 Destreza', 'Escalada felina', 'Corrida veloz'] },
-  { id: 'gnomo', name: 'Gnomo', icon: '🧠', description: 'Pequeno inventor de cabelos coloridos, mente brilhante, ilusões e piadas espertas.', traits: ['+2 Inteligência', 'Pequena ilusão', 'Inventor curioso'] },
+  { id: 'humano', name: 'Humano', icon: '🧑', description: 'Igual a nós: determinado, aprende rápido e se adapta a qualquer profissão ou lugar do mundo.', traits: ['Aprende uma perícia extra', 'Talento para qualquer coisa', 'Coragem para tentar de novo', 'Faz amizade rápido'] },
+  { id: 'anao', name: 'Anão', icon: '⛏️', description: 'Baixinho e forte como rocha, vive em montanhas e cria armas e armaduras excelentes.', traits: ['Braços de ferreiro', 'Sabedoria das montanhas', 'Resistência de rocha', 'Visão nas minas'] },
+  { id: 'elfo', name: 'Elfo', icon: '🌿', description: 'Alto, elegante e de orelhas pontudas, vive nas florestas e se move sem fazer barulho.', traits: ['Passos silenciosos', 'Memória de séculos', 'Visão no escuro', 'Ouvido afiado'] },
+  { id: 'halfling', name: 'Halfling', icon: '🍀', description: 'Pequenino, ágil e corajoso; adora comida, bons amigos e tem muita sorte.', traits: ['Escapa por qualquer fresta', 'Sente o perigo chegando', 'Sorte pequenina', 'Coragem de gigante'] },
+  { id: 'draconato', name: 'Draconato', icon: '🐲', description: 'Um herói-dragão com escamas coloridas, cauda e uma baforada elemental impressionante.', traits: ['Força sobre-humana', 'Baforada elemental', 'Escamas protetoras', 'Cauda equilibrista'] },
+  { id: 'tabaxi', name: 'Tabaxi', icon: '🐱', description: 'O povo-gato: curioso, veloz, com garras e talento para escalar lugares difíceis.', traits: ['Reflexos de gato', 'Escalada felina', 'Corrida veloz', 'Cai sempre de pé'] },
+  { id: 'gnomo', name: 'Gnomo', icon: '🧠', description: 'Pequeno inventor de cabelos coloridos, mente brilhante, ilusões e piadas espertas.', traits: ['Ideias que ninguém teve antes', 'Pequena ilusão', 'Inventor curioso', 'Conversa com bichinhos'] },
 ];
 
 const classes = [
-  { id: 'guerreiro', name: 'Guerreiro', icon: '🛡️', description: 'O mestre das armas, vai para a linha de frente com espada, escudo e armadura pesada.', attributes: { forca: 5, destreza: 3, inteligencia: 2, sabedoria: 3 } },
-  { id: 'barbaro', name: 'Bárbaro', icon: '💢', description: 'O guerreiro furioso que confia na força bruta, fica mais forte e quase não sente dor.', attributes: { forca: 5, destreza: 3, inteligencia: 1, sabedoria: 4 } },
-  { id: 'ladino', name: 'Ladino', icon: '🗝️', description: 'Rápido, silencioso e esperto; abre fechaduras, desarma armadilhas e ataca de surpresa.', attributes: { forca: 2, destreza: 5, inteligencia: 4, sabedoria: 3 } },
-  { id: 'patrulheiro', name: 'Patrulheiro', icon: '🏹', description: 'O protetor da natureza, arqueiro incrível que rastreia pegadas e sobrevive na floresta.', attributes: { forca: 3, destreza: 5, inteligencia: 3, sabedoria: 5 } },
-  { id: 'clerigo', name: 'Clérigo', icon: '✨', description: 'O guerreiro da cura, usa fé e magia de luz para ajudar amigos e afastar monstros sombrios.', attributes: { forca: 3, destreza: 2, inteligencia: 3, sabedoria: 5 } },
-  { id: 'mago', name: 'Mago', icon: '🪄', description: 'O cientista da magia, estuda livros antigos e lança feitiços como fogo ou invisibilidade.', attributes: { forca: 1, destreza: 3, inteligencia: 5, sabedoria: 4 } },
-  { id: 'bardo', name: 'Bardo', icon: '🎵', description: 'O artista do grupo, usa música, poemas e piadas para fortalecer amigos e confundir vilões.', attributes: { forca: 2, destreza: 4, inteligencia: 4, sabedoria: 3 } },
+  { id: 'guerreiro', name: 'Guerreiro', icon: '🛡️', description: 'O mestre das armas, vai para a linha de frente com espada, escudo e armadura pesada.', attributes: { forca: 5, destreza: 3, inteligencia: 2, sabedoria: 3 }, traits: ['Treinado em toda arma', 'Guarda que não abre', 'Aguenta o tranco', 'Anima a tropa'] },
+  { id: 'barbaro', name: 'Bárbaro', icon: '💢', description: 'O guerreiro furioso que confia na força bruta, fica mais forte e quase não sente dor.', attributes: { forca: 5, destreza: 3, inteligencia: 1, sabedoria: 4 }, traits: ['Fúria de tempestade', 'Quase não sente dor', 'Grito que arrepia', 'Faro para o perigo'] },
+  { id: 'ladino', name: 'Ladino', icon: '🗝️', description: 'Rápido, silencioso e esperto; abre fechaduras, desarma armadilhas e ataca de surpresa.', attributes: { forca: 2, destreza: 5, inteligencia: 4, sabedoria: 3 }, traits: ['Dedos de mestre', 'Some nas sombras', 'Ataca de surpresa', 'Enxerga a armadilha'] },
+  { id: 'patrulheiro', name: 'Patrulheiro', icon: '🏹', description: 'O protetor da natureza, arqueiro incrível que rastreia pegadas e sobrevive na floresta.', attributes: { forca: 3, destreza: 5, inteligencia: 3, sabedoria: 5 }, traits: ['Mira que não erra', 'Lê pegadas no chão', 'Amigo dos animais', 'Em casa na floresta'] },
+  { id: 'clerigo', name: 'Clérigo', icon: '✨', description: 'O guerreiro da cura, usa fé e magia de luz para ajudar amigos e afastar monstros sombrios.', attributes: { forca: 3, destreza: 2, inteligencia: 3, sabedoria: 5 }, traits: ['Mãos que curam', 'Luz que afasta sombras', 'Fé inabalável', 'Acalma quem tem medo'] },
+  { id: 'mago', name: 'Mago', icon: '🪄', description: 'O cientista da magia, estuda livros antigos e lança feitiços como fogo ou invisibilidade.', attributes: { forca: 1, destreza: 3, inteligencia: 5, sabedoria: 4 }, traits: ['Memória de mil feitiços', 'Lê línguas antigas', 'Sente magia por perto', 'Curiosidade sem fim'] },
+  { id: 'bardo', name: 'Bardo', icon: '🎵', description: 'O artista do grupo, usa música, poemas e piadas para fortalecer amigos e confundir vilões.', attributes: { forca: 2, destreza: 4, inteligencia: 4, sabedoria: 3 }, traits: ['Música que dá coragem', 'Lábia para tudo', 'Sabe toda história antiga', 'Vira amigo de qualquer um'] },
 ];
 
 const skillCatalog = {
@@ -101,8 +101,8 @@ const skillCatalog = {
 const appearanceGroups = [
   { key: 'skin', title: 'Tom de pele', icon: '🎨', options: ['Clara', 'Morena clara', 'Morena', 'Escura'] },
   { key: 'hair', title: 'Cabelo', icon: '💇', options: ['Curto', 'Cacheado', 'Longo', 'Trançado', 'Coque'] },
-  { key: 'hairColor', title: 'Cor do cabelo', icon: '💧', options: ['Preto', 'Castanho', 'Ruivo', 'Prateado', 'Dourado'] },
-  { key: 'eyes', title: 'Cor dos olhos', icon: '👁️', options: ['Castanhos', 'Verdes', 'Azuis', 'Cinzas', 'Roxos'] },
+  { key: 'hairColor', title: 'Cor do cabelo', icon: '💧', options: ['Preto', 'Castanho', 'Ruivo', 'Prateado', 'Loiro', 'Azul', 'Roxo'] },
+  { key: 'eyes', title: 'Cor dos olhos', icon: '👁️', options: ['Castanhos', 'Verdes', 'Azuis', 'Cinzas', 'Roxos', 'Vermelhos', 'Pretos', 'Laranja'] },
   { key: 'height', title: 'Estatura', icon: '📏', options: ['Baixa', 'Média', 'Alta'] },
   { key: 'body', title: 'Tipo físico', icon: '✿', options: ['Leve', 'Atlético', 'Forte', 'Robusto'] },
   { key: 'marks', title: 'Marcas e detalhes', icon: '✴', options: ['Nenhuma', 'Cicatriz no rosto', 'Sardas', 'Tatuagem mágica'] },
@@ -130,6 +130,10 @@ const equipmentCatalog = {
     { id: 'armadura-de-placas', name: 'Armadura de placas', icon: '🪖', description: 'Pesada, mas quase nada consegue atravessar.' },
     { id: 'martelo-de-guerra', name: 'Martelo de guerra', icon: '🔨', description: 'Amassa até o escudo do inimigo.' },
     { id: 'capa-do-regimento', name: 'Capa do regimento', icon: '🧣', description: 'Mostra a quem você jurou lealdade.' },
+    { id: 'lanca-de-torneio', name: 'Lança de torneio', icon: '🔱', description: 'Alcança o inimigo antes que ele chegue perto.' },
+    { id: 'espada-curta-reserva', name: 'Espada curta de reserva', icon: '🗡️', description: 'A segunda lâmina, para quando a primeira cai.' },
+    { id: 'elmo-com-viseira', name: 'Elmo com viseira', icon: '⛑️', description: 'Protege o rosto e ainda deixa você enxergar bem.' },
+    { id: 'botas-reforcadas', name: 'Botas reforçadas', icon: '🥾', description: 'Firmes no chão: ninguém derruba você.' },
   ],
   barbaro: [
     { id: 'machado-enorme', name: 'Machado enorme', icon: '🪓', description: 'Precisa das duas mãos e derruba portas.' },
@@ -137,6 +141,10 @@ const equipmentCatalog = {
     { id: 'clava-de-pedra', name: 'Clava de pedra', icon: '🪨', description: 'Simples, pesada e muito convincente.' },
     { id: 'amuleto-de-osso', name: 'Amuleto de osso', icon: '🦴', description: 'Lembrança da tribo que dá coragem.' },
     { id: 'tambor-de-guerra', name: 'Tambor de guerra', icon: '🥁', description: 'O som faz o coração dos amigos acelerar.' },
+    { id: 'lanca-de-caca', name: 'Lança de caça', icon: '🔱', description: 'Serve para caçar o jantar e para enfrentar o perigo.' },
+    { id: 'escudo-de-madeira', name: 'Escudo de madeira e couro', icon: '🛡️', description: 'Simples de fazer e difícil de quebrar.' },
+    { id: 'braceletes-de-couro', name: 'Braceletes de couro', icon: '🧤', description: 'Protegem os braços nos golpes mais fortes.' },
+    { id: 'capuz-de-lobo', name: 'Capuz de pele de lobo', icon: '🐺', description: 'Assusta de longe e esquenta na tempestade.' },
   ],
   ladino: [
     { id: 'par-de-adagas', name: 'Par de adagas', icon: '🗡️', description: 'Duas lâminas leves, rápidas e silenciosas.' },
@@ -144,6 +152,10 @@ const equipmentCatalog = {
     { id: 'ferramentas-de-ladrao', name: 'Ferramentas de abrir fechaduras', icon: '🗝️', description: 'Ganchinhos que abrem quase qualquer porta.' },
     { id: 'corda-com-gancho', name: 'Corda fina com gancho', icon: '🪢', description: 'Sobe muros e desce por janelas.' },
     { id: 'mascara-de-meio-rosto', name: 'Máscara de meio rosto', icon: '🎭', description: 'Ninguém sabe quem passou por ali.' },
+    { id: 'besta-de-mao', name: 'Besta de mão', icon: '🎯', description: 'Pequena, silenciosa e cabe embaixo da capa.' },
+    { id: 'estilingue-de-bolso', name: 'Estilingue de bolso', icon: '🪨', description: 'Acerta de longe e faz barulho para distrair a guarda.' },
+    { id: 'botas-macias', name: 'Botas macias de feltro', icon: '👢', description: 'Nenhum passo seu faz barulho no assoalho.' },
+    { id: 'luvas-sem-dedos', name: 'Luvas sem dedos', icon: '🧤', description: 'Agarram qualquer parede e não deixam marca.' },
   ],
   patrulheiro: [
     { id: 'arco-longo', name: 'Arco longo e aljava', icon: '🏹', description: 'Acerta o alvo bem de longe.' },
@@ -151,6 +163,10 @@ const equipmentCatalog = {
     { id: 'punhal-de-caca', name: 'Punhal de caça', icon: '🔪', description: 'Corta corda, galho e o que aparecer.' },
     { id: 'apito-do-companheiro', name: 'Apito do companheiro animal', icon: '🐺', description: 'Chama seu amigo animal de longe.' },
     { id: 'botas-de-trilha', name: 'Botas de trilha', icon: '🥾', description: 'Andam o dia inteiro sem machucar o pé.' },
+    { id: 'lanca-de-arremesso', name: 'Lança curta de arremesso', icon: '🔱', description: 'Leve de jogar e fácil de buscar depois.' },
+    { id: 'funda-de-couro', name: 'Funda de couro', icon: '🪨', description: 'Uma pedra bem mirada resolve muita coisa.' },
+    { id: 'gibao-de-couro', name: 'Gibão de couro', icon: '🦺', description: 'Armadura leve que não atrapalha correr.' },
+    { id: 'chapeu-de-abas-largas', name: 'Chapéu de abas largas', icon: '👒', description: 'Segura a chuva e o sol na trilha inteira.' },
   ],
   clerigo: [
     { id: 'martelo-abencoado', name: 'Martelo leve abençoado', icon: '🔨', description: 'Brilha um pouquinho quando você reza.' },
@@ -158,6 +174,10 @@ const equipmentCatalog = {
     { id: 'bolsa-de-curativos', name: 'Bolsa de curativos', icon: '🧵', description: 'Ataduras e ervas para cuidar dos amigos.' },
     { id: 'livro-de-preces', name: 'Livro de preces', icon: '📖', description: 'Palavras antigas que acalmam qualquer um.' },
     { id: 'tunica-branca', name: 'Túnica branca bordada', icon: '👘', description: 'Roupa simples com fios dourados.' },
+    { id: 'maca-de-peregrino', name: 'Maça de peregrino', icon: '⚒️', description: 'Vira bordão na estrada e arma no perigo.' },
+    { id: 'escudo-com-simbolo', name: 'Escudo com o símbolo sagrado', icon: '🛡️', description: 'Protege você e mostra em quem você acredita.' },
+    { id: 'manto-de-la', name: 'Manto de lã com capuz', icon: '🧥', description: 'Aquece nas noites longas de viagem.' },
+    { id: 'incensario-de-bronze', name: 'Incensário de bronze', icon: '🕯️', description: 'A fumaça perfumada acalma quem está com medo.' },
   ],
   mago: [
     { id: 'cajado-antigo', name: 'Cajado de madeira antiga', icon: '🪄', description: 'Ajuda a mirar e a guardar magia.' },
@@ -165,6 +185,10 @@ const equipmentCatalog = {
     { id: 'cristal-magico', name: 'Cristal mágico', icon: '🔮', description: 'Guarda energia para o feitiço mais difícil.' },
     { id: 'manto-estrelado', name: 'Manto estrelado', icon: '🌌', description: 'Tecido azul que parece o céu à noite.' },
     { id: 'chapeu-pontudo', name: 'Chapéu pontudo', icon: '🎩', description: 'Ninguém duvida que você é mago.' },
+    { id: 'varinha-de-cristal', name: 'Varinha de cristal', icon: '💎', description: 'Menor que o cajado e mais rápida de apontar.' },
+    { id: 'adaga-ritual', name: 'Adaga ritual', icon: '🗡️', description: 'Corta as ervas e os ingredientes das poções.' },
+    { id: 'tunica-com-runas', name: 'Túnica com runas bordadas', icon: '👘', description: 'As runas brilham quando tem magia por perto.' },
+    { id: 'bolsa-de-componentes', name: 'Bolsa de componentes', icon: '🎒', description: 'Penas, pó colorido e outras coisas de feitiço.' },
   ],
   bardo: [
     { id: 'alaude', name: 'Alaúde de cordas brilhantes', icon: '🪕', description: 'O instrumento que abre portas e corações.' },
@@ -172,6 +196,10 @@ const equipmentCatalog = {
     { id: 'caderno-de-cancoes', name: 'Caderno de canções', icon: '📓', description: 'Todas as músicas e histórias que você inventou.' },
     { id: 'casaco-colorido', name: 'Casaco colorido de artista', icon: '🧥', description: 'Chama atenção em qualquer praça.' },
     { id: 'chapeu-com-pluma', name: 'Chapéu com pluma', icon: '🪶', description: 'A pluma balança quando você faz reverência.' },
+    { id: 'rapieira-elegante', name: 'Rapieira elegante', icon: '🤺', description: 'Fina, veloz e combina com a reverência.' },
+    { id: 'adaga-escondida', name: 'Adaga escondida no alaúde', icon: '🗡️', description: 'Ninguém espera que o músico saiba se defender.' },
+    { id: 'botas-de-veludo', name: 'Botas de veludo', icon: '👢', description: 'Confortáveis para dançar a noite inteira.' },
+    { id: 'capa-de-cetim', name: 'Capa de cetim brilhante', icon: '🧣', description: 'Roda no ar quando você faz a reverência final.' },
   ],
 };
 
@@ -254,8 +282,7 @@ function render() {
         <div class="brand">
           <div class="sigil">✡</div>
           <div>
-            <span>CRIADOR DE</span>
-            <h1>PERSONAGEM</h1>
+            <h1>EDUCARPG KIDS</h1>
             <p>Monte seu herói e viva grandes aventuras!</p>
           </div>
           <div class="twinkle">✦</div>
@@ -336,7 +363,7 @@ function renderClassStep() {
   return `<section class="panel current-panel"><h2>✦ 2. ESCOLHA SUA CLASSE ✦</h2><p>A classe mostra como seu herói ajuda o grupo.</p><div class="option-grid class-grid">${classes.map((item) => `
     <button class="choice-card class-card ${state.class === item.id ? 'selected' : ''}" data-class="${item.id}">
       <span class="choice-art">${item.icon}</span><b>${item.name}</b><small>${item.description}</small><em>${state.class === item.id ? '✓' : ''}</em>
-    </button>`).join('')}</div>${klass ? `<div class="info"><h3>${klass.icon} ${klass.name.toUpperCase()}</h3><p>${klass.description}</p><b>O que essa classe costuma usar:</b><ul>${(equipmentCatalog[klass.id] || []).map((item) => `<li>${item.icon} ${item.name}</li>`).join('')}</ul><p class="hint">Você escolhe até ${EQUIPMENT_LIMIT} desses equipamentos no passo 5.</p></div>` : '<div class="info empty"><p>Nenhuma classe escolhida ainda.</p></div>'}${renderNavButtons('skills', 'race')}</section>`;
+    </button>`).join('')}</div>${klass ? `<div class="info"><h3>${klass.icon} ${klass.name.toUpperCase()}</h3><p>${klass.description}</p><b>Características:</b><ul>${klass.traits.map((trait) => `<li>${trait}</li>`).join('')}</ul><b>O que essa classe costuma usar:</b><ul>${(equipmentCatalog[klass.id] || []).map((item) => `<li>${item.icon} ${item.name}</li>`).join('')}</ul><p class="hint">Você escolhe até ${EQUIPMENT_LIMIT} desses equipamentos no passo 5.</p></div>` : '<div class="info empty"><p>Nenhuma classe escolhida ainda.</p></div>'}${renderNavButtons('skills', 'race')}</section>`;
 }
 
 function renderSkillsStep() {
@@ -446,7 +473,7 @@ function renderSheet() {
   const personality = selectedPersonality();
   const equipmentBlock = equipment.length ? `<section><h4>EQUIPAMENTOS</h4>${equipment.map((item) => `<p>${item.icon} ${item.name}</p>`).join('')}</section>` : '';
 
-  return `<aside class="sheet"><div class="ribbon">FICHA DO AVENTUREIRO</div>${identity ? `<div class="row">${identity}</div>` : ''}${details ? `<div class="row details">${details}</div>` : ''}${race || klass ? `<div class="badges">${race ? `<div>${race.icon}<span>RAÇA<b>${race.name}</b></span></div>` : ''}${klass ? `<div>${klass.icon}<span>CLASSE<b>${klass.name}</b></span></div>` : ''}</div>` : ''}${attributes ? `<h3>✧ ATRIBUTOS ✧</h3><div class="attrs"><div><span>✊</span><small>FORÇA</small><b>${attributes.forca}</b><em>MOD. ${modifier(attributes.forca)}</em></div><div><span>🍃</span><small>DESTREZA</small><b>${attributes.destreza}</b><em>MOD. ${modifier(attributes.destreza)}</em></div><div><span>📖</span><small>INTELIGÊNCIA</small><b>${attributes.inteligencia}</b><em>MOD. ${modifier(attributes.inteligencia)}</em></div><div><span>👁️</span><small>SABEDORIA</small><b>${attributes.sabedoria}</b><em>MOD. ${modifier(attributes.sabedoria)}</em></div></div>` : ''}${race ? `<h3>CARACTERÍSTICAS DA RAÇA</h3><p class="center">${race.traits.map((trait) => `• ${trait}`).join(' &nbsp; ')}</p>` : ''}${appearanceBlock || equipmentBlock ? `<div class="cols">${appearanceBlock}${equipmentBlock}</div>` : ''}${skills.length && catalog ? `<h3>${catalog.type.toUpperCase()}</h3><div class="chips">${skills.map((item) => `<span>${item.icon} ${item.name}</span>`).join('')}</div>` : ''}${personality.length ? `<h3>PERSONALIDADE</h3><div class="chips">${personality.map((item) => `<span>${item.icon} ${item.name}</span>`).join('')}</div>` : ''}${sheetText('HISTÓRIA', state.story)}</aside>`;
+  return `<aside class="sheet"><div class="ribbon">FICHA DO AVENTUREIRO</div>${identity ? `<div class="row">${identity}</div>` : ''}${details ? `<div class="row details">${details}</div>` : ''}${race || klass ? `<div class="badges">${race ? `<div>${race.icon}<span>RAÇA<b>${race.name}</b></span></div>` : ''}${klass ? `<div>${klass.icon}<span>CLASSE<b>${klass.name}</b></span></div>` : ''}</div>` : ''}${attributes ? `<h3>✧ ATRIBUTOS ✧</h3><div class="attrs"><div><span>✊</span><small>FORÇA</small><b>${attributes.forca}</b><em>MOD. ${modifier(attributes.forca)}</em></div><div><span>🍃</span><small>DESTREZA</small><b>${attributes.destreza}</b><em>MOD. ${modifier(attributes.destreza)}</em></div><div><span>📖</span><small>INTELIGÊNCIA</small><b>${attributes.inteligencia}</b><em>MOD. ${modifier(attributes.inteligencia)}</em></div><div><span>👁️</span><small>SABEDORIA</small><b>${attributes.sabedoria}</b><em>MOD. ${modifier(attributes.sabedoria)}</em></div></div>` : ''}${race ? `<h3>CARACTERÍSTICAS DA RAÇA</h3><p class="center">${race.traits.map((trait) => `• ${trait}`).join(' &nbsp; ')}</p>` : ''}${klass ? `<h3>CARACTERÍSTICAS DA CLASSE</h3><p class="center">${klass.traits.map((trait) => `• ${trait}`).join(' &nbsp; ')}</p>` : ''}${appearanceBlock || equipmentBlock ? `<div class="cols">${appearanceBlock}${equipmentBlock}</div>` : ''}${skills.length && catalog ? `<h3>${catalog.type.toUpperCase()}</h3><div class="chips">${skills.map((item) => `<span>${item.icon} ${item.name}</span>`).join('')}</div>` : ''}${personality.length ? `<h3>PERSONALIDADE</h3><div class="chips">${personality.map((item) => `<span>${item.icon} ${item.name}</span>`).join('')}</div>` : ''}${sheetText('HISTÓRIA', state.story)}</aside>`;
 }
 
 function sheetLabels(pairs) {
@@ -704,10 +731,11 @@ async function generatePdf() {
     if (!sheet) throw new Error('a ficha não está na tela');
     const sheetCanvas = await window.html2canvas(sheet, {
       scale: 2,
-      backgroundColor: '#f7ead3',
+      backgroundColor: '#ffffff',
       height: sheet.scrollHeight,
       windowHeight: sheet.scrollHeight,
       onclone: (clonedDocument) => {
+        applyPrintTheme(clonedDocument);
         const clone = clonedDocument.querySelector('.sheet');
         if (!clone) return;
         clone.style.overflow = 'visible';
@@ -733,6 +761,26 @@ async function generatePdf() {
   }
 }
 
+// Tema de impressão da ficha: fundo branco, texto preto e a faixa "FICHA DO AVENTUREIRO" sem o
+// gradiente escuro, para gastar menos tinta. Vive só no clone que o html2canvas rasteriza, então
+// a tela nunca muda. Os emojis continuam coloridos de propósito: a fonte de emoji é colorida e
+// ignora `color`, e são eles que deixam a ficha reconhecível para a criança. O retrato não passa
+// por aqui — ele entra no PDF direto de `imageState.dataUrl`, sempre colorido.
+function applyPrintTheme(clonedDocument) {
+  const style = clonedDocument.createElement('style');
+  style.textContent = `
+    .sheet, .sheet * {
+      background: #fff !important;
+      background-image: none !important;
+      color: #000 !important;
+      border-color: #777 !important;
+      box-shadow: none !important;
+      text-shadow: none !important;
+    }
+    .sheet, .sheet::before, .ribbon { border-color: #000 !important; color: #000 !important; }
+  `;
+  clonedDocument.head.appendChild(style);
+}
 // Coluna 0 = quadrante superior esquerdo (ficha); coluna 1 = quadrante superior direito (retrato).
 // Os dois começam na mesma altura e a metade de baixo da página fica em branco, como combinado.
 function placeInQuadrant(pdf, dataUrl, naturalWidth, naturalHeight, column) {

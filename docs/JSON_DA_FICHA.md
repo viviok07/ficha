@@ -18,7 +18,7 @@ lê. Os catálogos que alimentam esses campos estão em [MODELO_DE_DADOS.md](MOD
   skills: [],              // até 2 skill.id da classe atual
   appearance: { skin, hair, hairColor, eyes, height, body, marks, accessory, style }, // só estas 9 chaves; rótulos, '' quando vazio
   personality: [],         // até 3 ids de personalityCatalog
-  equipment: [],           // até 2 ids de equipmentCatalog[state.class]
+  equipment: [],           // até 2 ids de equipmentCatalog[state.class] (9 opções por classe)
   story: '',
 }
 ```
@@ -52,7 +52,8 @@ para raça, classe, habilidades, personalidade e equipamento, não apenas ids):
   "height": "1,45 m",
   "race":  { "id": "elfo", "name": "Elfo", "icon": "🌿", "description": "...", "traits": ["..."] },
   "class": { "id": "patrulheiro", "name": "Patrulheiro", "icon": "🏹", "description": "...",
-             "attributes": { "forca": 3, "destreza": 5, "inteligencia": 3, "sabedoria": 5 } },
+             "attributes": { "forca": 3, "destreza": 5, "inteligencia": 3, "sabedoria": 5 },
+             "traits": ["..."] },
   "skills": [ { "id": "tiro-marcado", "name": "Tiro marcado", "icon": "🏹", "description": "..." } ],
   "appearance": { "skin": "Morena clara", "hair": "Longo", "hairColor": "Prateado", "eyes": "Verdes",
                   "height": "Média", "body": "Atlético", "marks": "Cicatriz no rosto",

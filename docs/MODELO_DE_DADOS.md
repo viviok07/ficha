@@ -22,12 +22,15 @@ sempre, apenas editar esses literais** — a UI é gerada por `map()` sobre eles
   name: 'Elfo',                 // exibido nos cards e na ficha
   icon: '🌿',                    // 1 emoji; vira a arte do card
   description: '...',           // 1 frase, linguagem infantil
-  traits: ['+1 Destreza', ...], // 3 itens; texto livre, sem efeito mecânico
+  traits: ['Visão no escuro', ...], // 4 itens; característica descrita, sem efeito mecânico
 }
 ```
 
 Consumido por: `renderRaceStep()` (grid + bloco de informações) e `renderSheet()` (badge de raça
 e a linha "CARACTERÍSTICAS DA RAÇA").
+
+> **Nenhum `trait` é bônus de atributo.** Nem numérico (`+1 Força`) nem por extenso ("bônus em um
+> atributo"): os números vivem só em `class.attributes`. Traço é característica descrita.
 
 O grid usa a classe CSS `p{index}` (`p0`…`p6`) para dar um gradiente diferente à arte de cada
 card. Só existem gradientes definidos para `.p1`–`.p5` em [src/style.css:237](../src/style.css#L237);
@@ -45,6 +48,11 @@ adicionar raças além disso ainda funciona, mas os cards excedentes usam o grad
   attributes: { forca: 3, destreza: 5, inteligencia: 3, sabedoria: 5 }, // escala 1–5
 }
 ```
+
+A classe também tem `traits`: **4 itens**, mesmo formato e mesma regra da raça (característica
+descrita, nunca bônus de atributo). Aparecem como "Características:" no passo 2 e como
+"CARACTERÍSTICAS DA CLASSE" na ficha, espelhando o bloco da raça. São independentes de
+`attributes`, que continua sendo a única fonte dos números.
 
 A classe **não** guarda mais uma lista de equipamentos: isso virou `equipmentCatalog`, abaixo.
 
@@ -84,6 +92,9 @@ quantidade de opções, ajuste também essa frase.
 - `key` é a chave dentro de `state.appearance`.
 - As `options` são **strings exibidas diretamente** — o valor salvo é o próprio rótulo, não um id.
 - `labelForAppearance(key)` faz o caminho inverso (chave → título) para a ficha.
+- Como o valor salvo é o rótulo, **remover uma opção não apaga fichas antigas**: um valor fora da
+  lista sobrevive em `state.appearance`, aparece na ficha e no prompt, e só não fica marcado no
+  passo 4 (foi o caso de "Dourado", trocado por "Loiro").
 - `buildImagePrompt()` percorre `appearanceGroups` genericamente e emite `título valor`, em texto
   corrido, para cada grupo preenchido, ignorando os vazios. **Um grupo novo entra no prompt
   sozinho**, sem editar a função.
@@ -108,13 +119,13 @@ O usuário escolhe até `PERSONALITY_LIMIT` (3).
 
 ## `equipmentCatalog` — [src/main.js:126](../src/main.js#L126)
 
-Objeto indexado pelo `class.id`, com **5 opções por classe**, misturando vestimenta e equipamento
+Objeto indexado pelo `class.id`, com **9 opções por classe**, misturando vestimenta e equipamento
 principal para que dê para escolher "uma roupa + uma arma":
 
 ```js
 patrulheiro: [
   { id: 'arco-longo', name: 'Arco longo e aljava', icon: '🏹', description: 'Acerta o alvo bem de longe.' },
-  // ... 5 no total
+  // ... 9 no total
 ],
 ```
 

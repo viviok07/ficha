@@ -1,4 +1,4 @@
-# Criador de Personagem
+# EducaRPG Kids
 
 Aplicação web de página única (pt-BR) para montar uma ficha de personagem de RPG em 6 passos —
 Raça, Classe, Habilidades, Aparência, História e Visão geral — com a ficha sendo atualizada em

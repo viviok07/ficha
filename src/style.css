@@ -58,15 +58,9 @@ button { cursor: pointer; }
   line-height: 1;
 }
 
-.brand span {
-  color: #2f1b64;
-  font: 800 22px/1 Cinzel, serif;
-  letter-spacing: 1px;
-}
-
 .brand h1 {
   margin: 0;
-  font: 800 clamp(38px, 4vw, 58px)/0.9 Cinzel, serif;
+  font: 800 clamp(26px, 3.2vw, 46px)/1 Cinzel, serif;
 }
 
 .brand p {
