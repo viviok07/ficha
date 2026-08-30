@@ -16,7 +16,7 @@ lê. Os catálogos que alimentam esses campos estão em [MODELO_DE_DADOS.md](MOD
   race: '',                // race.id, '' enquanto nada foi escolhido
   class: '',               // class.id, '' enquanto nada foi escolhido
   skills: [],              // até 2 skill.id da classe atual
-  appearance: { skin, hair, hairColor, eyes, height, body, marks, accessory, style }, // rótulos, '' quando vazio
+  appearance: { skin, hair, hairColor, eyes, height, body, marks, accessory, style }, // só estas 9 chaves; rótulos, '' quando vazio
   personality: [],         // até 3 ids de personalityCatalog
   equipment: [],           // até 2 ids de equipmentCatalog[state.class]
   story: '',
@@ -69,6 +69,10 @@ o JSON de uma ficha incompleta continua válido e importável. **O retrato nunca
 Na importação, `loadCharacter()` aceita as duas formas — objeto completo ou id em string — para
 `race`, `class` e cada item de `skills`, `personality` e `equipment`. Campos desconhecidos são
 ignorados; campos ausentes mantêm o valor atual.
+
+Em `appearance`, **só as 9 chaves de `appearanceGroups` são aceitas** — qualquer outra é
+descartada em silêncio e o valor é convertido para texto. Isso vale também quando `appearance`
+vem com o tipo errado (string, array, `null`): o objeto atual é preservado.
 
 **Fichas salvas antes desta versão importam sem quebrar, mas perdem dois campos.** O `equipment`
 antigo era uma string livre e a `personality` antiga era uma lista de traços digitados à mão:
