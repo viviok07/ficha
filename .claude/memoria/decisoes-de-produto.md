@@ -53,6 +53,8 @@ página estática, com CSS e JS próprios; no repositório ele só ganhou o esqu
 abrir por `file://`, sem servidor.
 **Como aplicar:** não unifique o CSS dele com `src/style.css` nem o converta em passo do app. As
 quebras de página da impressão (2 folhas A4) dependem de `NOVA_FOLHA` e da ordem das classes:
-qualquer edição no conteúdo do guia exige reconferir o preview de impressão.
+qualquer edição no conteúdo do guia exige reconferir o preview de impressão — e esse preview
+só vale aberto direto no navegador (`file://` ou pasta servida): nenhum navegador aplica quebra
+de página de conteúdo em `iframe`, então visualizadores embutidos mentem sobre o resultado.
 
 Relacionado: `docs/MODELO_DE_DADOS.md`, `docs/INTEGRACAO_IMAGEM.md`, `docs/UI_E_ESTILOS.md`.
