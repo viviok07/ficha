@@ -81,8 +81,12 @@ button { cursor: pointer; }
   gap: 14px;
 }
 
+/* .portrait-actions entra na lista porque o passo 5 passou a ter quatro botões na mesma linha:
+   .primary sozinho só define cor, então COPIAR PROMPT saía mais baixo que CARREGAR IMAGEM
+   (.secondary). A lista fica ANTES de .primary para o botão roxo manter a borda dele. */
 .actions button,
 .actions .ghost-link,
+.portrait-actions button,
 .secondary,
 .next {
   min-height: 48px;
@@ -682,6 +686,110 @@ button { cursor: pointer; }
   text-align: center;
   color: #5b2c17;
   font-size: 13px;
+}
+
+/* Modal do Gemini -----------------------------------------------------------
+   Sobrepõe a página, mas NÃO bloqueia o uso do app: "AGORA NÃO" fecha e todo o
+   fluxo manual (copiar prompt + upload) continua disponível sem chave. */
+.gemini-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  overflow-y: auto;
+  background: #170d09cc;
+  backdrop-filter: blur(5px);
+}
+
+.gemini-card {
+  width: min(720px, 100%);
+  padding: clamp(18px, 3vw, 32px);
+  border: 2px solid var(--gold);
+  border-radius: 18px;
+  background: linear-gradient(145deg, #fff8eb, #f0d9b8);
+  box-shadow: 0 24px 80px #0007;
+}
+
+.gemini-card h2 {
+  margin: 0 0 10px;
+  text-align: center;
+  font: 800 clamp(19px, 3vw, 26px) Cinzel, serif;
+}
+
+.gemini-card p {
+  margin: 0 0 18px;
+  line-height: 1.5;
+  text-align: center;
+}
+
+.gemini-card small {
+  display: block;
+  margin-top: 14px;
+  color: var(--brown);
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+.gemini-grid {
+  display: grid;
+  grid-template-columns: 1.4fr 0.8fr 0.8fr;
+  gap: 12px;
+}
+
+/* O campo do modelo digitado só existe quando "Outro" está escolhido. O atributo hidden é
+   ligado/desligado direto no nó, sem re-render, para não apagar o que já foi digitado. */
+.gemini-custom[hidden] { display: none; }
+
+.gemini-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.field select {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: #fffaf1;
+  color: var(--ink);
+  font-size: 16px;
+}
+
+/* Loader da geração pelo Gemini. A chamada leva dezenas de segundos: só desabilitar o botão
+   pareceria travamento. O botão GERAR PDF continua com o padrão dele (rótulo + disabled). */
+.loader {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 16px;
+  color: var(--purple-dark);
+}
+
+.loader span {
+  flex: 0 0 28px;
+  width: 28px;
+  height: 28px;
+  border: 4px solid var(--line);
+  border-top-color: var(--purple);
+  border-radius: 50%;
+  animation: spin 0.9s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .loader span { animation-duration: 3s; }
+}
+
+@media (max-width: 980px) {
+  .gemini-grid { grid-template-columns: 1fr; }
+  .gemini-modal { place-items: start center; }
 }
 
 /* Layout exclusivo do PDF ---------------------------------------------------
