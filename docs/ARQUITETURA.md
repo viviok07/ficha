@@ -108,7 +108,7 @@ atributo certo no HTML — nenhum listener novo é preciso se você reutilizar u
 
 | Atributo | Efeito ao clicar/digitar |
 | --- | --- |
-| `data-step="<id>"` | `state.step = id` (usado pelo stepper lateral **e** pelos botões Voltar/Próximo) |
+| `data-step="<id>"` | `state.step = id` e, **depois do `render()`**, `window.scrollTo(0, 0)` (stepper **e** botões Voltar/Próximo) |
 | `data-race="<id>"` | `state.race = id` |
 | `data-class="<id>"` | `state.class = id` **e esvazia `state.skills` e `state.equipment`** (ids são exclusivos por classe) |
 | `data-skill="<id>"` | `toggleChoice('skills', id, SKILL_LIMIT)` — máximo de 2 |

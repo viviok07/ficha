@@ -562,6 +562,44 @@ button { cursor: pointer; }
   .row.details { grid-template-columns: 1fr; }
 }
 
+/* Ponto de quebra adicional, exclusivo da navegação de passos. Abaixo de 650px a faixa
+   horizontal de 6 colunas do bloco acima não cabe mais: cada célula fica com
+   (largura - 110) / 6 px, o que faz o círculo de 34px do número transbordar o cartão
+   abaixo de 434px de viewport e derruba o alvo de toque abaixo dos 44px em telas de
+   374px ou menos. Aqui a faixa vira uma grade compacta de 3 x 2, com número e título
+   lado a lado e o subtítulo oculto. Tudo que vale de 651px para cima está fora deste
+   bloco e permanece intocado. */
+@media (max-width: 650px) {
+  .steps {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 10px;
+  }
+
+  .step {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 56px;
+    padding: 10px;
+    text-align: left;
+  }
+
+  /* flex: 0 0 28px impede que o círculo do número seja espremido pelo título ao lado. */
+  .step strong {
+    flex: 0 0 28px;
+    width: 28px;
+    height: 28px;
+    font-size: 14px;
+  }
+
+  .step h3 {
+    margin: 0;
+    font-size: 12px;
+  }
+
+  .step p { display: none; }
+}
+
 .file-input {
   display: none;
 }

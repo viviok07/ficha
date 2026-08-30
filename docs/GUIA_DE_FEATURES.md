@@ -115,9 +115,9 @@ Exemplo: um campo `motivacao`.
    `if (state.step === 'novo') return renderNovoStep();` **antes** do `return renderStoryStep()`
    final, que funciona como fallback.
 4. Ajuste os `renderNavButtons()` dos passos vizinhos para apontarem para o novo id.
-5. Confira `.steps { grid-template-columns: repeat(6, ...) }` em
-   [src/style.css:534](../src/style.css#L534) (media query mobile) — o número precisa bater com a
-   quantidade de passos.
+5. Ajuste as **duas** grades de `.steps`: `repeat(6, ...)` em
+   [src/style.css:548](../src/style.css#L548) (≤980px, uma faixa) e `repeat(3, ...)` em
+   [src/style.css:574](../src/style.css#L574) (≤650px, 3 x 2 — com 7 passos vira 3 x 3).
 
 Todo passo precisa funcionar com o estado vazio: mostre um texto de espera em `.info.empty` em
 vez de acessar `selectedRace().name` direto, e **não** bloqueie o botão PRÓXIMO PASSO.
