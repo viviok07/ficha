@@ -216,9 +216,26 @@ const SKILL_LIMIT = 2;
 const PERSONALITY_LIMIT = 3;
 const EQUIPMENT_LIMIT = 2;
 
-// Integração com o Gemini (Interactions API) ---------------------------------
+// Integrações de geração de imagem (Gemini e OpenAI) -------------------------
 // A chamada sai do NAVEGADOR, sem backend: a chave é digitada pelo usuário, vive só nesta
-// sessão e some no F5. Ver docs/INTEGRACAO_GEMINI.md.
+// sessão e some no F5. Ver docs/INTEGRACAO_GEMINI.md e docs/INTEGRACAO_OPENAI.md.
+
+// O `id` é a chave do sub-objeto em `integrations`, do mapa de códigos de erro e do rótulo.
+const AI_PLATFORMS = [
+  { id: 'gemini', name: 'Gemini (Google)' },
+  { id: 'openai', name: 'ChatGPT (OpenAI)' },
+];
+
+// Rótulo do botão que abre o modal. Aparece na tela e dentro das mensagens de erro; ficam
+// juntos aqui para nunca divergirem.
+const AI_CONFIG_LABEL = '⚙ INTEGRAÇÕES';
+
+const AI_PLATFORM_INFO = {
+  gemini: { label: 'Gemini', painel: 'no Google AI Studio' },
+  openai: { label: 'ChatGPT', painel: 'no painel da OpenAI' },
+};
+
+// Gemini (Interactions API) ---------------------------------------------------
 const GEMINI_ENDPOINT = 'https://generativelanguage.googleapis.com/v1beta/interactions';
 
 // Nomes conferidos na documentação oficial. "outro" não é um modelo: é a opção que revela o
@@ -241,43 +258,118 @@ const GEMINI_SIZES = ['1K', '0.5K'];
 // canal alfa, então o retrato gerado nunca vem com fundo transparente — ver docs/INTEGRACAO_GEMINI.md.
 const GEMINI_IMAGE_MIME = 'image/jpeg';
 
-// error.code da Interactions API -> texto que a criança lê. Toda mensagem termina no caminho
-// manual, que continua disponível mesmo quando o Gemini falha.
-const GEMINI_ERRORS = {
-  quota_exceeded: 'A conta do Gemini está sem crédito ou já bateu o limite de hoje. Copie o prompt aqui em cima e gere a imagem na ferramenta de IA que você preferir, depois use CARREGAR IMAGEM.',
-  rate_limit_exceeded: 'A conta do Gemini está sem crédito ou já bateu o limite de hoje. Copie o prompt aqui em cima e gere a imagem na ferramenta de IA que você preferir, depois use CARREGAR IMAGEM.',
-  too_many_requests: 'A conta do Gemini está sem crédito ou já bateu o limite de hoje. Copie o prompt aqui em cima e gere a imagem na ferramenta de IA que você preferir, depois use CARREGAR IMAGEM.',
-  failed_precondition: 'A conta do Gemini está sem crédito ou já bateu o limite de hoje. Copie o prompt aqui em cima e gere a imagem na ferramenta de IA que você preferir, depois use CARREGAR IMAGEM.',
-  authentication: 'O Gemini não aceitou essa chave. Confira a chave em ⚙ GEMINI — ou copie o prompt e gere a imagem manualmente.',
-  permission_denied: 'Essa chave não tem permissão para gerar imagens. Confira a conta no Google AI Studio — ou copie o prompt e gere a imagem manualmente.',
-  model_not_found: 'O modelo escolhido não está disponível para essa chave. Tente outro em ⚙ GEMINI — ou copie o prompt e gere a imagem manualmente.',
-  not_found: 'O modelo escolhido não está disponível para essa chave. Tente outro em ⚙ GEMINI — ou copie o prompt e gere a imagem manualmente.',
-  safety: 'O Gemini não pôde criar esta imagem por causa das regras de conteúdo dele. Tente mudar a história ou a aparência — ou copie o prompt e gere a imagem manualmente.',
-  image_safety: 'O Gemini não pôde criar esta imagem por causa das regras de conteúdo dele. Tente mudar a história ou a aparência — ou copie o prompt e gere a imagem manualmente.',
-  prohibited_content: 'O Gemini não pôde criar esta imagem por causa das regras de conteúdo dele. Tente mudar a história ou a aparência — ou copie o prompt e gere a imagem manualmente.',
-  image_prohibited_content: 'O Gemini não pôde criar esta imagem por causa das regras de conteúdo dele. Tente mudar a história ou a aparência — ou copie o prompt e gere a imagem manualmente.',
-  recitation: 'O Gemini não pôde criar esta imagem por causa das regras de conteúdo dele. Tente mudar a história ou a aparência — ou copie o prompt e gere a imagem manualmente.',
-  image_recitation: 'O Gemini não pôde criar esta imagem por causa das regras de conteúdo dele. Tente mudar a história ou a aparência — ou copie o prompt e gere a imagem manualmente.',
-  image_other: 'O Gemini não pôde criar esta imagem por causa das regras de conteúdo dele. Tente mudar a história ou a aparência — ou copie o prompt e gere a imagem manualmente.',
-  content_blocked: 'O Gemini não pôde criar esta imagem por causa das regras de conteúdo dele. Tente mudar a história ou a aparência — ou copie o prompt e gere a imagem manualmente.',
-  no_image: 'O Gemini respondeu, mas não mandou nenhuma imagem. Tente de novo — ou copie o prompt e gere a imagem manualmente.',
-  api_error: 'O Gemini está fora do ar agora. Tente de novo em alguns minutos — ou copie o prompt e gere a imagem manualmente.',
-  service_unavailable: 'O Gemini está fora do ar agora. Tente de novo em alguns minutos — ou copie o prompt e gere a imagem manualmente.',
-  deadline_exceeded: 'O Gemini está fora do ar agora. Tente de novo em alguns minutos — ou copie o prompt e gere a imagem manualmente.',
+// OpenAI (Images API) ---------------------------------------------------------
+const OPENAI_ENDPOINT = 'https://api.openai.com/v1/images/generations';
+
+// Mesma ideia do Gemini: lista curta dos modelos de imagem conhecidos mais "outro", porque a
+// OpenAI também renomeia modelo e o app não se atualiza sozinho.
+const OPENAI_MODELS = [
+  { id: 'gpt-image-2', name: 'GPT Image 2 (padrão)' },
+  { id: 'gpt-image-1', name: 'GPT Image 1' },
+  { id: 'gpt-image-1-mini', name: 'GPT Image 1 Mini (mais rápido e barato)' },
+  { id: 'outro', name: 'Outro (digitar o nome)' },
+];
+
+// Nada de paisagem, pela mesma razão das proporções do Gemini: '1536x1024' ficou de fora.
+const OPENAI_SIZES = ['1024x1536', '1024x1024'];
+const OPENAI_QUALITIES = ['auto', 'low', 'medium', 'high'];
+// 'medium' e não 'high': o data URL de uma imagem 'high' é pesado e ainda precisa atravessar o
+// html2canvas na geração do PDF.
+const OPENAI_DEFAULT_QUALITY = 'medium';
+// A Images API devolve base64 de PNG em data[0].b64_json.
+const OPENAI_IMAGE_MIME = 'image/png';
+
+// Texto que a criança lê, um por situação, com o nome da plataforma interpolado. São templates
+// justamente para as duas integrações dividirem as mesmas frases já revisadas. Toda mensagem
+// termina no caminho manual, que continua disponível mesmo quando a API falha.
+const AI_ERROR_TEXTS = {
+  quota: 'A conta do {plataforma} está sem crédito ou já bateu o limite de hoje. Copie o prompt aqui em cima e gere a imagem na ferramenta de IA que você preferir, depois use CARREGAR IMAGEM.',
+  authentication: 'O {plataforma} não aceitou essa chave. Confira a chave em {botao} — ou copie o prompt e gere a imagem manualmente.',
+  permission: 'Essa chave não tem permissão para gerar imagens. Confira a conta {painel} — ou copie o prompt e gere a imagem manualmente.',
+  model: 'O modelo escolhido não está disponível para essa chave. Tente outro em {botao} — ou copie o prompt e gere a imagem manualmente.',
+  content: 'O {plataforma} não pôde criar esta imagem por causa das regras de conteúdo dele. Tente mudar a história ou a aparência — ou copie o prompt e gere a imagem manualmente.',
+  no_image: 'O {plataforma} respondeu, mas não mandou nenhuma imagem. Tente de novo — ou copie o prompt e gere a imagem manualmente.',
+  unavailable: 'O {plataforma} está fora do ar agora. Tente de novo em alguns minutos — ou copie o prompt e gere a imagem manualmente.',
+  network: 'Não consegui falar com o {plataforma} (sem internet ou conexão bloqueada). Copie o prompt e gere a imagem na ferramenta de IA que você preferir.',
+  unknown_detail: 'Não consegui gerar a imagem com o {plataforma} ({detalhe}). Copie o prompt e gere a imagem manualmente.',
+  unknown: 'Não consegui gerar a imagem com o {plataforma}. Copie o prompt e gere a imagem manualmente.',
 };
 
-const GEMINI_NETWORK_ERROR = 'Não consegui falar com o Gemini (sem internet ou conexão bloqueada). Copie o prompt e gere a imagem na ferramenta de IA que você preferir.';
-const GEMINI_NO_IMAGE_ERROR = GEMINI_ERRORS.no_image;
+// error.code da Interactions API -> chave de AI_ERROR_TEXTS.
+const GEMINI_ERROR_CODES = {
+  quota_exceeded: 'quota',
+  rate_limit_exceeded: 'quota',
+  too_many_requests: 'quota',
+  failed_precondition: 'quota',
+  authentication: 'authentication',
+  permission_denied: 'permission',
+  model_not_found: 'model',
+  not_found: 'model',
+  safety: 'content',
+  image_safety: 'content',
+  prohibited_content: 'content',
+  image_prohibited_content: 'content',
+  recitation: 'content',
+  image_recitation: 'content',
+  image_other: 'content',
+  content_blocked: 'content',
+  no_image: 'no_image',
+  api_error: 'unavailable',
+  service_unavailable: 'unavailable',
+  deadline_exceeded: 'unavailable',
+};
 
-// Configuração da sessão. NÃO entra em characterJson(), NÃO vai para localStorage e NÃO é
-// escrita em log: ao atualizar a página tudo isto some e o modal volta.
-const gemini = {
-  modalOpen: true,
-  apiKey: '',
-  model: GEMINI_MODELS[0].id,
-  customModel: '',
-  aspectRatio: GEMINI_ASPECTS[0],
-  imageSize: GEMINI_SIZES[0],
+// error.code (ou error.type, quando a resposta não traz code) da Images API -> AI_ERROR_TEXTS.
+const OPENAI_ERROR_CODES = {
+  insufficient_quota: 'quota',
+  billing_hard_limit_reached: 'quota',
+  rate_limit_exceeded: 'quota',
+  quota_exceeded: 'quota',
+  invalid_api_key: 'authentication',
+  invalid_authentication: 'authentication',
+  authentication_error: 'authentication',
+  permission_denied: 'permission',
+  permission_error: 'permission',
+  unsupported_country_region_territory: 'permission',
+  model_not_found: 'model',
+  moderation_blocked: 'content',
+  content_policy_violation: 'content',
+  image_generation_user_error: 'content',
+  no_image: 'no_image',
+  server_error: 'unavailable',
+  service_unavailable: 'unavailable',
+};
+
+// Monta o texto final da situação `key` para a plataforma dada.
+function aiText(platform, key, detail) {
+  const info = AI_PLATFORM_INFO[platform] || AI_PLATFORM_INFO.gemini;
+  return AI_ERROR_TEXTS[key]
+    .split('{plataforma}').join(info.label)
+    .split('{painel}').join(info.painel)
+    .split('{botao}').join(AI_CONFIG_LABEL)
+    .split('{detalhe}').join(detail ?? '');
+}
+
+// Configuração da sessão das DUAS plataformas. NÃO entra em characterJson(), NÃO vai para
+// localStorage e NÃO é escrita em log: ao atualizar a página tudo isto some.
+// `modalOpen` nasce false de propósito: o modal só abre pelo botão do passo 5.
+const integrations = {
+  modalOpen: false,
+  platform: AI_PLATFORMS[0].id,
+  gemini: {
+    apiKey: '',
+    model: GEMINI_MODELS[0].id,
+    customModel: '',
+    aspectRatio: GEMINI_ASPECTS[0],
+    imageSize: GEMINI_SIZES[0],
+  },
+  openai: {
+    apiKey: '',
+    model: OPENAI_MODELS[0].id,
+    customModel: '',
+    size: OPENAI_SIZES[0],
+    quality: OPENAI_DEFAULT_QUALITY,
+  },
 };
 
 const imageState = {
@@ -344,7 +436,7 @@ function render() {
   const focus = captureFocus();
   $('#root').innerHTML = `
     <main class="page">
-      ${renderGeminiModal()}
+      ${renderIntegrationsModal()}
       <header class="hero-head">
         <div class="brand">
           <div class="sigil">✡</div>
@@ -478,69 +570,133 @@ function renderEquipmentField() {
   return `<div class="field"><span>Equipamento <small>(escolha até ${EQUIPMENT_LIMIT} — ${state.equipment.length}/${EQUIPMENT_LIMIT})</small></span>${renderPickGrid(options, state.equipment, 'equipment', 'equipment-grid')}</div>`;
 }
 
-// O modal aparece uma vez por sessão e é DELIBERADAMENTE não-bloqueante: "AGORA NÃO" fecha e
-// libera o app inteiro, porque quem não tem chave do Gemini continua usando COPIAR PROMPT +
-// CARREGAR IMAGEM normalmente. O botão ⚙ GEMINI do passo 5 reabre quando o usuário quiser.
-function renderGeminiModal() {
-  if (!gemini.modalOpen) return '';
+// O modal NÃO abre sozinho: `integrations.modalOpen` nasce false e só o botão ⚙ INTEGRAÇÕES do
+// passo 5 o abre. Ele é DELIBERADAMENTE não-bloqueante — fechado sem chave nenhuma, o app
+// continua inteiro por COPIAR PROMPT + CARREGAR IMAGEM.
+// Os dois blocos de plataforma ficam visíveis ao mesmo tempo, a pedido do usuário: o select no
+// topo só marca qual delas o botão de gerar vai usar, e o bloco escolhido ganha destaque.
+function renderIntegrationsModal() {
+  if (!integrations.modalOpen) return '';
 
-  const custom = gemini.model === 'outro';
-  const options = GEMINI_MODELS
-    .map((item) => `<option value="${item.id}" ${gemini.model === item.id ? 'selected' : ''}>${escapeHtml(item.name)}</option>`)
-    .join('');
-  const aspects = GEMINI_ASPECTS
-    .map((item) => `<option value="${item}" ${gemini.aspectRatio === item ? 'selected' : ''}>${item} (retrato)</option>`)
-    .join('');
-  const sizes = GEMINI_SIZES
-    .map((item) => `<option value="${item}" ${gemini.imageSize === item ? 'selected' : ''}>${item}</option>`)
+  const platforms = AI_PLATFORMS
+    .map((item) => `<option value="${item.id}" ${integrations.platform === item.id ? 'selected' : ''}>${escapeHtml(item.name)}</option>`)
     .join('');
 
-  return `<section class="gemini-modal" aria-label="Configuração do Gemini">
-    <div class="gemini-card">
-      <h2>✦ Gerar o retrato com o Gemini ✦</h2>
-      <p>Quer que o retrato seja criado automaticamente? Informe sua chave do Google AI Studio. Se preferir continuar copiando o prompt e gerando a imagem por fora, clique em AGORA NÃO — o aplicativo funciona inteiro sem chave.</p>
-      <label class="field">Chave da API do Gemini
-        <input type="password" autocomplete="off" data-gemini="apiKey" placeholder="AIza..." value="${escapeHtml(gemini.apiKey)}" />
+  return `<section class="ai-modal" aria-label="Configuração das integrações de IA">
+    <div class="ai-card">
+      <h2>✦ Gerar o retrato com IA ✦</h2>
+      <p>Quer que o retrato seja criado automaticamente? Preencha os dados da plataforma que você tem e escolha qual delas vai gerar. Se preferir continuar copiando o prompt e gerando a imagem por fora, é só fechar — o aplicativo funciona inteiro sem chave.</p>
+      <label class="field">Plataforma que vai gerar o retrato
+        <select data-ai-platform>${platforms}</select>
       </label>
-      <div class="gemini-grid">
-        <label class="field">Modelo
-          <select data-gemini="model">${options}</select>
-        </label>
-        <label class="field">Proporção
-          <select data-gemini="aspectRatio">${aspects}</select>
-        </label>
-        <label class="field">Resolução
-          <select data-gemini="imageSize">${sizes}</select>
-        </label>
+      ${renderGeminiFields()}
+      ${renderOpenaiFields()}
+      <div class="ai-actions">
+        <button class="primary" data-action="save-integrations">SALVAR E FECHAR</button>
+        <button class="secondary" data-action="close-integrations">FECHAR</button>
       </div>
-      <label class="field gemini-custom" data-gemini-custom ${custom ? '' : 'hidden'}>Nome do modelo
-        <input data-gemini="customModel" placeholder="gemini-..." value="${escapeHtml(gemini.customModel)}" />
-      </label>
-      <div class="gemini-actions">
-        <button class="primary" data-action="save-gemini">SALVAR E FECHAR</button>
-        <button class="secondary" data-action="close-gemini">AGORA NÃO</button>
-      </div>
-      <small>A chave fica <b>só nesta sessão</b>, na memória do navegador: ao atualizar a página ela some e você precisa informar de novo. Ela nunca é gravada no computador nem entra no JSON da ficha. Mesmo assim, quem estiver usando este computador consegue ver a chave — use uma chave sua, não publique esta página em um servidor compartilhado e apague a chave no Google AI Studio se desconfiar de vazamento.</small>
+      <small>As chaves ficam <b>só nesta sessão</b>, na memória do navegador: ao atualizar a página elas somem e você precisa informar de novo. Nunca são gravadas no computador nem entram no JSON da ficha. Mesmo assim, quem estiver usando este computador consegue ver a chave — use uma chave sua, não publique esta página em um servidor compartilhado e apague a chave no painel da plataforma se desconfiar de vazamento.</small>
     </div>
   </section>`;
 }
 
-// O modelo efetivamente enviado: "outro" é só o gatilho do campo de texto.
-function geminiModel() {
-  return (gemini.model === 'outro' ? gemini.customModel : gemini.model).trim();
+// `ai-block-active` é só destaque visual de qual plataforma está escolhida. Ela é trocada
+// direto no nó quando o select muda (ver bindEvents), sem render(), para não apagar o que já
+// foi digitado nos campos.
+function aiBlockClass(platform) {
+  return `ai-block ${integrations.platform === platform ? 'ai-block-active' : ''}`;
 }
 
-function geminiReady() {
-  return Boolean(gemini.apiKey.trim() && geminiModel());
+function renderGeminiFields() {
+  const config = integrations.gemini;
+  const custom = config.model === 'outro';
+  const options = GEMINI_MODELS
+    .map((item) => `<option value="${item.id}" ${config.model === item.id ? 'selected' : ''}>${escapeHtml(item.name)}</option>`)
+    .join('');
+  const aspects = GEMINI_ASPECTS
+    .map((item) => `<option value="${item}" ${config.aspectRatio === item ? 'selected' : ''}>${item} (retrato)</option>`)
+    .join('');
+  const sizes = GEMINI_SIZES
+    .map((item) => `<option value="${item}" ${config.imageSize === item ? 'selected' : ''}>${item}</option>`)
+    .join('');
+
+  return `<div class="${aiBlockClass('gemini')}" data-ai-block="gemini">
+      <h3>Gemini <small>(Google AI Studio)</small></h3>
+      <label class="field">Chave da API do Gemini
+        <input type="password" autocomplete="off" data-ai="gemini.apiKey" placeholder="AIza..." value="${escapeHtml(config.apiKey)}" />
+      </label>
+      <div class="ai-grid">
+        <label class="field">Modelo
+          <select data-ai="gemini.model">${options}</select>
+        </label>
+        <label class="field">Proporção
+          <select data-ai="gemini.aspectRatio">${aspects}</select>
+        </label>
+        <label class="field">Resolução
+          <select data-ai="gemini.imageSize">${sizes}</select>
+        </label>
+      </div>
+      <label class="field ai-custom" data-ai-custom="gemini" ${custom ? '' : 'hidden'}>Nome do modelo
+        <input data-ai="gemini.customModel" placeholder="gemini-..." value="${escapeHtml(config.customModel)}" />
+      </label>
+    </div>`;
+}
+
+function renderOpenaiFields() {
+  const config = integrations.openai;
+  const custom = config.model === 'outro';
+  const options = OPENAI_MODELS
+    .map((item) => `<option value="${item.id}" ${config.model === item.id ? 'selected' : ''}>${escapeHtml(item.name)}</option>`)
+    .join('');
+  const sizes = OPENAI_SIZES
+    .map((item) => `<option value="${item}" ${config.size === item ? 'selected' : ''}>${item}${item === '1024x1536' ? ' (retrato)' : ' (quadrado)'}</option>`)
+    .join('');
+  const qualities = OPENAI_QUALITIES
+    .map((item) => `<option value="${item}" ${config.quality === item ? 'selected' : ''}>${item}</option>`)
+    .join('');
+
+  return `<div class="${aiBlockClass('openai')}" data-ai-block="openai">
+      <h3>ChatGPT <small>(OpenAI)</small></h3>
+      <label class="field">Chave da API da OpenAI
+        <input type="password" autocomplete="off" data-ai="openai.apiKey" placeholder="sk-..." value="${escapeHtml(config.apiKey)}" />
+      </label>
+      <div class="ai-grid">
+        <label class="field">Modelo
+          <select data-ai="openai.model">${options}</select>
+        </label>
+        <label class="field">Tamanho
+          <select data-ai="openai.size">${sizes}</select>
+        </label>
+        <label class="field">Qualidade
+          <select data-ai="openai.quality">${qualities}</select>
+        </label>
+      </div>
+      <label class="field ai-custom" data-ai-custom="openai" ${custom ? '' : 'hidden'}>Nome do modelo
+        <input data-ai="openai.customModel" placeholder="gpt-image-..." value="${escapeHtml(config.customModel)}" />
+      </label>
+    </div>`;
+}
+
+// O modelo efetivamente enviado: "outro" é só o gatilho do campo de texto.
+function aiModel(platform) {
+  const config = integrations[platform];
+  return (config.model === 'outro' ? config.customModel : config.model).trim();
+}
+
+function aiReady(platform) {
+  return Boolean(integrations[platform].apiKey.trim() && aiModel(platform));
 }
 
 function renderPortraitBlock() {
-  // Três caminhos para a mesma imagem: copiar o prompt e gerar por fora, gerar aqui com o
-  // Gemini, ou carregar um arquivo. Todos terminam no mesmo imageState.dataUrl.
-  const aiLabel = imageState.dataUrl ? 'GERAR DE NOVO COM GEMINI' : 'GERAR COM GEMINI';
-  const aiDisabled = geminiReady() && !imageState.aiLoading ? '' : 'disabled';
-  const aiTitle = geminiReady() ? '' : ' title="Informe a chave do Gemini em ⚙ GEMINI para usar este botão."';
-  return `<div class="portrait-tools"><h3>Retrato do personagem</h3><p>Copie o prompt abaixo e gere a imagem na ferramenta de IA que você preferir, ou peça ao Gemini para criar agora. Depois é só carregar o arquivo aqui. O retrato aparece no passo 6.</p><div class="portrait-actions"><button class="primary" data-action="copy-prompt">⧉ COPIAR PROMPT</button><button class="primary" data-action="generate-gemini" ${aiDisabled}${aiTitle}>✨ ${aiLabel}</button><button class="secondary" data-action="upload-image">⇪ ${imageState.dataUrl ? 'TROCAR IMAGEM' : 'CARREGAR IMAGEM'}</button><button class="ghost" data-action="open-gemini">⚙ GEMINI</button></div>${renderAiFeedback()}${renderCopyFeedback()}${renderUploadFeedback()}</div>`;
+  // Três caminhos para a mesma imagem: copiar o prompt e gerar por fora, gerar aqui com a
+  // plataforma escolhida, ou carregar um arquivo. Todos terminam no mesmo imageState.dataUrl.
+  const platform = integrations.platform;
+  const name = AI_PLATFORM_INFO[platform].label;
+  const aiLabel = `${imageState.dataUrl ? 'GERAR DE NOVO COM' : 'GERAR COM'} ${name.toUpperCase()}`;
+  const aiDisabled = imageState.aiLoading ? 'disabled' : '';
+  // Sem chave o botão NÃO fica inerte: ele abre o modal, que é o único lugar que resolve.
+  const aiTitle = aiReady(platform) ? '' : ` title="Informe a chave em ${AI_CONFIG_LABEL} para gerar aqui."`;
+  return `<div class="portrait-tools"><h3>Retrato do personagem</h3><p>Copie o prompt abaixo e gere a imagem na ferramenta de IA que você preferir, ou peça ao ${escapeHtml(name)} para criar agora. Depois é só carregar o arquivo aqui. O retrato aparece no passo 6.</p><div class="portrait-actions"><button class="primary" data-action="copy-prompt">⧉ COPIAR PROMPT</button><button class="primary" data-action="generate-ai" ${aiDisabled}${aiTitle}>✨ ${aiLabel}</button><button class="secondary" data-action="upload-image">⇪ ${imageState.dataUrl ? 'TROCAR IMAGEM' : 'CARREGAR IMAGEM'}</button><button class="ghost" data-action="open-integrations">${AI_CONFIG_LABEL}</button></div>${renderAiFeedback()}${renderCopyFeedback()}${renderUploadFeedback()}</div>`;
 }
 
 function renderAiFeedback() {
@@ -649,21 +805,28 @@ function bindEvents() {
   document.querySelectorAll('[data-appearance-key]').forEach((button) => button.addEventListener('click', () => { state.appearance[button.dataset.appearanceKey] = button.dataset.appearanceValue; render(); }));
   document.querySelectorAll('[data-field]').forEach((field) => field.addEventListener('input', () => { state[field.dataset.field] = field.value; render(); }));
   // Os campos do modal NÃO chamam render(): a página inteira seria remontada a cada tecla e o
-  // foco/seleção do campo se perderia (restoreFocus só cobre [data-field]). O único efeito
-  // visual necessário — mostrar o campo "Nome do modelo" — é feito ligando/desligando o
-  // atributo hidden no próprio nó, o que preserva tudo que já foi digitado no modal.
-  document.querySelectorAll('[data-gemini]').forEach((field) => {
+  // foco/seleção do campo se perderia (restoreFocus só cobre [data-field]). Os dois efeitos
+  // visuais necessários — mostrar o campo "Nome do modelo" e destacar a plataforma escolhida —
+  // são feitos direto no nó, o que preserva tudo que já foi digitado nos dois blocos.
+  document.querySelectorAll('[data-ai]').forEach((field) => {
+    const [platform, key] = field.dataset.ai.split('.');
     const update = () => {
-      gemini[field.dataset.gemini] = field.value;
-      if (field.dataset.gemini === 'model') $('[data-gemini-custom]')?.toggleAttribute('hidden', field.value !== 'outro');
+      integrations[platform][key] = field.value;
+      if (key === 'model') $(`[data-ai-custom="${platform}"]`)?.toggleAttribute('hidden', field.value !== 'outro');
     };
     field.addEventListener('input', update);
     field.addEventListener('change', update);
   });
-  $('[data-action="save-gemini"]')?.addEventListener('click', () => { gemini.modalOpen = false; render(); });
-  $('[data-action="close-gemini"]')?.addEventListener('click', () => { gemini.modalOpen = false; render(); });
-  $('[data-action="open-gemini"]')?.addEventListener('click', () => { gemini.modalOpen = true; render(); });
-  $('[data-action="generate-gemini"]')?.addEventListener('click', generateGeminiImage);
+  $('[data-ai-platform]')?.addEventListener('change', (event) => {
+    integrations.platform = event.target.value;
+    document.querySelectorAll('[data-ai-block]').forEach((block) => {
+      block.classList.toggle('ai-block-active', block.dataset.aiBlock === integrations.platform);
+    });
+  });
+  $('[data-action="save-integrations"]')?.addEventListener('click', () => { integrations.modalOpen = false; render(); });
+  $('[data-action="close-integrations"]')?.addEventListener('click', () => { integrations.modalOpen = false; render(); });
+  $('[data-action="open-integrations"]')?.addEventListener('click', () => { integrations.modalOpen = true; render(); });
+  $('[data-action="generate-ai"]')?.addEventListener('click', generateAiImage);
   $('[data-action="copy-prompt"]')?.addEventListener('click', copyPrompt);
   $('[data-action="upload-image"]')?.addEventListener('click', () => $('[data-image-input]')?.click());
   $('[data-image-input]')?.addEventListener('change', importImage);
@@ -869,27 +1032,31 @@ function importImage(event) {
   reader.readAsDataURL(file);
 }
 
-// Geração pelo Gemini ---------------------------------------------------------
-// Toda a conversa com a API está nestas quatro funções. Trocar a Interactions API por
-// generateContent um dia significa mexer só em geminiRequestBody() e geminiImageFromPayload().
+// Geração pelo Gemini e pelo ChatGPT ------------------------------------------
+// Toda a conversa com as APIs está nestas funções. Cada plataforma contribui com três coisas —
+// corpo do pedido, leitor da resposta e headers — reunidas em AI_REQUESTS; generateAiImage() é
+// igual para as duas. Trocar uma API um dia significa mexer só no par body/image dela.
 
 // A chave nunca pode vazar para a tela nem para o console. A mensagem de erro da API é texto de
-// terceiro: antes de exibir, qualquer ocorrência da chave é apagada.
+// terceiro: antes de exibir, qualquer ocorrência de QUALQUER uma das chaves digitadas é apagada.
 function scrubKey(text) {
-  const key = gemini.apiKey.trim();
-  const value = String(text ?? '');
-  return key ? value.split(key).join('***') : value;
+  let value = String(text ?? '');
+  for (const platform of AI_PLATFORMS) {
+    const key = integrations[platform.id].apiKey.trim();
+    if (key) value = value.split(key).join('***');
+  }
+  return value;
 }
 
 function geminiRequestBody(prompt) {
   return {
-    model: geminiModel(),
+    model: aiModel('gemini'),
     input: [{ type: 'text', text: prompt }],
     response_format: {
       type: 'image',
       mime_type: GEMINI_IMAGE_MIME,
-      aspect_ratio: gemini.aspectRatio,
-      image_size: gemini.imageSize,
+      aspect_ratio: integrations.gemini.aspectRatio,
+      image_size: integrations.gemini.imageSize,
     },
   };
 }
@@ -907,35 +1074,73 @@ function geminiImageFromPayload(payload) {
   return '';
 }
 
-// error.code é uma string snake_case documentada; o status HTTP é só a rede de segurança para
-// códigos novos que a Google introduza depois.
-function geminiErrorMessage(code, status, message) {
-  if (code && GEMINI_ERRORS[code]) return GEMINI_ERRORS[code];
-  if (status === 401 || status === 403) return GEMINI_ERRORS.authentication;
-  if (status === 404) return GEMINI_ERRORS.model_not_found;
-  if (status === 429) return GEMINI_ERRORS.quota_exceeded;
-  if (status >= 500) return GEMINI_ERRORS.api_error;
-  const detail = scrubKey(message).trim();
-  return detail
-    ? `Não consegui gerar a imagem com o Gemini (${detail}). Copie o prompt e gere a imagem manualmente.`
-    : 'Não consegui gerar a imagem com o Gemini. Copie o prompt e gere a imagem manualmente.';
+function openaiRequestBody(prompt) {
+  return {
+    model: aiModel('openai'),
+    prompt,
+    size: integrations.openai.size,
+    quality: integrations.openai.quality,
+    n: 1,
+  };
 }
 
-async function generateGeminiImage() {
-  if (imageState.aiLoading || !geminiReady()) return;
+// A Images API devolve a imagem em data[0].b64_json, sempre base64 — nunca URL, porque o app
+// não pede `response_format`.
+function openaiImageFromPayload(payload) {
+  const image = Array.isArray(payload?.data) ? payload.data[0] : null;
+  return image?.b64_json ? `data:${OPENAI_IMAGE_MIME};base64,${image.b64_json}` : '';
+}
 
+const AI_REQUESTS = {
+  gemini: {
+    endpoint: GEMINI_ENDPOINT,
+    headers: () => ({ 'Content-Type': 'application/json', 'x-goog-api-key': integrations.gemini.apiKey.trim() }),
+    body: geminiRequestBody,
+    image: geminiImageFromPayload,
+  },
+  openai: {
+    endpoint: OPENAI_ENDPOINT,
+    headers: () => ({ 'Content-Type': 'application/json', Authorization: `Bearer ${integrations.openai.apiKey.trim()}` }),
+    body: openaiRequestBody,
+    image: openaiImageFromPayload,
+  },
+};
+
+// error.code é uma string snake_case documentada nas duas APIs (a OpenAI às vezes só traz
+// error.type); o status HTTP é a rede de segurança para códigos novos que elas introduzam.
+function aiErrorMessage(platform, code, status, message) {
+  const codes = platform === 'openai' ? OPENAI_ERROR_CODES : GEMINI_ERROR_CODES;
+  if (code && codes[code]) return aiText(platform, codes[code]);
+  if (status === 401 || status === 403) return aiText(platform, 'authentication');
+  if (status === 404) return aiText(platform, 'model');
+  if (status === 429) return aiText(platform, 'quota');
+  if (status >= 500) return aiText(platform, 'unavailable');
+  const detail = scrubKey(message).trim();
+  return detail ? aiText(platform, 'unknown_detail', detail) : aiText(platform, 'unknown');
+}
+
+async function generateAiImage() {
+  if (imageState.aiLoading) return;
+
+  const platform = integrations.platform;
+  // Sem chave o botão não fica inerte: abre o modal, que é o único lugar onde isso se resolve.
+  // O modal não aparece mais sozinho, então este é o caminho de descoberta da funcionalidade.
+  if (!aiReady(platform)) {
+    integrations.modalOpen = true;
+    render();
+    return;
+  }
+
+  const request = AI_REQUESTS[platform];
   imageState.aiLoading = true;
   imageState.aiError = '';
   render();
 
   try {
-    const response = await fetch(GEMINI_ENDPOINT, {
+    const response = await fetch(request.endpoint, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-goog-api-key': gemini.apiKey.trim(),
-      },
-      body: JSON.stringify(geminiRequestBody(buildImagePrompt())),
+      headers: request.headers(),
+      body: JSON.stringify(request.body(buildImagePrompt())),
     });
 
     // Um 500 pode devolver HTML em vez de JSON: o parse não pode derrubar o tratamento.
@@ -947,13 +1152,14 @@ async function generateGeminiImage() {
     }
 
     if (!response.ok) {
-      imageState.aiError = geminiErrorMessage(payload?.error?.code, response.status, payload?.error?.message);
+      const code = payload?.error?.code || payload?.error?.type;
+      imageState.aiError = aiErrorMessage(platform, code, response.status, payload?.error?.message);
       return;
     }
 
-    const dataUrl = geminiImageFromPayload(payload);
+    const dataUrl = request.image(payload);
     if (!dataUrl) {
-      imageState.aiError = GEMINI_NO_IMAGE_ERROR;
+      imageState.aiError = aiText(platform, 'no_image');
       return;
     }
 
@@ -963,7 +1169,7 @@ async function generateGeminiImage() {
     imageState.pdfError = '';
   } catch (error) {
     // fetch só rejeita por rede/CORS/offline; erro de API vem como resposta com status.
-    imageState.aiError = GEMINI_NETWORK_ERROR;
+    imageState.aiError = aiText(platform, 'network');
   } finally {
     imageState.aiLoading = false;
     render();

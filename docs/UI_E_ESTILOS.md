@@ -71,8 +71,8 @@ Dois pontos de quebra, nesta ordem:
 | `.info.empty` | passos 1–3 | Texto de espera quando nada foi escolhido |
 | `.row.details` | `renderSheet()` | Linha de 3 colunas com idade, gênero e altura |
 | `.portrait-tools`, `.portrait-actions`, `.copy-status`, `.prompt-box` | passo 5 | Bloco do retrato: os quatro botões, aviso de cópia e o prompt em textarea. `.portrait-actions button` entra na lista de medidas do cabeçalho, senão `.primary` sai mais baixo que `.secondary` |
-| `.gemini-modal`, `.gemini-card`, `.gemini-grid`, `.gemini-custom`, `.gemini-actions` | `renderGeminiModal()` | Overlay de configuração do Gemini. Sobrepõe a página mas **não** bloqueia: some com AGORA NÃO. `.gemini-custom[hidden]` esconde o campo do modelo digitado |
-| `.loader` | `renderAiFeedback()` | Spinner (`@keyframes spin`) enquanto o Gemini gera. Reduzido a 3 s em `prefers-reduced-motion`. O botão GERAR PDF **não** usa: ele só troca o rótulo |
+| `.ai-modal`, `.ai-card`, `.ai-block`, `.ai-block-active`, `.ai-grid`, `.ai-custom`, `.ai-actions` | `renderIntegrationsModal()` | Overlay de configuração das integrações. **Não abre sozinho** e não bloqueia: some com FECHAR. `.ai-card` rola por dentro (`max-height` + `overflow-y`) porque os dois blocos ficam à vista; `.ai-block-active` destaca a plataforma escolhida; `.ai-custom[hidden]` esconde o campo do modelo digitado |
+| `.loader` | `renderAiFeedback()` | Spinner (`@keyframes spin`) enquanto a IA gera. Reduzido a 3 s em `prefers-reduced-motion`. O botão GERAR PDF **não** usa: ele só troca o rótulo |
 | `.image-error`, `.generated-image` | passos 5 e 6 | Erro legível e a moldura do retrato |
 | `.sheet`, `.ribbon`, `.badges`, `.attrs`, `.cols`, `.chips`, `.center` | `renderSheet()` | Ficha lateral |
 | `.info` | passos 1–3 | Bloco de detalhe abaixo do grid |

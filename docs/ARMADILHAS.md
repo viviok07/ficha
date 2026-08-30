@@ -22,6 +22,6 @@ Documentadas para que agentes não as tratem como bugs novos nem as repitam:
    checado, via `file.type.startsWith('image/')`. Um SVG sem dimensão intrínseca é barrado depois,
    já dentro de `generatePdf()`.
 8. ~~Chave de `appearance` vinda de JSON chega crua ao `innerHTML`~~ — **resolvido em duas
-   camadas**: `normalizeAppearance()` ([src/main.js:736](../src/main.js#L736)) só aceita as chaves
+   camadas**: `normalizeAppearance()` ([src/main.js:899](../src/main.js#L899)) só aceita as chaves
    de `appearanceGroups` na importação, e `renderSheet()` escapa `labelForAppearance(key)` no
    ponto de interpolação. Chave desconhecida é descartada em silêncio, como nos outros catálogos.

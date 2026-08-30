@@ -25,9 +25,9 @@ retrato dentro dela.
 | Como rodar | Abrir `index.html` no navegador, ou servir a pasta (`python -m http.server`). |
 | Módulos | **Não há `import`/`export`.** `src/main.js` é um script clássico (`<script defer>`); todo o escopo é um único arquivo. |
 | Renderização | Reescrita total de `#root.innerHTML` a cada mudança de estado. Sem virtual DOM, sem diff. |
-| Persistência | Nenhuma. Nada de `localStorage`. Só download/upload manual de JSON. A chave do Gemini também é só de sessão. |
+| Persistência | Nenhuma. Nada de `localStorage`. Só download/upload manual de JSON. As chaves de IA também são só de sessão. |
 | Estado inicial | **Vazio.** Nada de raça, classe, habilidade, aparência ou texto pré-selecionado. |
-| Retrato | Dois caminhos: copiar o prompt e trazer a imagem por upload, ou gerar pela API do Gemini com uma chave da sessão (opcional). Vive só em memória. |
+| Retrato | Dois caminhos: copiar o prompt e trazer a imagem por upload, ou gerar pela API do Gemini ou do ChatGPT com uma chave da sessão (opcional). Vive só em memória. |
 | Idioma | Todo texto de UI, nomes de dados e commits em **português do Brasil**. |
 | Testes | Não existem. A validação é `npm run build` + verificação manual no navegador. |
 
@@ -42,7 +42,8 @@ retrato dentro dela.
 | [docs/GUIA_DE_FEATURES.md](docs/GUIA_DE_FEATURES.md) | **Receitas prontas**: adicionar raça, classe, habilidade, campo, passo, ação do cabeçalho, etc. |
 | [docs/UI_E_ESTILOS.md](docs/UI_E_ESTILOS.md) | Tokens de cor, classes CSS existentes, grid, responsividade. |
 | [docs/INTEGRACAO_IMAGEM.md](docs/INTEGRACAO_IMAGEM.md) | Como funcionam o prompt, a cópia, o upload do retrato e a geração do PDF. |
-| [docs/INTEGRACAO_GEMINI.md](docs/INTEGRACAO_GEMINI.md) | O caminho opcional pela API do Gemini: chave, modal, endpoint, mapa de erros, CORS e segurança. |
+| [docs/INTEGRACAO_GEMINI.md](docs/INTEGRACAO_GEMINI.md) | O caminho opcional pela API do Gemini: chave, endpoint, mapa de erros, CORS e segurança. |
+| [docs/INTEGRACAO_OPENAI.md](docs/INTEGRACAO_OPENAI.md) | O mesmo para a API de imagens da OpenAI (ChatGPT), a segunda plataforma do modal ⚙ INTEGRAÇÕES. |
 | [vendor/README.md](vendor/README.md) | Quais bibliotecas de terceiros existem, em que versão e por quê. |
 
 ## Agente e skills deste repositório

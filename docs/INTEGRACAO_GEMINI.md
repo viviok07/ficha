@@ -14,7 +14,8 @@ manual inteiro — ver [INTEGRACAO_IMAGEM.md](INTEGRACAO_IMAGEM.md).
 3. Copie a chave. Ela costuma começar com `AIza`.
 4. Modelos de imagem podem exigir **faturamento ativo** no projeto. Se a geração falhar com
    "sem crédito", confira o billing em <https://aistudio.google.com/> antes de tentar de novo.
-5. Abra o `index.html`. O modal **✦ Gerar o retrato com o Gemini ✦** aparece sozinho:
+5. Abra o `index.html`, vá até o passo 5 (História) e clique em **⚙ INTEGRAÇÕES**. O modal
+   **não abre sozinho** — esse botão é o único jeito de abri-lo. No bloco **Gemini**:
    - **Chave da API do Gemini** — a chave copiada.
    - **Modelo** — lista com os modelos de imagem conhecidos, mais *Outro*, que revela um campo
      de texto para digitar um nome novo (útil quando a Google renomeia um modelo).
@@ -22,18 +23,20 @@ manual inteiro — ver [INTEGRACAO_IMAGEM.md](INTEGRACAO_IMAGEM.md).
      inteiro e ocupa uma coluna estreita no PDF.
    - **Resolução** — `1K` ou `0.5K`. Não há `2K`/`4K` de propósito: o data URL ficaria enorme e
      atravessaria o `html2canvas` na geração do PDF.
-6. **SALVAR E FECHAR** guarda tudo na sessão. **AGORA NÃO** fecha sem chave nenhuma e o app
-   segue funcionando por completo.
-7. No passo 5, clique em **✨ GERAR COM GEMINI**. O botão `⚙ GEMINI` reabre o modal quando
-   quiser trocar chave ou modelo.
+6. Escolha **Gemini (Google)** no `<select>` do topo do modal: é ele que decide qual plataforma
+   o botão de gerar vai chamar. O bloco escolhido fica destacado.
+7. **SALVAR E FECHAR** guarda tudo na sessão. **FECHAR** sai sem chave nenhuma e o app segue
+   funcionando por completo.
+8. No passo 5, clique em **✨ GERAR COM GEMINI**. Sem chave, esse botão **abre o modal** em vez
+   de chamar a API.
 
-Ao atualizar a página, **tudo some** e o modal volta.
+Ao atualizar a página, **tudo some** — e o modal continua só abrindo pelo botão.
 
 ## Parte 2 — Como a chamada é feita (para quem mexe no código)
 
-Tudo vive em quatro funções de `src/main.js`: `geminiRequestBody()`, `geminiImageFromPayload()`,
-`geminiErrorMessage()` e `generateGeminiImage()`. Trocar de API um dia significa mexer nas duas
-primeiras.
+Tudo vive em `src/main.js`: `geminiRequestBody()` e `geminiImageFromPayload()` são exclusivas do
+Gemini e estão registradas em `AI_REQUESTS.gemini`; `aiErrorMessage()` e `generateAiImage()` são
+compartilhadas com a OpenAI. Trocar de API um dia significa mexer só nas duas primeiras.
 
 ### Requisição — Interactions API
 
@@ -114,13 +117,14 @@ porque essa lista envelhece:
 ### Erros
 
 O corpo de erro é `{"error": {"code": "<snake_case>", "message": "…"}}`, com o status HTTP
-definido. O `code` é a chave do mapa `GEMINI_ERRORS`; o status HTTP é a rede de segurança para
-códigos que a Google introduza depois. **Toda** mensagem termina apontando o caminho manual.
+definido. O `code` é a chave do mapa `GEMINI_ERROR_CODES`, que aponta para um texto de
+`AI_ERROR_TEXTS` com `{plataforma}` interpolado — as frases são as mesmas para as duas APIs. O
+status HTTP é a rede de segurança para códigos que a Google introduza depois. **Toda** mensagem termina apontando o caminho manual.
 
 | Situação | Detecção | Mensagem |
 | --- | --- | --- |
 | Sem crédito / cota | 429 `quota_exceeded`, `rate_limit_exceeded`, `too_many_requests`; 400 `failed_precondition` | "sem crédito ou já bateu o limite de hoje… copie o prompt" |
-| Chave recusada | 401 `authentication` | "não aceitou essa chave. Confira em ⚙ GEMINI" |
+| Chave recusada | 401 `authentication` | "não aceitou essa chave. Confira em ⚙ INTEGRAÇÕES" |
 | Sem permissão | 403 `permission_denied` | "não tem permissão para gerar imagens" |
 | Modelo inexistente | 404 `model_not_found`, `not_found` | "o modelo escolhido não está disponível" |
 | Bloqueio de conteúdo | `safety`, `image_safety`, `prohibited_content`, `image_prohibited_content`, `recitation`, `image_recitation`, `image_other`, `content_blocked` | "regras de conteúdo… tente mudar a história" |
@@ -141,7 +145,7 @@ navegador funciona **até com o `index.html` aberto por duplo clique**. Não é 
 
 ## Segurança
 
-- A chave vive em `gemini.apiKey`, só em memória. **Nada de `localStorage`**, nada em
+- A chave vive em `integrations.gemini.apiKey`, só em memória. **Nada de `localStorage`**, nada em
   `characterJson()`, nada em `console`.
 - `scrubKey()` apaga a chave de qualquer mensagem de erro antes de exibi-la, caso a API a ecoe.
 - O campo é `type="password"`; com o modal fechado a chave não aparece em lugar nenhum do DOM.
