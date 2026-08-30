@@ -1,6 +1,6 @@
 # UI e estilos
 
-Todo o CSS está em [src/style.css](../src/style.css) (~655 linhas), escrito à mão, sem
+Todo o CSS está em [src/style.css](../src/style.css) (~625 linhas), escrito à mão, sem
 pré-processador, sem utilitários e sem `!important`. As classes são semânticas e curtas, e o
 HTML que as usa vive nas template strings de `src/main.js`.
 
@@ -36,32 +36,33 @@ massa.
 .workspace grid 3 colunas: steps (0.16fr) | painel (1.08fr) | ficha (0.92fr)
 ```
 
-Ponto de quebra único: `@media (max-width: 980px)` ([src/style.css:556](../src/style.css#L556)),
+Ponto de quebra único: `@media (max-width: 980px)` ([src/style.css:532](../src/style.css#L532)),
 que empilha `.hero-head` e `.workspace` em uma coluna, transforma `.steps` em uma faixa
-horizontal de 5 colunas e colapsa os grids de cards, `.row`, `.badges`, `.cols` e `.attrs` para
-uma coluna. **Se você adicionar um grid novo, avalie incluí-lo nessa lista.**
+horizontal de 6 colunas e colapsa os grids de cards (`.race-grid`, `.class-grid`, `.skill-grid`,
+`.trait-grid`, `.equipment-grid`), `.row`, `.badges`, `.cols` e `.attrs` para uma coluna.
+**Se você adicionar um grid novo, inclua-o nessa lista.**
 
 ## Classes por área
 
 | Classe | Onde é gerada | Papel |
 | --- | --- | --- |
-| `.integration-gate` / `.integration-card` | `renderIntegrationGate()` | Overlay fixo de configuração da OpenAI |
 | `.hero-head`, `.brand`, `.sigil`, `.twinkle`, `.actions` | `render()` | Cabeçalho |
 | `.primary`, `.secondary`, `.ghost`, `.next` | vários | Variantes de botão |
 | `.steps`, `.step`, `.step.active` | `renderStepper()` | Navegação lateral |
 | `.panel`, `.current-panel` | cada `render*Step()` | Cartão do passo atual |
-| `.option-grid` + `.race-grid` / `.class-grid` / `.skill-grid` | passos 1–3 | Grids de escolha (3, 2 e 2 colunas) |
-| `.choice-card`, `.choice-art`, `.p0`–`.p6`, `.skill-card` | passos 1–3 | Card selecionável |
+| `.option-grid` + `.race-grid` / `.class-grid` / `.skill-grid` / `.trait-grid` / `.equipment-grid` | passos 1–3 e 5 | Grids de escolha (3, 2, 2, 2 e 2 colunas) |
+| `.choice-card`, `.choice-art`, `.p0`–`.p6`, `.skill-card`, `.pick-card` | passos 1–3 e 5 | Card selecionável (`.pick-card` é o mais baixo, usado nos multi-selects do passo 5) |
 | `.appearance-list`, `.group`, `.opts`, `.pill-choice` | passo 4 | Grupos de aparência |
-| `.field` | passo 5 e gate | `<label>` (ou `<div>`) com input/textarea/select |
-| `.traits`, `.trait`, `.trait-remove`, `.traits-empty` | `renderPersonalityField()` | Badges de personalidade e o "×" que remove cada uma |
+| `.field` | passo 5 | `<label>` (ou `<div>`) com input, textarea ou uma grade de escolha |
+| `.hint` | passo 2 e passo 6 | Observação em itálico, discreta |
 | `.info.empty` | passos 1–3 | Texto de espera quando nada foi escolhido |
 | `.row.details` | `renderSheet()` | Linha de 3 colunas com idade, gênero e altura |
-| `.image-generator`, `.loader`, `.image-error`, `.generated-image` | passo 5 | Bloco de geração de imagem |
+| `.portrait-tools`, `.portrait-actions`, `.copy-status`, `.prompt-box` | passo 5 | Bloco do retrato: botões, aviso de cópia e o prompt em textarea |
+| `.image-error`, `.generated-image` | passos 5 e 6 | Erro legível e a moldura do retrato |
 | `.sheet`, `.ribbon`, `.badges`, `.attrs`, `.cols`, `.chips`, `.center` | `renderSheet()` | Ficha lateral |
 | `.info` | passos 1–3 | Bloco de detalhe abaixo do grid |
 | `.panel-actions` | `renderNavButtons()` | Botões Voltar / Próximo |
-| `.file-input` | `render()` | `<input type="file">` escondido (`display: none`) |
+| `.file-input` | `render()` | Os dois `<input type="file">` escondidos, de JSON e de imagem (`display: none`) |
 
 ## Padrões de marcação a seguir
 
@@ -81,7 +82,7 @@ uma coluna. **Se você adicionar um grid novo, avalie incluí-lo nessa lista.**
 1. Procure primeiro uma classe existente que sirva — o arquivo é pequeno e a repetição visual é
    proposital.
 2. Acrescente as regras novas **no fim do bloco temático correspondente**, não no fim do arquivo
-   (as seções de integração e imagem já estão depois da media query, o que é uma exceção
+   (as seções de retrato e imagem já estão depois da media query, o que é uma exceção
    histórica).
 3. Se criar um grid, verifique o comportamento abaixo de 980px.
 4. Mantenha alvos de toque com pelo menos 44px de altura (`.pill-choice` já define isso) — o
