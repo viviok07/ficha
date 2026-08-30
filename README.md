@@ -31,10 +31,17 @@ npm run build   # equivale a: node --check src/main.js
 A imagem fica **só na sessão**: ela não entra no JSON salvo, então ao reimportar uma ficha é
 preciso carregá-la de novo.
 
+## Guia do Aventureiro
+
+O botão **GUIA DO AVENTUREIRO**, no cabeçalho, abre [guia.html](guia.html) em outra aba: um guia
+ilustrado dos 5 passos de criação, escrito para crianças, feito para ser lido na tela ou impresso
+em 2 folhas A4 (Ctrl+P). É uma página independente — não usa `src/main.js` nem `src/style.css`.
+
 ## Estrutura
 
 ```
 index.html                    página e pontos de montagem
+guia.html                     Guia do Aventureiro: página estática à parte, com CSS e JS próprios
 src/main.js                   catálogos, estado, render, eventos, prompt, upload e PDF
 src/style.css                 todo o CSS
 vendor/                       jsPDF e html2canvas locais (única exceção a "zero dependências")

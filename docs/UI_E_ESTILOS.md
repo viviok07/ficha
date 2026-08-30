@@ -48,6 +48,7 @@ horizontal de 6 colunas e colapsa os grids de cards (`.race-grid`, `.class-grid`
 | --- | --- | --- |
 | `.hero-head`, `.brand`, `.sigil`, `.twinkle`, `.actions` | `render()` | Cabeçalho |
 | `.primary`, `.secondary`, `.ghost`, `.next` | vários | Variantes de botão |
+| `.ghost-link` | `render()` | O `<a>` GUIA DO AVENTUREIRO: soma-se a `.ghost` e dá ao link a caixa de um botão (`inline-flex`, `line-height: 1`, sem sublinhado) |
 | `.steps`, `.step`, `.step.active` | `renderStepper()` | Navegação lateral |
 | `.panel`, `.current-panel` | cada `render*Step()` | Cartão do passo atual |
 | `.option-grid` + `.race-grid` / `.class-grid` / `.skill-grid` / `.trait-grid` / `.equipment-grid` | passos 1–3 e 5 | Grids de escolha (3, 2, 2, 2 e 2 colunas) |
@@ -74,9 +75,19 @@ horizontal de 6 colunas e colapsa os grids de cards (`.race-grid`, `.class-grid`
   `<span class="choice-art">ícone</span><b>nome</b><small>descrição</small><em>✓</em>`.
   O `<small>` é opcional (a grade de raças não usa).
 - **Campos de formulário** sempre dentro de `<label class="field">Rótulo<input …/></label>`.
+- **Ação que só abre uma página** é um `<a class="ghost ghost-link" target="_blank" rel="noopener">`,
+  não um `<button>` com handler: continua funcionando se o JS falhar e não exige nada em
+  `bindEvents()`. Os ícones do cabeçalho (`↻`, `⇪`, `❖`, `▣`) são glifos monocromáticos, não emojis.
 - **Ícones são emojis literais** no JS, nunca imagens ou fontes de ícone.
 - **Títulos de passo** usam o formato `✦ N. TÍTULO ✦` em maiúsculas.
 - A ficha usa `<h3>` em maiúsculas como separador de seção e `<p>` para o conteúdo.
+
+## Fora deste arquivo: `guia.html`
+
+[guia.html](../guia.html) tem **CSS próprio embutido**, com tokens e identidade visual
+diferentes (papel claro, `Baloo 2`/`Cinzel`/`Lora`, suporte a tema escuro por
+`prefers-color-scheme`) e regras `@media print` que fecham o guia em 2 folhas A4. Nada em
+`src/style.css` o alcança, e mudanças aqui não o afetam — nem o contrário.
 
 ## Ao adicionar estilos
 
