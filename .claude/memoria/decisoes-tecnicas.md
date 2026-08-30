@@ -14,10 +14,20 @@ as alternativas eram `window.print()` (sem download direto) ou CDN (exige intern
 runtime, nada de npm, e qualquer biblioteca nova exige nova autorização.** A exceção está escrita
 na regra 1 do `AGENTS.md` e detalhada em `vendor/README.md`.
 
-**A integração com a API da OpenAI foi removida por inteiro.** Não existe mais chave, gate,
-`fetch` nem `integration`. O usuário copia o prompt, gera a imagem fora e faz upload.
-**Como aplicar:** não "restaure" o fluxo antigo; se um dia voltar uma API, ela entra por trás de
-um backend, não com a chave no navegador.
+**Chave de IA no navegador: aceita, sem backend.** Em 2026-08-30 o usuário **reverteu**
+explicitamente a regra anterior ("se um dia voltar uma API, ela entra por trás de um backend") e
+pediu a geração de imagem pelo Gemini chamada direto do `fetch`, com a chave digitada por ele.
+**Por quê:** o projeto não tem servidor e é usado localmente; ele aceita o risco de a chave ficar
+visível para quem estiver no computador, em troca de um clique em vez de copiar/colar o prompt.
+**Como aplicar:** a chave vive só em `gemini.apiKey`, em memória; nunca em `localStorage`, em
+`characterJson()` nem em `console`. `scrubKey()` a remove de qualquer mensagem de erro exibida.
+O `AGENTS.md` e `docs/INTEGRACAO_GEMINI.md` precisam manter o aviso de exposição.
+
+**A integração é opcional, nunca um portão.** A da OpenAI (removida na PR #9) bloqueava o app
+inteiro até a chave ser informada; a do Gemini não pode repetir isso.
+**Por quê:** o público principal usa o fluxo manual (COPIAR PROMPT + upload) e não tem chave.
+**Como aplicar:** o modal sempre tem saída ("AGORA NÃO") e todo passo do wizard funciona sem
+chave. Quebrar isso é regressão, não detalhe de UI.
 
 **O retrato vive só em memória** (`imageState.dataUrl`) e **não** entra em `characterJson()`.
 **Por quê:** um data URL de 1024x1024 deixaria o JSON salvo com vários MB.

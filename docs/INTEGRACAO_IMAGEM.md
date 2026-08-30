@@ -1,11 +1,11 @@
-# Retrato do personagem: prompt + upload
+# Retrato do personagem: prompt, Gemini e upload
 
-Este documento explica como o retrato entra na ficha e como o PDF é montado. **Não há mais
-chamada de API.** A geração da imagem acontece fora da aplicação, na ferramenta de IA que o
-usuário preferir.
+Este documento explica como o retrato entra na ficha e como o PDF é montado. Há **três caminhos
+até a mesma imagem**, e todos terminam em `imageState.dataUrl`.
 
-> Histórico: até a PR #9 existia uma integração direta com a API de imagens da OpenAI, com um
-> overlay pedindo a chave. Ela foi removida por inteiro — chave, `fetch`, gate e loader.
+> Histórico: até a PR #9 existia uma integração com a API de imagens da OpenAI, com um gate
+> **bloqueante** pedindo a chave. Ela foi removida. O Gemini entrou depois com a mesma forma,
+> mas com o modal **opcional**: sem chave, o app continua inteiro.
 
 ## Fluxo completo
 
@@ -13,12 +13,27 @@ usuário preferir.
 Passo 5 (História)
 1. COPIAR PROMPT      -> copyPrompt(): buildImagePrompt() + cadeia de cópia
 2. textarea readonly  -> o prompt fica visível na tela, copiado ou não
-3. CARREGAR IMAGEM    -> importImage(): valida o tipo e lê como data URL
+3. GERAR COM GEMINI   -> generateGeminiImage(): fetch + loader  (opcional)
+4. CARREGAR IMAGEM    -> importImage(): valida o tipo e lê como data URL
 
 Passo 6 (Visão geral)
-4. imageState.dataUrl -> <figure class="generated-image"> com o retrato
-5. GERAR PDF          -> generatePdf(): html2canvas na ficha + jsPDF
+5. imageState.dataUrl -> <figure class="generated-image"> com o retrato
+6. GERAR PDF          -> generatePdf(): html2canvas na ficha + jsPDF
 ```
+
+## Caminho 3: Gemini
+
+Detalhado em [INTEGRACAO_GEMINI.md](INTEGRACAO_GEMINI.md). O essencial para não se perder aqui:
+
+- É **opcional**. O modal do primeiro acesso tem `AGORA NÃO`; fechado sem chave, os caminhos 1,
+  2 e 4 continuam idênticos ao que sempre foram. O botão `⚙ GEMINI` do passo 5 o reabre.
+- Usa o **mesmo** `buildImagePrompt()` do COPIAR PROMPT, sem nenhuma alteração.
+- Escreve no **mesmo** `imageState.dataUrl` do upload, substituindo a imagem anterior sem
+  perguntar — igual ao botão TROCAR IMAGEM. Passo 6 e PDF não sabem a origem da imagem.
+- Chave e configuração vivem no objeto `gemini`, só em memória, fora de `characterJson()`.
+- `imageState.aiLoading` desenha o `.loader` (spinner) e desabilita o botão;
+  `imageState.aiError` desenha a mensagem. O botão GERAR PDF mantém o padrão antigo, só de
+  rótulo + `disabled`.
 
 ## `imageState` — tudo em memória, nada persistido
 
@@ -29,6 +44,7 @@ Passo 6 (Visão geral)
 | `prompt` | Último prompt gerado; alimenta o `<textarea class="prompt-box">` |
 | `copyStatus` | `'copiado'` ou `'manual'` — decide a mensagem verde ou âmbar |
 | `pdfLoading` / `pdfError` | Estado do botão GERAR PDF |
+| `aiLoading` / `aiError` | Estado do botão GERAR COM GEMINI (spinner e mensagem) |
 
 **A imagem vive só na sessão.** Salvar a ficha em JSON não guarda o retrato, e reimportar uma
 ficha exige carregar a imagem de novo. Isso é decisão de produto: um data URL de 1024x1024 deixa
