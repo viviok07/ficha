@@ -7,10 +7,10 @@ sempre, apenas editar esses literais** — a UI é gerada por `map()` sobre eles
 ## Convenção de `id`
 
 - kebab-case, minúsculo, **sem acentos e sem espaços**: `guerreiro`, `passo-da-floresta`.
-- Único dentro do seu catálogo (ids de habilidade precisam ser únicos apenas dentro da classe,
-  mas mantenha-os globalmente distintos para facilitar depuração).
+- Único dentro do seu catálogo (ids de habilidade e de equipamento precisam ser únicos apenas
+  dentro da classe, mas mantenha-os globalmente distintos para facilitar depuração).
 - **Nunca renomeie um id já publicado**: fichas JSON salvas por usuários referenciam esses
-  valores, e `normalizeId()` descarta silenciosamente ids desconhecidos, caindo no padrão.
+  valores, e `normalizeId()` / `normalizeChoices()` descartam silenciosamente ids desconhecidos.
 
 ---
 
@@ -30,7 +30,7 @@ Consumido por: `renderRaceStep()` (grid + bloco de informações) e `renderSheet
 e a linha "CARACTERÍSTICAS DA RAÇA").
 
 O grid usa a classe CSS `p{index}` (`p0`…`p6`) para dar um gradiente diferente à arte de cada
-card. Só existem gradientes definidos para `.p1`–`.p5` em [src/style.css:235](../src/style.css#L235);
+card. Só existem gradientes definidos para `.p1`–`.p5` em [src/style.css:237](../src/style.css#L237);
 adicionar raças além disso ainda funciona, mas os cards excedentes usam o gradiente padrão de
 `.choice-art`.
 
@@ -42,17 +42,19 @@ adicionar raças além disso ainda funciona, mas os cards excedentes usam o grad
   name: 'Patrulheiro',
   icon: '🏹',
   description: '...',
-  equipment: ['Arco longo', 'Aljava com flechas', ...], // itens padrão da classe
   attributes: { forca: 3, destreza: 5, inteligencia: 3, sabedoria: 5 }, // escala 1–5
 }
 ```
+
+A classe **não** guarda mais uma lista de equipamentos: isso virou `equipmentCatalog`, abaixo.
 
 As **quatro** chaves de `attributes` são fixas e usadas literalmente em `renderSheet()`
 (`forca`, `destreza`, `inteligencia`, `sabedoria`, sem acento). Adicionar um quinto atributo
 exige alterar `renderSheet()` e o CSS `.attrs`.
 
-> Toda classe **precisa** ter uma entrada correspondente em `skillCatalog` com a mesma chave de
-> id. Sem isso, `selectedSkillCatalog()` retorna `undefined` e o passo 3 quebra.
+> Toda classe **precisa** ter uma entrada correspondente em `skillCatalog` **e** em
+> `equipmentCatalog`, com a mesma chave de id. Sem a primeira, `selectedSkillCatalog()` retorna
+> `undefined` e o passo 3 quebra; sem a segunda, o passo 5 mostra o texto de espera para sempre.
 
 ## `skillCatalog` — [src/main.js:21](../src/main.js#L21)
 
@@ -82,96 +84,60 @@ quantidade de opções, ajuste também essa frase.
 - `key` é a chave dentro de `state.appearance`.
 - As `options` são **strings exibidas diretamente** — o valor salvo é o próprio rótulo, não um id.
 - `labelForAppearance(key)` faz o caminho inverso (chave → título) para a ficha.
-- `buildImagePrompt()` referencia `skin`, `hair`, `hairColor`, `eyes`, `height`, `body`, `marks`,
-  `accessory` e `style` **pelo nome**; grupos novos não entram no prompt automaticamente.
+- `buildImagePrompt()` percorre `appearanceGroups` genericamente e monta `título: valor` para cada
+  grupo preenchido, ignorando os vazios. **Um grupo novo entra no prompt sozinho**, sem editar a
+  função.
 
 > **Estatura ≠ Altura.** O grupo `height` se chama **"Estatura"** (Baixa/Média/Alta) e é diferente
 > do campo de texto livre `state.height` ("Altura", aba História). A chave continua `height` para
 > não quebrar fichas antigas, e `buildImagePrompt()` cita os dois com rótulos distintos.
 
-## `steps` — [src/main.js:113](../src/main.js#L113)
+## `personalityCatalog` — [src/main.js:113](../src/main.js#L113)
+
+Array simples de 10 opções, **global** (não depende de classe nem de raça):
+
+```js
+{ id: 'valente', name: 'Valente', icon: '🦁', description: 'Encara o medo e vai em frente mesmo tremendo.' }
+```
+
+Os nomes são propositalmente **neutros em gênero** (valente, gentil, leal, alegre, inteligente,
+paciente, falante, otimista, persistente, responsável): o campo Gênero é texto livre e a ficha
+mostra o traço como chip. Ao acrescentar opções, mantenha essa neutralidade e o tom infantil.
+
+O usuário escolhe até `PERSONALITY_LIMIT` (3).
+
+## `equipmentCatalog` — [src/main.js:126](../src/main.js#L126)
+
+Objeto indexado pelo `class.id`, com **5 opções por classe**, misturando vestimenta e equipamento
+principal para que dê para escolher "uma roupa + uma arma":
+
+```js
+patrulheiro: [
+  { id: 'arco-longo', name: 'Arco longo e aljava', icon: '🏹', description: 'Acerta o alvo bem de longe.' },
+  // ... 5 no total
+],
+```
+
+O usuário escolhe até `EQUIPMENT_LIMIT` (2). É a **única** fonte de equipamento do sistema: o
+passo 2 lista as 5 como "o que essa classe costuma usar", o passo 5 deixa escolher, e a ficha e o
+prompt mostram só as escolhidas.
+
+## `steps` — [src/main.js:178](../src/main.js#L178)
 
 ```js
 { id: 'race', number: 1, title: 'Raça', subtitle: 'Escolha sua origem' }
 ```
 
-Só alimenta o stepper visual. A navegação real depende de `renderCurrentStep()` (o `if` por
-`state.step`) e dos `renderNavButtons(proximo, anterior)` de cada passo.
+São **6**: `race`, `class`, `skills`, `appearance`, `story`, `overview`. Só alimenta o stepper
+visual. A navegação real depende de `renderCurrentStep()` (o `if` por `state.step`) e dos
+`renderNavButtons(proximo, anterior)` de cada passo.
+
+## Limites — [src/main.js:187](../src/main.js#L187)
+
+`SKILL_LIMIT` (2), `PERSONALITY_LIMIT` (3) e `EQUIPMENT_LIMIT` (2) são consumidos tanto pelos
+handlers (`toggleChoice`) quanto pelos textos da UI e por `normalizeChoices()` na importação.
+Mudar a constante muda os três lugares de uma vez.
 
 ---
 
-## `state` — o personagem — [src/main.js:137](../src/main.js#L137)
-
-```js
-{
-  step: 'race',            // id do passo ativo (UI, não serializado)
-  name: '',                // string livre
-  player: '',              // string livre
-  age: '',                 // texto livre (ex.: "12 anos")
-  gender: '',              // texto livre
-  height: '',              // texto livre (ex.: "1,45 m") — NÃO confundir com appearance.height
-  race: '',                // race.id, '' enquanto nada foi escolhido
-  class: '',               // class.id, '' enquanto nada foi escolhido
-  skills: [],              // até 2 skill.id da classe atual
-  appearance: { skin, hair, hairColor, eyes, height, body, marks, accessory, style }, // rótulos, '' quando vazio
-  personality: [],         // array de strings, editado por badges na aba História
-  personalityDraft: '',    // texto ainda não confirmado no input de personalidade (UI, não serializado)
-  equipment: '',           // string livre (aba História)
-  otherCharacteristics: '',
-  story: '',
-}
-```
-
-**Tudo começa vazio.** A aplicação não pré-seleciona nada: nenhuma raça, classe, habilidade,
-opção de aparência ou texto vem preenchido. Blocos de informação exibem um texto de espera
-("Nenhuma raça escolhida ainda") e as seções vazias da ficha simplesmente não são renderizadas.
-Isso obriga todo consumidor de `state.race`/`state.class` a tolerar `undefined` — use
-`selectedRace()?.` / `selectedClass()?.` em vez de acessar direto.
-
-`state.personality` é editado na aba História: vírgula (ou Enter, ou sair do campo) transforma o
-texto em badge, e cada badge tem um "×" que a remove. Traços são aparados, vazios são ignorados e
-repetidos (sem diferenciar maiúsculas) não entram duas vezes.
-
-`state.personalityDraft` é o texto pendente do input e **não** é exportado — como `state.step`,
-é estado de UI que mora dentro de `state`.
-
----
-
-## JSON exportado — `characterJson()` — [src/main.js:170](../src/main.js#L170)
-
-`SALVAR FICHA` baixa `${state.name || 'personagem'}.json` com este formato (**objetos completos**
-para raça, classe e habilidades, não apenas ids):
-
-```json
-{
-  "name": "Lirien",
-  "player": "Maria Eduarda",
-  "age": "12 anos",
-  "gender": "menina",
-  "height": "1,45 m",
-  "race":  { "id": "elfo", "name": "Elfo", "icon": "🌿", "description": "...", "traits": ["..."] },
-  "class": { "id": "patrulheiro", "name": "Patrulheiro", "icon": "🏹", "description": "...",
-             "equipment": ["..."], "attributes": { "forca": 3, "destreza": 5, "inteligencia": 3, "sabedoria": 5 } },
-  "skills": [ { "id": "tiro-marcado", "name": "Tiro marcado", "icon": "🏹", "description": "..." } ],
-  "appearance": { "skin": "Morena clara", "hair": "Longo", "hairColor": "Prateado", "eyes": "Verdes",
-                  "height": "Média", "body": "Atlético", "marks": "Cicatriz no rosto",
-                  "accessory": "Colar com pingente", "style": "Roupa da floresta" },
-  "personality": ["Observadora", "Curiosa", "Leal", "Determinada"],
-  "equipment": "Arco longo, aljava com flechas, punhal e apito do companheiro animal.",
-  "otherCharacteristics": "...",
-  "story": "..."
-}
-```
-
-`race` e `class` saem como `null` enquanto nada foi escolhido, e `skills` pode vir com 0 ou 1
-item — o JSON de uma ficha incompleta continua válido e importável.
-
-Na importação, `loadCharacter()` aceita as duas formas — objeto completo ou id em string — para
-`race`, `class` e cada item de `skills`. Campos desconhecidos são ignorados; campos ausentes
-mantêm o valor atual. Fichas antigas (sem `age`/`gender`/`height`) importam normalmente: os
-campos novos ficam vazios.
-
-**Ao adicionar um campo novo ao personagem, atualize os três pontos:** `state` (valor padrão),
-`characterJson()` (exportação) e `loadCharacter()` (importação). Esquecer um deles gera perda
-silenciosa de dados. Se o campo for obrigatório para gerar a imagem, acrescente-o também a
-`missingCharacterFields()`.
+O `state` em memória e o schema do JSON salvo ficam em [JSON_DA_FICHA.md](JSON_DA_FICHA.md).

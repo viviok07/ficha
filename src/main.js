@@ -9,13 +9,13 @@ const races = [
 ];
 
 const classes = [
-  { id: 'guerreiro', name: 'Guerreiro', icon: '🛡️', description: 'O mestre das armas, vai para a linha de frente com espada, escudo e armadura pesada.', equipment: ['Espada longa', 'Escudo', 'Armadura pesada', 'Kit de treino'], attributes: { forca: 5, destreza: 3, inteligencia: 2, sabedoria: 3 } },
-  { id: 'barbaro', name: 'Bárbaro', icon: '💢', description: 'O guerreiro furioso que confia na força bruta, fica mais forte e quase não sente dor.', equipment: ['Machado grande', 'Peles de proteção', 'Amuleto tribal', 'Tambor de guerra'], attributes: { forca: 5, destreza: 3, inteligencia: 1, sabedoria: 4 } },
-  { id: 'ladino', name: 'Ladino', icon: '🗝️', description: 'Rápido, silencioso e esperto; abre fechaduras, desarma armadilhas e ataca de surpresa.', equipment: ['Adaga dupla', 'Ferramentas de ladrão', 'Capa escura', 'Corda fina'], attributes: { forca: 2, destreza: 5, inteligencia: 4, sabedoria: 3 } },
-  { id: 'patrulheiro', name: 'Patrulheiro', icon: '🏹', description: 'O protetor da natureza, arqueiro incrível que rastreia pegadas e sobrevive na floresta.', equipment: ['Arco longo', 'Aljava com flechas', 'Punhal', 'Apito do companheiro animal'], attributes: { forca: 3, destreza: 5, inteligencia: 3, sabedoria: 5 } },
-  { id: 'clerigo', name: 'Clérigo', icon: '✨', description: 'O guerreiro da cura, usa fé e magia de luz para ajudar amigos e afastar monstros sombrios.', equipment: ['Martelo leve', 'Símbolo sagrado', 'Kit de curativos', 'Livro de preces'], attributes: { forca: 3, destreza: 2, inteligencia: 3, sabedoria: 5 } },
-  { id: 'mago', name: 'Mago', icon: '🪄', description: 'O cientista da magia, estuda livros antigos e lança feitiços como fogo ou invisibilidade.', equipment: ['Cajado', 'Livro de feitiços', 'Cristal mágico', 'Manto estrelado'], attributes: { forca: 1, destreza: 3, inteligencia: 5, sabedoria: 4 } },
-  { id: 'bardo', name: 'Bardo', icon: '🎵', description: 'O artista do grupo, usa música, poemas e piadas para fortalecer amigos e confundir vilões.', equipment: ['Alaúde', 'Caderno de canções', 'Roupa colorida', 'Flauta encantada'], attributes: { forca: 2, destreza: 4, inteligencia: 4, sabedoria: 3 } },
+  { id: 'guerreiro', name: 'Guerreiro', icon: '🛡️', description: 'O mestre das armas, vai para a linha de frente com espada, escudo e armadura pesada.', attributes: { forca: 5, destreza: 3, inteligencia: 2, sabedoria: 3 } },
+  { id: 'barbaro', name: 'Bárbaro', icon: '💢', description: 'O guerreiro furioso que confia na força bruta, fica mais forte e quase não sente dor.', attributes: { forca: 5, destreza: 3, inteligencia: 1, sabedoria: 4 } },
+  { id: 'ladino', name: 'Ladino', icon: '🗝️', description: 'Rápido, silencioso e esperto; abre fechaduras, desarma armadilhas e ataca de surpresa.', attributes: { forca: 2, destreza: 5, inteligencia: 4, sabedoria: 3 } },
+  { id: 'patrulheiro', name: 'Patrulheiro', icon: '🏹', description: 'O protetor da natureza, arqueiro incrível que rastreia pegadas e sobrevive na floresta.', attributes: { forca: 3, destreza: 5, inteligencia: 3, sabedoria: 5 } },
+  { id: 'clerigo', name: 'Clérigo', icon: '✨', description: 'O guerreiro da cura, usa fé e magia de luz para ajudar amigos e afastar monstros sombrios.', attributes: { forca: 3, destreza: 2, inteligencia: 3, sabedoria: 5 } },
+  { id: 'mago', name: 'Mago', icon: '🪄', description: 'O cientista da magia, estuda livros antigos e lança feitiços como fogo ou invisibilidade.', attributes: { forca: 1, destreza: 3, inteligencia: 5, sabedoria: 4 } },
+  { id: 'bardo', name: 'Bardo', icon: '🎵', description: 'O artista do grupo, usa música, poemas e piadas para fortalecer amigos e confundir vilões.', attributes: { forca: 2, destreza: 4, inteligencia: 4, sabedoria: 3 } },
 ];
 
 const skillCatalog = {
@@ -110,28 +110,91 @@ const appearanceGroups = [
   { key: 'style', title: 'Roupa / estilo', icon: '🧥', options: ['Roupa da floresta', 'Armadura leve', 'Manto mágico', 'Roupa de viagem'] },
 ];
 
+const personalityCatalog = [
+  { id: 'valente', name: 'Valente', icon: '🦁', description: 'Encara o medo e vai em frente mesmo tremendo.' },
+  { id: 'gentil', name: 'Gentil', icon: '💛', description: 'Trata todo mundo com carinho, até quem acabou de conhecer.' },
+  { id: 'leal', name: 'Leal', icon: '🤝', description: 'Nunca abandona um amigo, nem no perigo.' },
+  { id: 'alegre', name: 'Alegre', icon: '😄', description: 'Sempre acha um motivo para rir e animar o grupo.' },
+  { id: 'inteligente', name: 'Inteligente', icon: '🧠', description: 'Pensa rápido e acha saída para problemas difíceis.' },
+  { id: 'paciente', name: 'Paciente', icon: '🐢', description: 'Sabe esperar a hora certa sem se irritar.' },
+  { id: 'falante', name: 'Falante', icon: '🗣️', description: 'Puxa conversa com qualquer um que aparecer.' },
+  { id: 'otimista', name: 'Otimista', icon: '🌟', description: 'Acredita que tudo vai dar certo no final.' },
+  { id: 'persistente', name: 'Persistente', icon: '🧗', description: 'Tenta de novo e de novo até conseguir.' },
+  { id: 'responsavel', name: 'Responsável', icon: '🧰', description: 'Cuida das próprias coisas e das do grupo.' },
+];
+
+const equipmentCatalog = {
+  guerreiro: [
+    { id: 'espada-longa', name: 'Espada longa', icon: '⚔️', description: 'A arma clássica de quem treina desde pequeno.' },
+    { id: 'escudo-de-aco', name: 'Escudo de aço', icon: '🛡️', description: 'Protege você e quem estiver do seu lado.' },
+    { id: 'armadura-de-placas', name: 'Armadura de placas', icon: '🪖', description: 'Pesada, mas quase nada consegue atravessar.' },
+    { id: 'martelo-de-guerra', name: 'Martelo de guerra', icon: '🔨', description: 'Amassa até o escudo do inimigo.' },
+    { id: 'capa-do-regimento', name: 'Capa do regimento', icon: '🧣', description: 'Mostra a quem você jurou lealdade.' },
+  ],
+  barbaro: [
+    { id: 'machado-enorme', name: 'Machado enorme', icon: '🪓', description: 'Precisa das duas mãos e derruba portas.' },
+    { id: 'peles-de-urso', name: 'Peles de urso', icon: '🐻', description: 'Roupa quente que aguenta neve e garras.' },
+    { id: 'clava-de-pedra', name: 'Clava de pedra', icon: '🪨', description: 'Simples, pesada e muito convincente.' },
+    { id: 'amuleto-de-osso', name: 'Amuleto de osso', icon: '🦴', description: 'Lembrança da tribo que dá coragem.' },
+    { id: 'tambor-de-guerra', name: 'Tambor de guerra', icon: '🥁', description: 'O som faz o coração dos amigos acelerar.' },
+  ],
+  ladino: [
+    { id: 'par-de-adagas', name: 'Par de adagas', icon: '🗡️', description: 'Duas lâminas leves, rápidas e silenciosas.' },
+    { id: 'capa-com-capuz', name: 'Capa escura com capuz', icon: '🧥', description: 'Some nas sombras e esconde o rosto.' },
+    { id: 'ferramentas-de-ladrao', name: 'Ferramentas de abrir fechaduras', icon: '🗝️', description: 'Ganchinhos que abrem quase qualquer porta.' },
+    { id: 'corda-com-gancho', name: 'Corda fina com gancho', icon: '🪢', description: 'Sobe muros e desce por janelas.' },
+    { id: 'mascara-de-meio-rosto', name: 'Máscara de meio rosto', icon: '🎭', description: 'Ninguém sabe quem passou por ali.' },
+  ],
+  patrulheiro: [
+    { id: 'arco-longo', name: 'Arco longo e aljava', icon: '🏹', description: 'Acerta o alvo bem de longe.' },
+    { id: 'capa-camuflada', name: 'Capa camuflada de folhas', icon: '🍃', description: 'Você vira parte da floresta.' },
+    { id: 'punhal-de-caca', name: 'Punhal de caça', icon: '🔪', description: 'Corta corda, galho e o que aparecer.' },
+    { id: 'apito-do-companheiro', name: 'Apito do companheiro animal', icon: '🐺', description: 'Chama seu amigo animal de longe.' },
+    { id: 'botas-de-trilha', name: 'Botas de trilha', icon: '🥾', description: 'Andam o dia inteiro sem machucar o pé.' },
+  ],
+  clerigo: [
+    { id: 'martelo-abencoado', name: 'Martelo leve abençoado', icon: '🔨', description: 'Brilha um pouquinho quando você reza.' },
+    { id: 'simbolo-do-sol', name: 'Símbolo sagrado do sol', icon: '☀️', description: 'O sinal da sua fé, pendurado no peito.' },
+    { id: 'bolsa-de-curativos', name: 'Bolsa de curativos', icon: '🧵', description: 'Ataduras e ervas para cuidar dos amigos.' },
+    { id: 'livro-de-preces', name: 'Livro de preces', icon: '📖', description: 'Palavras antigas que acalmam qualquer um.' },
+    { id: 'tunica-branca', name: 'Túnica branca bordada', icon: '👘', description: 'Roupa simples com fios dourados.' },
+  ],
+  mago: [
+    { id: 'cajado-antigo', name: 'Cajado de madeira antiga', icon: '🪄', description: 'Ajuda a mirar e a guardar magia.' },
+    { id: 'livro-de-feiticos', name: 'Livro de feitiços', icon: '📕', description: 'Todas as magias que você já estudou.' },
+    { id: 'cristal-magico', name: 'Cristal mágico', icon: '🔮', description: 'Guarda energia para o feitiço mais difícil.' },
+    { id: 'manto-estrelado', name: 'Manto estrelado', icon: '🌌', description: 'Tecido azul que parece o céu à noite.' },
+    { id: 'chapeu-pontudo', name: 'Chapéu pontudo', icon: '🎩', description: 'Ninguém duvida que você é mago.' },
+  ],
+  bardo: [
+    { id: 'alaude', name: 'Alaúde de cordas brilhantes', icon: '🪕', description: 'O instrumento que abre portas e corações.' },
+    { id: 'flauta-encantada', name: 'Flauta encantada', icon: '🪈', description: 'Toca sozinha se você pedir com jeitinho.' },
+    { id: 'caderno-de-cancoes', name: 'Caderno de canções', icon: '📓', description: 'Todas as músicas e histórias que você inventou.' },
+    { id: 'casaco-colorido', name: 'Casaco colorido de artista', icon: '🧥', description: 'Chama atenção em qualquer praça.' },
+    { id: 'chapeu-com-pluma', name: 'Chapéu com pluma', icon: '🪶', description: 'A pluma balança quando você faz reverência.' },
+  ],
+};
+
 const steps = [
   { id: 'race', number: 1, title: 'Raça', subtitle: 'Escolha sua origem' },
   { id: 'class', number: 2, title: 'Classe', subtitle: 'Escolha sua profissão' },
   { id: 'skills', number: 3, title: 'Habilidades', subtitle: 'Escolha 2 opções' },
   { id: 'appearance', number: 4, title: 'Aparência', subtitle: 'Defina sua aparência' },
   { id: 'story', number: 5, title: 'História', subtitle: 'Conte um pouco sobre você' },
+  { id: 'overview', number: 6, title: 'Visão geral', subtitle: 'Veja o retrato e gere o PDF' },
 ];
 
-const integration = {
-  ready: false,
-  apiKey: '',
-  model: 'gpt-image-2',
-  size: '1024x1024',
-  quality: 'high',
-};
+const SKILL_LIMIT = 2;
+const PERSONALITY_LIMIT = 3;
+const EQUIPMENT_LIMIT = 2;
 
 const imageState = {
-  loading: false,
-  error: '',
-  checked: false,
   dataUrl: '',
+  uploadError: '',
   prompt: '',
+  copyStatus: '',
+  pdfLoading: false,
+  pdfError: '',
 };
 
 const state = {
@@ -156,9 +219,7 @@ const state = {
     style: '',
   },
   personality: [],
-  personalityDraft: '',
-  equipment: '',
-  otherCharacteristics: '',
+  equipment: [],
   story: '',
 };
 
@@ -167,6 +228,9 @@ const selectedRace = () => races.find((item) => item.id === state.race);
 const selectedClass = () => classes.find((item) => item.id === state.class);
 const selectedSkillCatalog = () => skillCatalog[state.class];
 const selectedSkills = () => (selectedSkillCatalog()?.options || []).filter((item) => state.skills.includes(item.id));
+const equipmentOptions = () => equipmentCatalog[state.class] || [];
+const selectedEquipment = () => equipmentOptions().filter((item) => state.equipment.includes(item.id));
+const selectedPersonality = () => personalityCatalog.filter((item) => state.personality.includes(item.id));
 const characterJson = () => ({
   name: state.name,
   player: state.player,
@@ -177,20 +241,15 @@ const characterJson = () => ({
   class: selectedClass() || null,
   skills: selectedSkills(),
   appearance: state.appearance,
-  personality: state.personality,
-  equipment: state.equipment,
-  otherCharacteristics: state.otherCharacteristics,
+  personality: selectedPersonality(),
+  equipment: selectedEquipment(),
   story: state.story,
 });
 
-let rendering = false;
-
 function render() {
   const focus = captureFocus();
-  rendering = true;
   $('#root').innerHTML = `
     <main class="page">
-      ${renderIntegrationGate()}
       <header class="hero-head">
         <div class="brand">
           <div class="sigil">✡</div>
@@ -206,6 +265,7 @@ function render() {
           <button class="ghost" data-action="import">⇪ IMPORTAR JSON</button>
           <button class="primary" data-action="save">▣ SALVAR FICHA</button>
           <input class="file-input" type="file" accept="application/json,.json" data-file-input />
+          <input class="file-input" type="file" accept="image/*" data-image-input />
         </div>
       </header>
       <div class="workspace">
@@ -216,14 +276,11 @@ function render() {
     </main>`;
   bindEvents();
   restoreFocus(focus);
-  rendering = false;
 }
 
 function focusSelector(element) {
   if (!element || !element.dataset) return '';
   if (element.dataset.field) return `[data-field="${element.dataset.field}"]`;
-  if (element.dataset.integration) return `[data-integration="${element.dataset.integration}"]`;
-  if (element.hasAttribute('data-personality-input')) return '[data-personality-input]';
   return '';
 }
 
@@ -248,37 +305,6 @@ function restoreFocus(focus) {
   }
 }
 
-function renderIntegrationGate() {
-  if (integration.ready) return '';
-
-  return `<section class="integration-gate" aria-label="Configuração da integração com OpenAI">
-    <div class="integration-card">
-      <h2>✦ Integração com ChatGPT para imagem ✦</h2>
-      <p>Informe os dados da API para esta sessão. Nada será salvo: ao atualizar a página, você precisará preencher novamente.</p>
-      <label class="field">Chave da API OpenAI
-        <input type="password" autocomplete="off" data-integration="apiKey" placeholder="sk-..." value="${escapeHtml(integration.apiKey)}" />
-      </label>
-      <div class="integration-grid">
-        <label class="field">Modelo de imagem
-          <input data-integration="model" value="${escapeHtml(integration.model)}" />
-        </label>
-        <label class="field">Tamanho
-          <select data-integration="size">
-            ${['1024x1024', '1024x1536', '1536x1024'].map((size) => `<option value="${size}" ${integration.size === size ? 'selected' : ''}>${size}</option>`).join('')}
-          </select>
-        </label>
-        <label class="field">Qualidade
-          <select data-integration="quality">
-            ${['high', 'medium', 'low', 'auto'].map((quality) => `<option value="${quality}" ${integration.quality === quality ? 'selected' : ''}>${quality}</option>`).join('')}
-          </select>
-        </label>
-      </div>
-      <button class="primary" data-action="confirm-integration">OK</button>
-      <small>Recomendação: use esta tela apenas localmente. Em produção, faça a chamada por um backend para não expor a chave.</small>
-    </div>
-  </section>`;
-}
-
 function renderStepper() {
   return `<aside class="steps">${steps.map((step) => `
     <button class="step ${state.step === step.id ? 'active' : ''}" data-step="${step.id}">
@@ -293,6 +319,7 @@ function renderCurrentStep() {
   if (state.step === 'class') return renderClassStep();
   if (state.step === 'skills') return renderSkillsStep();
   if (state.step === 'appearance') return renderAppearanceStep();
+  if (state.step === 'overview') return renderOverviewStep();
   return renderStoryStep();
 }
 
@@ -309,7 +336,7 @@ function renderClassStep() {
   return `<section class="panel current-panel"><h2>✦ 2. ESCOLHA SUA CLASSE ✦</h2><p>A classe mostra como seu herói ajuda o grupo.</p><div class="option-grid class-grid">${classes.map((item) => `
     <button class="choice-card class-card ${state.class === item.id ? 'selected' : ''}" data-class="${item.id}">
       <span class="choice-art">${item.icon}</span><b>${item.name}</b><small>${item.description}</small><em>${state.class === item.id ? '✓' : ''}</em>
-    </button>`).join('')}</div>${klass ? `<div class="info"><h3>${klass.icon} ${klass.name.toUpperCase()}</h3><p>${klass.description}</p><b>Equipamentos:</b><ul>${klass.equipment.map((item) => `<li>${item}</li>`).join('')}</ul></div>` : '<div class="info empty"><p>Nenhuma classe escolhida ainda.</p></div>'}${renderNavButtons('skills', 'race')}</section>`;
+    </button>`).join('')}</div>${klass ? `<div class="info"><h3>${klass.icon} ${klass.name.toUpperCase()}</h3><p>${klass.description}</p><b>O que essa classe costuma usar:</b><ul>${(equipmentCatalog[klass.id] || []).map((item) => `<li>${item.icon} ${item.name}</li>`).join('')}</ul><p class="hint">Você escolhe até ${EQUIPMENT_LIMIT} desses equipamentos no passo 5.</p></div>` : '<div class="info empty"><p>Nenhuma classe escolhida ainda.</p></div>'}${renderNavButtons('skills', 'race')}</section>`;
 }
 
 function renderSkillsStep() {
@@ -333,22 +360,70 @@ function renderAppearanceStep() {
 }
 
 function renderStoryStep() {
-  return `<section class="panel current-panel"><h2>✦ 5. HISTÓRIA ✦</h2><p>Conte quem é seu personagem.</p><label class="field">Nome do personagem<input data-field="name" value="${escapeHtml(state.name)}" /></label><label class="field">Jogador<input data-field="player" value="${escapeHtml(state.player)}" /></label><label class="field">Idade<input data-field="age" value="${escapeHtml(state.age)}" placeholder="Ex.: 12 anos" /></label><label class="field">Gênero<input data-field="gender" value="${escapeHtml(state.gender)}" placeholder="Ex.: menina, menino, não-binárie" /></label><label class="field">Altura<input data-field="height" value="${escapeHtml(state.height)}" placeholder="Ex.: 1,45 m" /></label>${renderPersonalityField()}<label class="field">Equipamento<input data-field="equipment" value="${escapeHtml(state.equipment)}" /></label><label class="field">Outras características<textarea data-field="otherCharacteristics">${escapeHtml(state.otherCharacteristics)}</textarea></label><label class="field">História<textarea data-field="story">${escapeHtml(state.story)}</textarea></label><div class="image-generator"><h3>Retrato do personagem</h3><p>Gere uma imagem em aquarela, fantasia clássica e visual de livro de histórias usando o JSON atual e o equipamento informado acima.</p><button class="primary" data-action="generate-image" ${imageState.loading ? 'disabled' : ''}>${imageState.loading ? 'GERANDO...' : 'GERAR IMAGEM'}</button>${renderImageResult()}</div>${renderNavButtons(null, 'appearance')}</section>`;
+  return `<section class="panel current-panel"><h2>✦ 5. HISTÓRIA ✦</h2><p>Conte quem é seu personagem.</p><label class="field">Nome do personagem<input data-field="name" value="${escapeHtml(state.name)}" /></label><label class="field">Jogador<input data-field="player" value="${escapeHtml(state.player)}" /></label><label class="field">Idade<input data-field="age" value="${escapeHtml(state.age)}" placeholder="Ex.: 12 anos" /></label><label class="field">Gênero<input data-field="gender" value="${escapeHtml(state.gender)}" /></label><label class="field">Altura<input data-field="height" value="${escapeHtml(state.height)}" placeholder="Ex.: 1,45 m" /></label>${renderPersonalityField()}${renderEquipmentField()}<label class="field">História<textarea data-field="story">${escapeHtml(state.story)}</textarea></label>${renderPortraitBlock()}${renderNavButtons('overview', 'appearance')}</section>`;
+}
+
+function renderPickGrid(options, selectedIds, attribute, gridClass) {
+  return `<div class="option-grid ${gridClass}">${options.map((item) => `
+    <button class="choice-card pick-card ${selectedIds.includes(item.id) ? 'selected' : ''}" data-${attribute}="${item.id}">
+      <span class="choice-art">${item.icon}</span><b>${item.name}</b><small>${item.description}</small><em>${selectedIds.includes(item.id) ? '✓' : ''}</em>
+    </button>`).join('')}</div>`;
 }
 
 function renderPersonalityField() {
-  const traits = state.personality.map((trait, index) => `<span class="trait">${escapeHtml(trait)}<button type="button" class="trait-remove" data-personality-remove="${index}" aria-label="Remover ${escapeHtml(trait)}">×</button></span>`).join('');
-  return `<div class="field"><span>Personalidade</span>${traits ? `<div class="traits">${traits}</div>` : '<p class="traits-empty">Nenhum traço de personalidade ainda.</p>'}<input data-personality-input aria-label="Novo traço de personalidade" placeholder="Digite um traço e use vírgula ou Enter" value="${escapeHtml(state.personalityDraft)}" /></div>`;
+  return `<div class="field"><span>Personalidade <small>(escolha até ${PERSONALITY_LIMIT} — ${state.personality.length}/${PERSONALITY_LIMIT})</small></span>${renderPickGrid(personalityCatalog, state.personality, 'personality', 'trait-grid')}</div>`;
 }
 
-function renderImageResult() {
-  if (imageState.loading) return '<div class="loader"><span></span><b>Preparando ilustração mágica...</b></div>';
-  const missing = imageState.checked ? missingCharacterFields() : [];
-  if (missing.length) return `<div class="image-error"><p>Complete estes itens antes de gerar a imagem:</p><ul>${missing.map((item) => `<li>${escapeHtml(item)}</li>`).join('')}</ul></div>`;
-  if (imageState.error) return `<p class="image-error">${escapeHtml(imageState.error)}</p>`;
+function renderEquipmentField() {
+  const options = equipmentOptions();
+  if (!options.length) {
+    return '<div class="field"><span>Equipamento</span><div class="info empty"><p>Escolha uma classe no passo 2 para ver os equipamentos disponíveis.</p></div></div>';
+  }
+
+  return `<div class="field"><span>Equipamento <small>(escolha até ${EQUIPMENT_LIMIT} — ${state.equipment.length}/${EQUIPMENT_LIMIT})</small></span>${renderPickGrid(options, state.equipment, 'equipment', 'equipment-grid')}</div>`;
+}
+
+function renderPortraitBlock() {
+  return `<div class="portrait-tools"><h3>Retrato do personagem</h3><p>Copie o prompt abaixo, gere a imagem na ferramenta de IA que você preferir e carregue o arquivo aqui. O retrato aparece no passo 6.</p><div class="portrait-actions"><button class="primary" data-action="copy-prompt">⧉ COPIAR PROMPT</button><button class="secondary" data-action="upload-image">⇪ ${imageState.dataUrl ? 'TROCAR IMAGEM' : 'CARREGAR IMAGEM'}</button></div>${renderCopyFeedback()}${renderUploadFeedback()}</div>`;
+}
+
+function renderCopyFeedback() {
+  if (!imageState.prompt) return '';
+
+  // O prompt é remontado a cada render: se a ficha mudou depois da cópia, o textarea mostra a
+  // versão atual (é ele que o usuário seleciona no fallback manual) e o aviso muda de tom.
+  const current = buildImagePrompt();
+  let tone = 'warn';
+  let message = '⚠ Seu navegador bloqueou a cópia automática. O texto abaixo já está selecionado: use Ctrl+C (ou ⌘+C).';
+  if (current !== imageState.prompt) {
+    message = '⚠ A ficha mudou depois da cópia. O texto abaixo já está atualizado — clique em COPIAR PROMPT de novo.';
+  } else if (imageState.copyStatus === 'copiado') {
+    tone = 'ok';
+    message = '✓ Copiado! Agora é só colar na ferramenta de imagem.';
+  }
+
+  return `<p class="copy-status ${tone}">${message}</p><textarea class="prompt-box" data-prompt-box readonly rows="10" aria-label="Prompt do personagem">${escapeHtml(current)}</textarea>`;
+}
+
+function renderUploadError() {
+  return imageState.uploadError ? `<p class="image-error">${escapeHtml(imageState.uploadError)}</p>` : '';
+}
+
+function renderUploadFeedback() {
+  if (imageState.uploadError) return renderUploadError();
   if (!imageState.dataUrl) return '';
 
-  return `<figure class="generated-image"><img src="${imageState.dataUrl}" alt="Imagem gerada do personagem ${escapeHtml(state.name)}" /><figcaption>Imagem gerada por IA a partir do prompt do personagem.</figcaption></figure>`;
+  return '<p class="copy-status ok">✓ Imagem carregada. Vá ao passo 6 para ver o retrato e gerar o PDF.</p>';
+}
+
+function renderOverviewStep() {
+  const portrait = imageState.dataUrl
+    ? `<figure class="generated-image"><img src="${imageState.dataUrl}" alt="Retrato de ${escapeHtml(state.name) || 'personagem'}" /><figcaption>Retrato carregado por você.</figcaption></figure>`
+    : '<div class="info empty"><p>Nenhuma imagem carregada ainda. Volte ao passo 5, copie o prompt, gere a imagem na ferramenta de IA que preferir e carregue o arquivo aqui.</p></div>';
+  const pdfFeedback = imageState.pdfError ? `<p class="image-error">${escapeHtml(imageState.pdfError)}</p>` : '';
+  const pdfDisabled = imageState.dataUrl && !imageState.pdfLoading ? '' : 'disabled';
+
+  return `<section class="panel current-panel"><h2>✦ 6. VISÃO GERAL ✦</h2><p>Confira a ficha ao lado, veja o retrato e gere o PDF do aventureiro.</p>${portrait}<div class="portrait-actions"><button class="secondary" data-action="upload-image">⇪ ${imageState.dataUrl ? 'TROCAR IMAGEM' : 'CARREGAR IMAGEM'}</button><button class="primary" data-action="generate-pdf" ${pdfDisabled}>${imageState.pdfLoading ? 'GERANDO PDF...' : '▤ GERAR PDF'}</button></div>${renderUploadError()}${pdfFeedback}<p class="hint">A imagem fica só nesta sessão: ela não entra no JSON da ficha, então ao reimportar uma ficha salva é preciso carregá-la de novo.</p>${renderNavButtons(null, 'story')}</section>`;
 }
 
 function renderNavButtons(next, previous) {
@@ -367,9 +442,11 @@ function renderSheet() {
   const appearanceBlock = appearanceEntries.length
     ? `<section><h4>APARÊNCIA</h4>${appearanceEntries.map(([key, value]) => `<p>✹ ${labelForAppearance(key)}: ${escapeHtml(value)}</p>`).join('')}</section>`
     : '';
-  const equipmentBlock = klass ? `<section><h4>EQUIPAMENTOS</h4>${klass.equipment.map((item) => `<p>⚔ ${item}</p>`).join('')}</section>` : '';
+  const equipment = selectedEquipment();
+  const personality = selectedPersonality();
+  const equipmentBlock = equipment.length ? `<section><h4>EQUIPAMENTOS</h4>${equipment.map((item) => `<p>${item.icon} ${item.name}</p>`).join('')}</section>` : '';
 
-  return `<aside class="sheet"><div class="ribbon">FICHA DO AVENTUREIRO</div>${identity ? `<div class="row">${identity}</div>` : ''}${details ? `<div class="row details">${details}</div>` : ''}${race || klass ? `<div class="badges">${race ? `<div>${race.icon}<span>RAÇA<b>${race.name}</b></span></div>` : ''}${klass ? `<div>${klass.icon}<span>CLASSE<b>${klass.name}</b></span></div>` : ''}</div>` : ''}${attributes ? `<h3>✧ ATRIBUTOS ✧</h3><div class="attrs"><div><span>✊</span><small>FORÇA</small><b>${attributes.forca}</b><em>MOD. ${modifier(attributes.forca)}</em></div><div><span>🍃</span><small>DESTREZA</small><b>${attributes.destreza}</b><em>MOD. ${modifier(attributes.destreza)}</em></div><div><span>📖</span><small>INTELIGÊNCIA</small><b>${attributes.inteligencia}</b><em>MOD. ${modifier(attributes.inteligencia)}</em></div><div><span>👁️</span><small>SABEDORIA</small><b>${attributes.sabedoria}</b><em>MOD. ${modifier(attributes.sabedoria)}</em></div></div>` : ''}${race ? `<h3>CARACTERÍSTICAS DA RAÇA</h3><p class="center">${race.traits.map((trait) => `• ${trait}`).join(' &nbsp; ')}</p>` : ''}${appearanceBlock || equipmentBlock ? `<div class="cols">${appearanceBlock}${equipmentBlock}</div>` : ''}${skills.length && catalog ? `<h3>${catalog.type.toUpperCase()}</h3><div class="chips">${skills.map((item) => `<span>${item.icon} ${item.name}</span>`).join('')}</div>` : ''}${state.personality.length ? `<h3>PERSONALIDADE</h3><div class="chips">${state.personality.map((item) => `<span>${escapeHtml(item)}</span>`).join('')}</div>` : ''}${sheetText('EQUIPAMENTO', state.equipment)}${sheetText('OUTRAS CARACTERÍSTICAS', state.otherCharacteristics)}${sheetText('HISTÓRIA', state.story)}</aside>`;
+  return `<aside class="sheet"><div class="ribbon">FICHA DO AVENTUREIRO</div>${identity ? `<div class="row">${identity}</div>` : ''}${details ? `<div class="row details">${details}</div>` : ''}${race || klass ? `<div class="badges">${race ? `<div>${race.icon}<span>RAÇA<b>${race.name}</b></span></div>` : ''}${klass ? `<div>${klass.icon}<span>CLASSE<b>${klass.name}</b></span></div>` : ''}</div>` : ''}${attributes ? `<h3>✧ ATRIBUTOS ✧</h3><div class="attrs"><div><span>✊</span><small>FORÇA</small><b>${attributes.forca}</b><em>MOD. ${modifier(attributes.forca)}</em></div><div><span>🍃</span><small>DESTREZA</small><b>${attributes.destreza}</b><em>MOD. ${modifier(attributes.destreza)}</em></div><div><span>📖</span><small>INTELIGÊNCIA</small><b>${attributes.inteligencia}</b><em>MOD. ${modifier(attributes.inteligencia)}</em></div><div><span>👁️</span><small>SABEDORIA</small><b>${attributes.sabedoria}</b><em>MOD. ${modifier(attributes.sabedoria)}</em></div></div>` : ''}${race ? `<h3>CARACTERÍSTICAS DA RAÇA</h3><p class="center">${race.traits.map((trait) => `• ${trait}`).join(' &nbsp; ')}</p>` : ''}${appearanceBlock || equipmentBlock ? `<div class="cols">${appearanceBlock}${equipmentBlock}</div>` : ''}${skills.length && catalog ? `<h3>${catalog.type.toUpperCase()}</h3><div class="chips">${skills.map((item) => `<span>${item.icon} ${item.name}</span>`).join('')}</div>` : ''}${personality.length ? `<h3>PERSONALIDADE</h3><div class="chips">${personality.map((item) => `<span>${item.icon} ${item.name}</span>`).join('')}</div>` : ''}${sheetText('HISTÓRIA', state.story)}</aside>`;
 }
 
 function sheetLabels(pairs) {
@@ -396,34 +473,16 @@ function labelForAppearance(key) {
 function bindEvents() {
   document.querySelectorAll('[data-step]').forEach((button) => button.addEventListener('click', () => { state.step = button.dataset.step; render(); }));
   document.querySelectorAll('[data-race]').forEach((button) => button.addEventListener('click', () => { state.race = button.dataset.race; render(); }));
-  document.querySelectorAll('[data-class]').forEach((button) => button.addEventListener('click', () => { state.class = button.dataset.class; state.skills = []; render(); }));
-  document.querySelectorAll('[data-skill]').forEach((button) => button.addEventListener('click', () => toggleSkill(button.dataset.skill)));
+  document.querySelectorAll('[data-class]').forEach((button) => button.addEventListener('click', () => { state.class = button.dataset.class; state.skills = []; state.equipment = []; render(); }));
+  document.querySelectorAll('[data-skill]').forEach((button) => button.addEventListener('click', () => toggleChoice('skills', button.dataset.skill, SKILL_LIMIT)));
+  document.querySelectorAll('[data-personality]').forEach((button) => button.addEventListener('click', () => toggleChoice('personality', button.dataset.personality, PERSONALITY_LIMIT)));
+  document.querySelectorAll('[data-equipment]').forEach((button) => button.addEventListener('click', () => toggleChoice('equipment', button.dataset.equipment, EQUIPMENT_LIMIT)));
   document.querySelectorAll('[data-appearance-key]').forEach((button) => button.addEventListener('click', () => { state.appearance[button.dataset.appearanceKey] = button.dataset.appearanceValue; render(); }));
   document.querySelectorAll('[data-field]').forEach((field) => field.addEventListener('input', () => { state[field.dataset.field] = field.value; render(); }));
-  document.querySelectorAll('[data-personality-remove]').forEach((button) => button.addEventListener('click', () => { state.personality = state.personality.filter((item, index) => index !== Number(button.dataset.personalityRemove)); render(); }));
-  const personalityInput = $('[data-personality-input]');
-  if (personalityInput) {
-    personalityInput.addEventListener('input', () => { updatePersonalityDraft(personalityInput.value); render(); });
-    personalityInput.addEventListener('keydown', (event) => {
-      if (event.key !== 'Enter') return;
-      event.preventDefault();
-      commitPersonalityDraft();
-      render();
-    });
-    personalityInput.addEventListener('blur', () => {
-      if (rendering) return;
-      if (!commitPersonalityDraft()) return;
-      // Espera o foco assentar no próximo elemento antes de recriar o DOM.
-      setTimeout(render, 0);
-    });
-  }
-  document.querySelectorAll('[data-integration]').forEach((field) => {
-    const updateIntegration = () => { integration[field.dataset.integration] = field.value; };
-    field.addEventListener('input', updateIntegration);
-    field.addEventListener('change', updateIntegration);
-  });
-  $('[data-action="confirm-integration"]')?.addEventListener('click', confirmIntegration);
-  $('[data-action="generate-image"]')?.addEventListener('click', generateCharacterImage);
+  $('[data-action="copy-prompt"]')?.addEventListener('click', copyPrompt);
+  $('[data-action="upload-image"]')?.addEventListener('click', () => $('[data-image-input]')?.click());
+  $('[data-image-input]')?.addEventListener('change', importImage);
+  $('[data-action="generate-pdf"]')?.addEventListener('click', generatePdf);
   $('[data-action="reset"]')?.addEventListener('click', () => window.location.reload());
   $('[data-action="save"]')?.addEventListener('click', downloadJson);
   $('[data-action="import"]')?.addEventListener('click', () => $('[data-file-input]')?.click());
@@ -455,65 +514,29 @@ function loadCharacter(data) {
   state.height = data.height || state.height;
   state.race = normalizeId(data.race, races, state.race);
   state.class = normalizeId(data.class, classes, state.class);
-  state.skills = normalizeSkills(data.skills);
+  state.skills = normalizeChoices(data.skills, selectedSkillCatalog()?.options || [], SKILL_LIMIT);
   state.appearance = { ...state.appearance, ...(data.appearance || {}) };
-  state.personality = Array.isArray(data.personality)
-    ? data.personality.map((item) => String(item ?? '').trim()).filter(Boolean)
-    : state.personality;
-  state.personalityDraft = '';
-  state.equipment = data.equipment || state.equipment;
-  state.otherCharacteristics = data.otherCharacteristics || state.otherCharacteristics;
+  state.personality = normalizeChoices(data.personality, personalityCatalog, PERSONALITY_LIMIT);
+  state.equipment = normalizeChoices(data.equipment, equipmentOptions(), EQUIPMENT_LIMIT);
   state.story = data.story || state.story;
 }
 
-function toggleSkill(id) {
-  if (state.skills.includes(id)) {
-    state.skills = state.skills.filter((item) => item !== id);
-  } else if (state.skills.length < 2) {
-    state.skills = [...state.skills, id];
+function toggleChoice(key, id, limit) {
+  if (state[key].includes(id)) {
+    state[key] = state[key].filter((item) => item !== id);
+  } else if (state[key].length < limit) {
+    state[key] = [...state[key], id];
   }
   render();
 }
 
-function normalizeSkills(value) {
-  const availableIds = (selectedSkillCatalog()?.options || []).map((item) => item.id);
+function normalizeChoices(value, options, limit) {
+  const availableIds = options.map((item) => item.id);
   const ids = Array.isArray(value)
     ? value.map((item) => (typeof item === 'string' ? item : item?.id))
     : [];
   const validIds = ids.filter((id, index) => availableIds.includes(id) && ids.indexOf(id) === index);
-  return validIds.slice(0, 2);
-}
-
-function addPersonalityTrait(value) {
-  const trait = String(value ?? '').trim();
-  if (!trait) return false;
-  if (state.personality.some((item) => item.toLowerCase() === trait.toLowerCase())) return false;
-  state.personality = [...state.personality, trait];
-  return true;
-}
-
-function updatePersonalityDraft(value) {
-  if (!value.includes(',')) {
-    state.personalityDraft = value;
-    return;
-  }
-
-  const parts = value.split(',');
-  state.personalityDraft = parts.pop();
-  parts.forEach(addPersonalityTrait);
-}
-
-function commitPersonalityDraft() {
-  const draft = state.personalityDraft;
-  if (!draft.trim()) {
-    if (!draft) return false;
-    state.personalityDraft = '';
-    return true;
-  }
-
-  addPersonalityTrait(draft);
-  state.personalityDraft = '';
-  return true;
+  return validIds.slice(0, limit);
 }
 
 function normalizeId(value, collection, fallback) {
@@ -521,105 +544,186 @@ function normalizeId(value, collection, fallback) {
   return collection.some((item) => item.id === id) ? id : fallback;
 }
 
-function confirmIntegration() {
-  if (!integration.apiKey.trim()) {
-    alert('Informe a chave da API OpenAI para continuar.');
-    return;
-  }
-
-  integration.ready = true;
-  render();
-}
-
 function buildImagePrompt() {
-  const data = characterJson();
-  return `Crie uma ilustração vertical de personagem de RPG em fantasia clássica, aquarela delicada, pintura de storybook e desenho de livro infantil/juvenil de aventura.
+  const race = selectedRace();
+  const klass = selectedClass();
+  // Um JSON importado pode trazer número no lugar de texto, então nada de `.trim()` direto.
+  const text = (value) => String(value ?? '').trim();
+  const identity = [
+    text(state.name) && `nome ${text(state.name)}`,
+    race && `raça ${race.name}`,
+    klass && `classe ${klass.name}`,
+    text(state.age) && `idade ${text(state.age)}`,
+    text(state.gender) && `gênero ${text(state.gender)}`,
+    text(state.height) && `altura informada ${text(state.height)}`,
+  ].filter(Boolean);
+  const appearance = appearanceGroups
+    .filter((group) => String(state.appearance[group.key] ?? '').trim())
+    .map((group) => `${group.title.toLowerCase()}: ${String(state.appearance[group.key]).toLowerCase()}`);
+  const personality = selectedPersonality().map((item) => item.name.toLowerCase());
+  const equipment = selectedEquipment().map((item) => item.name.toLowerCase());
+  const skills = selectedSkills().map((item) => item.name.toLowerCase());
 
-Personagem: ${data.name}, raça ${data.race.name}, classe ${data.class.name}, idade ${data.age}, gênero ${data.gender}, altura informada ${data.height}.
-Aparência: pele ${data.appearance.skin}, cabelo ${data.appearance.hair.toLowerCase()} ${data.appearance.hairColor.toLowerCase()}, olhos ${data.appearance.eyes.toLowerCase()}, estatura (porte na escala baixa/média/alta) ${data.appearance.height.toLowerCase()}, corpo ${data.appearance.body.toLowerCase()}, marcas: ${data.appearance.marks.toLowerCase()}, acessório: ${data.appearance.accessory.toLowerCase()}, roupa/estilo: ${data.appearance.style.toLowerCase()}.
-Personalidade: ${data.personality.join(', ')}.
-Equipamentos obrigatórios da aba História: ${data.equipment}. Não substitua por equipamentos padrão de raça ou classe.
-Outras características: ${data.otherCharacteristics}.
-História e intenção dramática: ${data.story}.
+  const blocks = ['Crie uma ilustração vertical de personagem de RPG em fantasia clássica, aquarela delicada, pintura de storybook e desenho de livro infantil/juvenil de aventura.'];
+  if (identity.length) blocks.push(`Personagem: ${identity.join(', ')}.`);
+  if (appearance.length) blocks.push(`Aparência: ${appearance.join(', ')}.`);
+  if (personality.length) blocks.push(`Personalidade: ${personality.join(', ')}.`);
+  if (skills.length) blocks.push(`Talentos que aparecem na pose: ${skills.join(', ')}.`);
+  if (equipment.length) blocks.push(`Equipamentos obrigatórios escolhidos pelo jogador: ${equipment.join(' e ')}. Não substitua por equipamentos padrão de raça ou classe.`);
+  if (text(state.story)) blocks.push(`História e intenção dramática: ${text(state.story)}`);
+  blocks.push('Composição: pose dinâmica e heroica em três quartos, corpo inteiro visível, expressão carismática coerente com a personalidade, cenário de fantasia suave relacionado à história, luz dourada cinematográfica, pinceladas de aquarela, contornos finos, textura de papel, cores harmoniosas, detalhes nos equipamentos, atmosfera mágica e acolhedora. Evite texto, assinatura, logotipos, marcas de água, moldura, aparência fotorealista ou estilo sombrio adulto.');
+  blocks.push(`JSON do personagem para fidelidade:\n${JSON.stringify(characterJson(), null, 2)}`);
 
-Composição: pose dinâmica e heroica em três quartos, corpo inteiro visível, expressão carismática coerente com a personalidade, cenário de fantasia suave relacionado à história, luz dourada cinematográfica, pinceladas de aquarela, contornos finos, textura de papel, cores harmoniosas, detalhes nos equipamentos, atmosfera mágica e acolhedora. Evite texto, assinatura, logotipos, marcas d'água, moldura, aparência fotorealista ou estilo sombrio adulto.
-
-JSON do personagem para fidelidade:
-${JSON.stringify(data, null, 2)}`;
+  return blocks.join('\n\n');
 }
 
-function missingCharacterFields() {
-  const missing = [];
-  if (!selectedRace()) missing.push('Passo 1 — Raça');
-  if (!selectedClass()) missing.push('Passo 2 — Classe');
-  if (state.skills.length < 2) missing.push('Passo 3 — 2 habilidades');
-  appearanceGroups.forEach((group) => {
-    if (!String(state.appearance[group.key] ?? '').trim()) missing.push(`Passo 4 — ${group.title}`);
-  });
-  [
-    ['Nome do personagem', state.name],
-    ['Jogador', state.player],
-    ['Idade', state.age],
-    ['Gênero', state.gender],
-    ['Altura', state.height],
-    ['Equipamento', state.equipment],
-    ['Outras características', state.otherCharacteristics],
-    ['História', state.story],
-  ].forEach(([label, value]) => {
-    if (!String(value ?? '').trim()) missing.push(`Passo 5 — ${label}`);
-  });
-  if (!state.personality.length) missing.push('Passo 5 — pelo menos 1 traço de personalidade');
-  return missing;
+async function copyPrompt() {
+  const prompt = buildImagePrompt();
+  imageState.prompt = prompt;
+  let copied = false;
+
+  try {
+    if (navigator.clipboard?.writeText && window.isSecureContext) {
+      await navigator.clipboard.writeText(prompt);
+      copied = true;
+    }
+  } catch (error) {
+    copied = false;
+  }
+
+  if (!copied) copied = copyWithExecCommand(prompt);
+  imageState.copyStatus = copied ? 'copiado' : 'manual';
+  render();
+  if (!copied) $('[data-prompt-box]')?.select();
 }
 
-async function generateCharacterImage() {
-  commitPersonalityDraft();
+function copyWithExecCommand(text) {
+  const area = document.createElement('textarea');
+  area.value = text;
+  area.setAttribute('readonly', '');
+  area.style.position = 'fixed';
+  area.style.top = '-1000px';
+  document.body.appendChild(area);
+  area.select();
 
-  if (!integration.ready || !integration.apiKey.trim()) {
-    alert('Atualize a página e informe os dados da integração antes de gerar a imagem.');
+  let copied = false;
+  try {
+    copied = document.execCommand('copy');
+  } catch (error) {
+    copied = false;
+  }
+  area.remove();
+  return copied;
+}
+
+function importImage(event) {
+  const file = event.target.files?.[0];
+  // Zera o input para que escolher o mesmo arquivo de novo continue disparando o change.
+  event.target.value = '';
+  if (!file) return;
+
+  if (!file.type.startsWith('image/')) {
+    imageState.uploadError = 'Esse arquivo não é uma imagem. Escolha um PNG, JPG ou WEBP.';
     render();
     return;
   }
 
-  imageState.checked = true;
-  if (missingCharacterFields().length) {
-    imageState.error = '';
+  const reader = new FileReader();
+  reader.addEventListener('load', () => {
+    imageState.dataUrl = String(reader.result || '');
+    imageState.uploadError = '';
+    imageState.pdfError = '';
+    render();
+  });
+  reader.addEventListener('error', () => {
+    imageState.uploadError = 'Não consegui ler esse arquivo. Tente outra imagem.';
+    render();
+  });
+  reader.readAsDataURL(file);
+}
+
+const pdfPage = { width: 210, height: 297, margin: 8 };
+
+async function generatePdf() {
+  if (!imageState.dataUrl || imageState.pdfLoading) return;
+  if (!window.html2canvas || !window.jspdf?.jsPDF) {
+    imageState.pdfError = 'Não encontrei o gerador de PDF (pasta vendor/). Recarregue a página.';
     render();
     return;
   }
 
-  imageState.loading = true;
-  imageState.error = '';
-  imageState.dataUrl = '';
-  imageState.prompt = buildImagePrompt();
+  imageState.pdfLoading = true;
+  imageState.pdfError = '';
   render();
 
   try {
-    const response = await fetch('https://api.openai.com/v1/images/generations', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${integration.apiKey.trim()}`,
+    // A ficha é buscada depois do render acima: o nó anterior já foi descartado.
+    const sheet = $('.sheet');
+    if (!sheet) throw new Error('a ficha não está na tela');
+    const sheetCanvas = await window.html2canvas(sheet, {
+      scale: 2,
+      backgroundColor: '#f7ead3',
+      height: sheet.scrollHeight,
+      windowHeight: sheet.scrollHeight,
+      onclone: (clonedDocument) => {
+        const clone = clonedDocument.querySelector('.sheet');
+        if (!clone) return;
+        clone.style.overflow = 'visible';
+        clone.style.height = 'auto';
+        clone.style.maxHeight = 'none';
       },
-      body: JSON.stringify({
-        model: integration.model.trim() || 'gpt-image-2',
-        prompt: imageState.prompt,
-        size: integration.size,
-        quality: integration.quality,
-        n: 1,
-      }),
     });
-    const payload = await response.json();
-    if (!response.ok) throw new Error(payload.error?.message || 'A API recusou a solicitação de imagem.');
-    const imageBase64 = payload.data?.[0]?.b64_json;
-    if (!imageBase64) throw new Error('A resposta da API não trouxe uma imagem em base64.');
-    imageState.dataUrl = `data:image/png;base64,${imageBase64}`;
+    const portrait = await loadImageElement(imageState.dataUrl);
+    // Um SVG sem largura/altura intrínsecas chega aqui com 0x0 e viraria NaN no addImage.
+    if (!portrait.naturalWidth || !portrait.naturalHeight) {
+      throw new Error('a imagem carregada não tem tamanho definido; use um PNG, JPG ou WEBP');
+    }
+    const { jsPDF } = window.jspdf;
+    const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+    placeInQuadrant(pdf, sheetCanvas.toDataURL('image/jpeg', 0.95), sheetCanvas.width, sheetCanvas.height, 0);
+    placeInQuadrant(pdf, toJpegDataUrl(portrait), portrait.naturalWidth, portrait.naturalHeight, 1);
+    pdf.save(`${state.name.trim() || 'personagem'}.pdf`);
   } catch (error) {
-    imageState.error = `Não foi possível gerar a imagem: ${error.message}`;
+    imageState.pdfError = `Não consegui gerar o PDF: ${error.message}`;
   } finally {
-    imageState.loading = false;
+    imageState.pdfLoading = false;
     render();
   }
+}
+
+// Coluna 0 = quadrante superior esquerdo (ficha); coluna 1 = quadrante superior direito (retrato).
+// Os dois começam na mesma altura e a metade de baixo da página fica em branco, como combinado.
+function placeInQuadrant(pdf, dataUrl, naturalWidth, naturalHeight, column) {
+  const halfWidth = pdfPage.width / 2;
+  const halfHeight = pdfPage.height / 2;
+  const boxWidth = halfWidth - pdfPage.margin * 1.5;
+  const boxHeight = halfHeight - pdfPage.margin * 2;
+  const scale = Math.min(boxWidth / naturalWidth, boxHeight / naturalHeight);
+  const width = naturalWidth * scale;
+  const height = naturalHeight * scale;
+  const boxLeft = column === 0 ? pdfPage.margin : halfWidth + pdfPage.margin / 2;
+  pdf.addImage(dataUrl, 'JPEG', boxLeft + (boxWidth - width) / 2, pdfPage.margin, width, height);
+}
+
+function loadImageElement(source) {
+  return new Promise((resolve, reject) => {
+    const image = new Image();
+    image.addEventListener('load', () => resolve(image));
+    image.addEventListener('error', () => reject(new Error('não consegui abrir a imagem carregada')));
+    image.src = source;
+  });
+}
+
+// Reencoda em JPEG para que qualquer formato aceito pelo navegador (WEBP, GIF...) entre no PDF.
+function toJpegDataUrl(image) {
+  const canvas = document.createElement('canvas');
+  canvas.width = image.naturalWidth;
+  canvas.height = image.naturalHeight;
+  const context = canvas.getContext('2d');
+  context.fillStyle = '#ffffff';
+  context.fillRect(0, 0, canvas.width, canvas.height);
+  context.drawImage(image, 0, 0);
+  return canvas.toDataURL('image/jpeg', 0.95);
 }
 
 function escapeHtml(value) {

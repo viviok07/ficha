@@ -8,7 +8,7 @@ Checklist final, válido para toda receita:
 ```
 1. npm run build                  # node --check src/main.js
 2. abrir index.html no navegador
-3. percorrer os 5 passos e conferir a ficha lateral
+3. percorrer os 6 passos e conferir a ficha lateral
 4. SALVAR FICHA -> IMPORTAR JSON  # garante round-trip da exportação
 ```
 
@@ -26,19 +26,22 @@ Checklist final, válido para toda receita:
 
 Nada mais é necessário: o grid, o bloco de informações e a ficha leem do array.
 Opcional: adicionar `.p7 .choice-art { background: linear-gradient(...); }` em
-[src/style.css:235](../src/style.css#L235) para dar cor própria ao card (o índice da classe CSS
+[src/style.css:237](../src/style.css#L237) para dar cor própria ao card (o índice da classe CSS
 é a posição no array).
 
 ## 2. Adicionar uma classe
 
 **Toque em dois lugares, nesta ordem:**
 
-1. `classes` ([src/main.js:11](../src/main.js#L11)) — inclua `equipment` (array) e `attributes`
-   com as quatro chaves `forca`, `destreza`, `inteligencia`, `sabedoria` (escala 1–5).
+1. `classes` ([src/main.js:11](../src/main.js#L11)) — só `id`, `name`, `icon`, `description` e
+   `attributes` com as quatro chaves `forca`, `destreza`, `inteligencia`, `sabedoria` (escala 1–5).
 2. `skillCatalog` ([src/main.js:21](../src/main.js#L21)) — **obrigatório**, com a mesma chave do
    `id` da classe, `type` (`'manobras'` ou `'magias'`), `singular` e **5 `options`**.
+3. `equipmentCatalog` ([src/main.js:126](../src/main.js#L126)) — **obrigatório**, mesma chave do
+   `id`, um array de **5 opções** misturando vestimenta e equipamento principal.
 
-Sem o passo 2 a aplicação quebra no passo 3 (`selectedSkillCatalog()` retorna `undefined`).
+Sem o passo 2 a aplicação quebra no passo 3 (`selectedSkillCatalog()` retorna `undefined`); sem o
+passo 3 o campo de equipamento do passo 5 fica preso no texto de espera.
 
 ## 3. Adicionar ou trocar uma habilidade
 
@@ -48,24 +51,24 @@ Mantenha 5 opções por classe ou ajuste também a frase "Escolha 2 ... dentre a
 `renderSkillsStep()` ([src/main.js:315](../src/main.js#L315)).
 Não renomeie ids existentes — fichas salvas os referenciam.
 
-## 4. Mudar o limite de habilidades (ex.: 3 em vez de 2)
+## 4. Mudar o limite de habilidades, personalidade ou equipamento
 
-Quatro pontos, todos precisam concordar:
+Os três limites já são constantes em [src/main.js:187](../src/main.js#L187): `SKILL_LIMIT` (2),
+`PERSONALITY_LIMIT` (3) e `EQUIPMENT_LIMIT` (2). Mudar a constante já acerta o handler
+(`toggleChoice`), a importação (`normalizeChoices`) e o contador exibido no rótulo do campo.
 
-| Onde | O que mudar |
+Sobra apenas o **texto escrito à mão**:
+
+| Onde | O que conferir |
 | --- | --- |
-| `toggleSkill()` ([src/main.js:469](../src/main.js#L469)) | `state.skills.length < 2` |
-| `normalizeSkills()` ([src/main.js:478](../src/main.js#L478)) | `.slice(0, 2)` |
-| `missingCharacterFields()` ([src/main.js:551](../src/main.js#L551)) | `state.skills.length < 2` e o texto "2 habilidades" |
-| Textos | `steps` (`subtitle: 'Escolha 2 opções'`) e as frases de `renderSkillsStep()`, incluindo `(${selectedCount}/2)` |
-
-Extraia uma constante `const MAX_SKILLS = 2;` no topo se for mexer nisso — é a mudança mais
-propensa a ficar inconsistente.
+| `steps` ([src/main.js:178](../src/main.js#L178)) | `subtitle: 'Escolha 2 opções'` do passo 3 |
+| `renderSkillsStep()` | as frases "Escolha 2 …" e `(${selectedCount}/2)` |
+| `renderClassStep()` | "Você escolhe até N desses equipamentos no passo 5" já usa a constante |
 
 ## 5. Adicionar um grupo de aparência
 
 **Toque em:** `appearanceGroups` ([src/main.js:101](../src/main.js#L101)) **e** no padrão
-`state.appearance` ([src/main.js:137](../src/main.js#L137)).
+`state.appearance` ([src/main.js:207](../src/main.js#L207)).
 
 ```js
 // appearanceGroups
@@ -75,45 +78,45 @@ propensa a ficar inconsistente.
 capa: '',
 ```
 
-O passo 4, a ficha (que omite a linha enquanto o valor for `''`), a exportação e a lista de
-pendências de `missingCharacterFields()` passam a incluir o grupo automaticamente.
-Para que ele influencie a imagem gerada, acrescente-o à frase "Aparência:" em
-`buildImagePrompt()` ([src/main.js:534](../src/main.js#L534)) — o prompt lista as chaves
-manualmente.
+O passo 4, a ficha (que omite a linha enquanto o valor for `''`), a exportação **e o prompt do
+retrato** passam a incluir o grupo automaticamente: `buildImagePrompt()`
+([src/main.js:534](../src/main.js#L534)) percorre `appearanceGroups` e ignora os vazios. Nada mais
+a fazer.
 
 ## 6. Adicionar um campo de texto ao personagem
 
 Exemplo: um campo `motivacao`.
 
-1. `state.motivacao = ''` ([src/main.js:137](../src/main.js#L137)) — campo novo **sempre** começa
+1. `state.motivacao = ''` ([src/main.js:200](../src/main.js#L200)) — campo novo **sempre** começa
    vazio.
-2. Em `renderStoryStep()` ([src/main.js:335](../src/main.js#L335)), um controle com `data-field`:
+2. Em `renderStoryStep()` ([src/main.js:366](../src/main.js#L366)), um controle com `data-field`:
    ```html
    <label class="field">Motivação<textarea data-field="motivacao">${escapeHtml(state.motivacao)}</textarea></label>
    ```
    O handler genérico de `data-field` já cuida do resto — não mexa em `bindEvents()`. O foco
    também já é preservado: `focusSelector()` reconhece qualquer `data-field`.
-3. `characterJson()` ([src/main.js:170](../src/main.js#L170)) — adicione `motivacao: state.motivacao`.
-4. `loadCharacter()` ([src/main.js:450](../src/main.js#L450)) — `state.motivacao = data.motivacao || state.motivacao;`.
-5. `renderSheet()` ([src/main.js:358](../src/main.js#L358)) — se o campo deve aparecer na ficha,
+3. `characterJson()` ([src/main.js:238](../src/main.js#L238)) — adicione `motivacao: state.motivacao`.
+4. `loadCharacter()` ([src/main.js:496](../src/main.js#L496)) — `state.motivacao = data.motivacao || state.motivacao;`.
+5. `renderSheet()` ([src/main.js:420](../src/main.js#L420)) — se o campo deve aparecer na ficha,
    use `${sheetText('MOTIVAÇÃO', state.motivacao)}`, que já escapa o valor e omite a seção quando
    ela está vazia.
-6. Opcional: incluir no prompt em `buildImagePrompt()` e na lista de obrigatórios de
-   `missingCharacterFields()`.
+6. Opcional: incluir no prompt em `buildImagePrompt()` — lembrando que lá todo campo vazio é
+   omitido, então trate a string vazia.
 
 ## 7. Adicionar um passo novo ao wizard
 
-1. `steps` ([src/main.js:113](../src/main.js#L113)) — `{ id: 'novo', number: 6, title, subtitle }`
+1. `steps` ([src/main.js:178](../src/main.js#L178)) — `{ id: 'novo', number: 7, title, subtitle }`
    e renumere os seguintes, se necessário.
 2. Escreva `renderNovoStep()` seguindo o padrão dos irmãos: `<section class="panel current-panel">`,
    título `✦ N. TÍTULO ✦`, um parágrafo de instrução, o conteúdo e, no fim,
    `renderNavButtons(proximoId, anteriorId)`.
-3. `renderCurrentStep()` ([src/main.js:291](../src/main.js#L291)) — adicione
+3. `renderCurrentStep()` ([src/main.js:337](../src/main.js#L337)) — adicione
    `if (state.step === 'novo') return renderNovoStep();` **antes** do `return renderStoryStep()`
    final, que funciona como fallback.
 4. Ajuste os `renderNavButtons()` dos passos vizinhos para apontarem para o novo id.
-5. Se o passo for o quinto ou além, confira `.steps { grid-template-columns: repeat(5, ...) }`
-   em [src/style.css:556](../src/style.css#L556) (media query mobile).
+5. Confira `.steps { grid-template-columns: repeat(6, ...) }` em
+   [src/style.css:534](../src/style.css#L534) (media query mobile) — o número precisa bater com a
+   quantidade de passos.
 
 Todo passo precisa funcionar com o estado vazio: mostre um texto de espera em `.info.empty` em
 vez de acessar `selectedRace().name` direto, e **não** bloqueie o botão PRÓXIMO PASSO.
@@ -124,7 +127,7 @@ por linha, sempre terminando em `render()`).
 
 ## 8. Adicionar um botão de ação no cabeçalho
 
-1. Em `render()` ([src/main.js:188](../src/main.js#L188)), dentro de `<div class="actions">`, um
+1. Em `render()` ([src/main.js:249](../src/main.js#L249)), dentro de `<div class="actions">`, um
    botão com `data-action="minha-acao"` e a classe `primary`, `ghost` ou `secondary`.
 2. Em `bindEvents()`, na sequência dos outros:
    ```js
@@ -134,52 +137,62 @@ por linha, sempre terminando em `render()`).
 3. Implemente `minhaAcao()` no bloco de domínio/IO (perto de `downloadJson`), terminando com
    `render()` se alterar estado.
 
-## 9. Mexer no campo de personalidade (badges)
+## 9. Mexer nos multi-selects (personalidade e equipamento)
 
-`state.personality` é editado na aba História por um input que vira badge. As peças:
+Personalidade, equipamento e habilidades usam **as mesmas três peças**. Não existe mais campo de
+texto com badges.
 
 | Onde | Papel |
 | --- | --- |
-| `renderPersonalityField()` ([src/main.js:339](../src/main.js#L339)) | badges + `<input data-personality-input>` |
-| `addPersonalityTrait()` ([src/main.js:487](../src/main.js#L487)) | apara, ignora vazio, recusa repetido (sem diferenciar maiúsculas) |
-| `updatePersonalityDraft()` ([src/main.js:495](../src/main.js#L495)) | quebra o texto na vírgula; o resto vira `state.personalityDraft` |
-| `commitPersonalityDraft()` ([src/main.js:506](../src/main.js#L506)) | confirma o pendente no `Enter`, no `blur` e antes de gerar a imagem |
+| `renderPickGrid(options, selecionados, atributo, classeDoGrid)` ([src/main.js:370](../src/main.js#L370)) | monta a grade de `.choice-card.pick-card` com o `✓` de selecionado |
+| `renderPersonalityField()` / `renderEquipmentField()` ([src/main.js:378](../src/main.js#L378)) | rótulo, contador `n/limite` e a grade; o de equipamento mostra o texto de espera sem classe |
+| `toggleChoice(chave, id, limite)` ([src/main.js:511](../src/main.js#L511)) | alterna, respeita o limite em silêncio e chama `render()` |
+| `normalizeChoices(valor, opções, limite)` ([src/main.js:520](../src/main.js#L520)) | importação: aceita id ou objeto, descarta desconhecido e repetido, corta no limite |
 
-Cuidados ao mexer aqui:
+Para criar um **quarto** multi-select basta um catálogo novo, uma lista em `state`, uma linha em
+`bindEvents()` apontando para `toggleChoice` e uma classe de grid no CSS. Nenhuma lógica nova.
 
-- O handler de `blur` precisa sair cedo quando `rendering` for `true` (o `blur` disparado pela
-  troca do `innerHTML` confirmaria um traço a cada tecla) e adiar o `render()` com
-  `setTimeout(render, 0)`, para o foco assentar no elemento clicado antes de o DOM ser recriado.
-- Para trocar o separador (vírgula) mude só `updatePersonalityDraft()`; o resto não depende dele.
-- Nada muda em `characterJson()`/`loadCharacter()`: o campo já era serializado.
+Cuidados:
+
+- Se as opções dependerem da classe, zere a lista no handler de `data-class` (como
+  `state.skills` e `state.equipment` já fazem) e valide contra o catálogo da classe atual.
+- Em `loadCharacter()`, a linha do multi-select precisa vir **depois** de `state.class`.
 
 ## 10. Persistir a ficha entre sessões
 
 Hoje não há persistência (`REINICIAR` apenas recarrega a página). Se o usuário pedir:
 
-- Salve **apenas** `characterJson()` em `localStorage`, nunca `integration` (contém a chave de API).
+- Salve **apenas** `characterJson()` em `localStorage`. Nunca `imageState`: o retrato é um data
+  URL de vários MB e foi deliberadamente deixado fora do que se salva.
 - Carregue no bootstrap: antes da chamada final a `render()`, tente
   `loadCharacter(JSON.parse(localStorage.getItem('ficha')))` dentro de um `try/catch`.
 - Faça `REINICIAR` limpar a chave do `localStorage` antes do `reload()`, senão o botão deixa de
   reiniciar de fato.
 
-## 11. Mover a chamada da OpenAI para um backend
+## 11. Mexer no prompt, no upload do retrato ou no PDF
 
-Ver [INTEGRACAO_IMAGEM.md](INTEGRACAO_IMAGEM.md#migrando-para-um-backend). Resumo: trocar a URL e
-os headers em `generateCharacterImage()` ([src/main.js:575](../src/main.js#L575)) e remover o
-campo de chave do `renderIntegrationGate()`. O resto do fluxo (loader, erro, `dataUrl`) não muda.
+Ver [INTEGRACAO_IMAGEM.md](INTEGRACAO_IMAGEM.md). Em resumo:
+
+- **Prompt**: `buildImagePrompt()` ([src/main.js:534](../src/main.js#L534)) monta blocos e **omite
+  todo campo vazio** — qualquer bloco novo precisa do mesmo cuidado.
+- **Cópia**: `copyPrompt()` tem três degraus (`navigator.clipboard` → `execCommand` → textarea
+  selecionado). Não reduza para um só: a página roda por `file://`.
+- **PDF**: `generatePdf()` depende de `window.html2canvas` e `window.jspdf`, carregados de
+  [vendor/](../vendor/README.md). O layout dos quadrantes vive em `placeInQuadrant()`, e a fonte da
+  imagem da ficha é o próprio `<aside class="sheet">` — mudou a ficha, mudou o PDF.
 
 ---
 
 ## Anti-padrões a evitar neste repositório
 
-- Adicionar `npm install`, bundler, TypeScript, React ou qualquer dependência.
+- Adicionar `npm install`, bundler, TypeScript, React ou qualquer dependência. As duas de
+  [vendor/](../vendor/README.md) são exceção já autorizada e não abrem precedente.
 - Manipular o DOM diretamente (`element.textContent = ...`) em vez de mutar o estado e renderizar.
 - Registrar listeners fora de `bindEvents()` — eles se perdem no próximo `render()`.
 - Interpolar valor de usuário em HTML sem `escapeHtml()`.
 - Usar `innerHTML` em subárvores para "otimizar" — quebra a premissa de que `render()` é a única
   fonte do DOM.
-- Renomear ids de raça, classe ou habilidade já existentes.
+- Renomear ids já existentes de raça, classe, habilidade, personalidade ou equipamento.
 - Textos de UI em inglês ou com jargão de regras de RPG.
 - Pré-selecionar qualquer coisa para o usuário — nem valor padrão em `state`, nem fallback
-  escondido em `normalizeSkills()`, nem "escolhe as 2 primeiras" ao trocar de classe.
+  escondido em `normalizeChoices()`, nem "escolhe as 2 primeiras" ao trocar de classe.

@@ -202,6 +202,8 @@ button { cursor: pointer; }
 .race-grid { grid-template-columns: repeat(3, minmax(120px, 1fr)); }
 .class-grid { grid-template-columns: repeat(2, minmax(180px, 1fr)); }
 .skill-grid { grid-template-columns: repeat(2, minmax(180px, 1fr)); }
+.trait-grid { grid-template-columns: repeat(2, minmax(160px, 1fr)); }
+.equipment-grid { grid-template-columns: repeat(2, minmax(160px, 1fr)); }
 
 .choice-card {
   position: relative;
@@ -368,47 +370,21 @@ button { cursor: pointer; }
   resize: vertical;
 }
 
-.traits {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-}
-
-.trait {
-  display: inline-flex;
-  gap: 8px;
-  align-items: center;
-  padding: 7px 8px 7px 12px;
-  border: 1px solid #d1b891;
-  border-radius: 999px;
-  background: #fbf0dc;
-  font-size: 14px;
+.pick-card {
+  min-height: 148px;
+  padding: 12px 12px 42px;
   font-weight: 400;
 }
 
-.trait-remove {
-  width: 22px;
-  height: 22px;
-  min-height: 22px;
-  padding: 0;
-  border: none;
-  border-radius: 50%;
-  background: #e6d4b6;
-  color: var(--brown);
-  font-size: 15px;
-  line-height: 1;
-  cursor: pointer;
-}
-
-.trait-remove:hover {
-  background: var(--purple);
-  color: #fff6e7;
-}
-
-.traits-empty {
-  margin: 0;
+.field > span small {
   color: #6b543a;
-  font-size: 14px;
+  font-weight: 400;
+}
+
+.hint {
+  margin: 10px 0 0;
+  color: #6b543a;
+  font-size: 13px;
   font-style: italic;
   font-weight: 400;
 }
@@ -564,13 +540,15 @@ button { cursor: pointer; }
   }
 
   .steps {
-    grid-template-columns: repeat(5, minmax(0, 1fr));
+    grid-template-columns: repeat(6, minmax(0, 1fr));
   }
 
   .step { min-height: 120px; }
   .race-grid,
   .class-grid,
   .skill-grid,
+  .trait-grid,
+  .equipment-grid,
   .row,
   .badges,
   .cols,
@@ -583,62 +561,7 @@ button { cursor: pointer; }
   display: none;
 }
 
-.integration-gate {
-  position: fixed;
-  inset: 0;
-  z-index: 20;
-  display: grid;
-  place-items: center;
-  padding: 24px;
-  background: #170d09cc;
-  backdrop-filter: blur(5px);
-}
-
-.integration-card {
-  width: min(760px, 100%);
-  padding: clamp(20px, 3vw, 34px);
-  border: 2px solid var(--gold);
-  border-radius: 18px;
-  background: linear-gradient(145deg, #fff8eb, #f0d9b8);
-  box-shadow: 0 24px 80px #0007;
-}
-
-.integration-card h2 {
-  margin: 0 0 10px;
-  text-align: center;
-  font: 800 clamp(20px, 3vw, 28px) Cinzel, serif;
-}
-
-.integration-card p {
-  margin: 0 0 18px;
-  text-align: center;
-  line-height: 1.5;
-}
-
-.integration-card small {
-  display: block;
-  margin-top: 14px;
-  color: #5b2c17;
-  line-height: 1.45;
-}
-
-.integration-grid {
-  display: grid;
-  grid-template-columns: 1.2fr 0.9fr 0.9fr;
-  gap: 12px;
-}
-
-.field select {
-  width: 100%;
-  border: 1px solid var(--line);
-  border-radius: 10px;
-  background: #fffaf1;
-  padding: 12px;
-  color: var(--ink);
-  font-size: 16px;
-}
-
-.image-generator {
+.portrait-tools {
   margin-top: 22px;
   padding: 18px;
   border: 1px solid #c6c798;
@@ -646,55 +569,56 @@ button { cursor: pointer; }
   background: linear-gradient(90deg, #f5f8e7, #fbfbef);
 }
 
-.image-generator h3 {
+.portrait-tools h3 {
   margin: 0 0 8px;
   font: 800 18px Cinzel, serif;
 }
 
-.image-generator p {
+.portrait-tools p {
   margin: 0 0 14px;
   line-height: 1.5;
 }
 
-.image-generator button:disabled {
-  cursor: wait;
-  opacity: 0.75;
+.portrait-actions button:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
 }
 
-.loader {
+.portrait-actions {
   display: flex;
-  align-items: center;
+  flex-wrap: wrap;
   gap: 12px;
-  margin-top: 16px;
-  color: var(--purple-dark);
+  margin-top: 4px;
 }
 
-.loader span {
-  width: 28px;
-  height: 28px;
-  border: 4px solid #d9c5a5;
-  border-top-color: var(--purple);
-  border-radius: 50%;
-  animation: spin 0.9s linear infinite;
+.portrait-tools .copy-status {
+  margin: 14px 0 0;
+  font-weight: 700;
+}
+
+.copy-status.ok { color: #2f6b2a; }
+.copy-status.warn { color: #8a5a12; }
+
+.prompt-box {
+  width: 100%;
+  margin-top: 10px;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: #fffaf1;
+  color: var(--ink);
+  font-size: 13px;
+  line-height: 1.45;
+  resize: vertical;
 }
 
 .image-error {
-  margin-top: 16px !important;
   color: #8b1e14;
   font-weight: 700;
 }
 
-.image-error p {
-  margin: 0 0 8px;
-}
-
-.image-error ul {
-  margin: 0;
-  padding-left: 20px;
-}
-
-.image-error li {
-  margin: 3px 0;
+.portrait-tools .image-error {
+  margin: 16px 0 0;
 }
 
 .generated-image {
@@ -715,12 +639,4 @@ button { cursor: pointer; }
   text-align: center;
   color: #5b2c17;
   font-size: 13px;
-}
-
-@keyframes spin {
-  to { transform: rotate(360deg); }
-}
-
-@media (max-width: 980px) {
-  .integration-grid { grid-template-columns: 1fr; }
 }

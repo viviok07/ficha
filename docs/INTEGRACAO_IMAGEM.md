@@ -1,121 +1,127 @@
-# Integração de imagem por IA (visão de desenvolvedor)
+# Retrato do personagem: prompt + upload
 
-Este documento explica **como o recurso funciona por dentro**. Para o passo a passo de usuário
-(criar conta, gerar chave), veja [INTEGRACAO_OPENAI_IMAGENS.md](../INTEGRACAO_OPENAI_IMAGENS.md).
+Este documento explica como o retrato entra na ficha e como o PDF é montado. **Não há mais
+chamada de API.** A geração da imagem acontece fora da aplicação, na ferramenta de IA que o
+usuário preferir.
+
+> Histórico: até a PR #9 existia uma integração direta com a API de imagens da OpenAI, com um
+> overlay pedindo a chave. Ela foi removida por inteiro — chave, `fetch`, gate e loader.
 
 ## Fluxo completo
 
 ```
-1. Página carrega            -> integration.ready === false
-2. renderIntegrationGate()   -> overlay fixo cobrindo a tela (.integration-gate)
-3. Usuário preenche campos   -> data-integration muta o objeto `integration` a cada tecla
-4. Clique em OK              -> confirmIntegration(): exige apiKey não vazia; ready = true; render()
-5. Aba História -> GERAR IMAGEM
-5b. missingCharacterFields() -> se faltar algo, lista as pendências e NÃO chama a API
-6. generateCharacterImage()  -> imageState.loading = true; render()  (mostra o .loader)
-7. buildImagePrompt()        -> texto em pt-BR + JSON completo do personagem
-8. fetch POST api.openai.com/v1/images/generations
-9. Resposta                  -> data[0].b64_json  ->  imageState.dataUrl = 'data:image/png;base64,...'
-10. finally                  -> loading = false; render()  (mostra <figure> ou .image-error)
+Passo 5 (História)
+1. COPIAR PROMPT      -> copyPrompt(): buildImagePrompt() + cadeia de cópia
+2. textarea readonly  -> o prompt fica visível na tela, copiado ou não
+3. CARREGAR IMAGEM    -> importImage(): valida o tipo e lê como data URL
+
+Passo 6 (Visão geral)
+4. imageState.dataUrl -> <figure class="generated-image"> com o retrato
+5. GERAR PDF          -> generatePdf(): html2canvas na ficha + jsPDF
 ```
 
-## `integration` — configuração da sessão
+## `imageState` — tudo em memória, nada persistido
 
-| Campo | Padrão | Origem |
-| --- | --- | --- |
-| `ready` | `false` | `confirmIntegration()` |
-| `apiKey` | `''` | input `type="password"` do gate |
-| `model` | `'gpt-image-2'` | input de texto livre |
-| `size` | `'1024x1024'` | select: `1024x1024`, `1024x1536`, `1536x1024` |
-| `quality` | `'high'` | select: `high`, `medium`, `low`, `auto` |
-
-O gate é o **único** bloqueio da aplicação: enquanto `ready` for `false`, o overlay cobre a tela
-(mas o restante da UI já está renderizado atrás dele). Ele nunca reaparece na mesma sessão — só
-recarregando a página.
-
-**A chave nunca é persistida.** Não a grave em `localStorage`, `sessionStorage`, cookie, URL, log
-ou em qualquer requisição que não seja para `api.openai.com`.
-
-## `imageState` — máquina de estados da geração
-
-`renderImageResult()` ([src/main.js:344](../src/main.js#L344)) despacha nesta ordem de prioridade:
-
-| Condição | Render |
+| Campo | Papel |
 | --- | --- |
-| `loading` | `<div class="loader">` com spinner e "Preparando ilustração mágica..." |
-| `checked` e há pendências | `<div class="image-error">` com a lista do que falta preencher |
-| `error` | `<p class="image-error">` com a mensagem (escapada) |
-| `dataUrl` vazio | nada |
-| caso contrário | `<figure class="generated-image">` com a imagem e legenda |
+| `dataUrl` | O retrato carregado, como data URL. **Não entra em `characterJson()`.** |
+| `uploadError` | Mensagem quando o arquivo não é imagem ou não pôde ser lido |
+| `prompt` | Último prompt gerado; alimenta o `<textarea class="prompt-box">` |
+| `copyStatus` | `'copiado'` ou `'manual'` — decide a mensagem verde ou âmbar |
+| `pdfLoading` / `pdfError` | Estado do botão GERAR PDF |
 
-O botão GERAR IMAGEM fica `disabled` enquanto `loading` for `true`, o que impede requisições
-concorrentes. `imageState.prompt` guarda o último prompt enviado — hoje só para depuração, não é
-exibido.
+**A imagem vive só na sessão.** Salvar a ficha em JSON não guarda o retrato, e reimportar uma
+ficha exige carregar a imagem de novo. Isso é decisão de produto: um data URL de 1024x1024 deixa
+o JSON com vários MB. O passo 6 avisa isso em uma linha.
 
-## Pré-requisito: ficha completa — `missingCharacterFields()` — [src/main.js:551](../src/main.js#L551)
+## `buildImagePrompt()`
 
-O clique em GERAR IMAGEM primeiro confirma o traço de personalidade pendente
-(`commitPersonalityDraft()`), depois marca `imageState.checked = true` e exige **tudo**
-preenchido: raça, classe, as 2 habilidades, os 9 grupos de aparência, nome, jogador, idade,
-gênero, altura, equipamento, outras características, história e ao menos 1 traço de
-personalidade. Faltando qualquer item, a lista aparece abaixo do botão e nenhuma requisição é
-feita. A lista é recalculada a cada `render()`, então some conforme o usuário preenche.
+Monta um texto em português, **omitindo todo campo vazio** — a ficha não precisa estar completa
+para copiar o prompt. Os blocos, em ordem:
 
-## `buildImagePrompt()` — [src/main.js:534](../src/main.js#L534)
+1. Estilo (sempre presente): ilustração vertical, aquarela, storybook infantojuvenil.
+2. `Personagem:` nome, raça, classe, idade, gênero, altura informada.
+3. `Aparência:` percorre `appearanceGroups` e monta `título: valor` só para os grupos preenchidos.
+4. `Personalidade:` nomes das opções escolhidas no catálogo.
+5. `Talentos que aparecem na pose:` as habilidades escolhidas.
+6. `Equipamentos obrigatórios escolhidos pelo jogador:` com a instrução de não substituir por
+   equipamentos padrão de raça ou classe.
+7. `História e intenção dramática:`.
+8. Composição e negativos.
+9. O JSON completo do personagem, para fidelidade.
 
-Monta um prompt em português com quatro blocos:
+Detalhes deliberados:
 
-1. **Estilo**: ilustração vertical de RPG, fantasia clássica, aquarela, storybook infantojuvenil.
-2. **Dados do personagem**: nome, raça, classe, idade, gênero, altura informada, cada chave de
-   aparência, personalidade, equipamento, outras características, história.
-3. **Composição e negativos**: pose de três quartos, corpo inteiro, luz dourada; evitar texto,
-   assinatura, logotipos, marca d'água, moldura, fotorrealismo e estilo sombrio adulto.
-4. **JSON do personagem** (`JSON.stringify(data, null, 2)`) anexado para fidelidade.
+- O bloco de aparência é **genérico**: um grupo novo em `appearanceGroups` entra no prompt
+  sozinho, sem editar esta função (antes as chaves eram escritas à mão).
+- Os dois dados de altura continuam separados: `appearance.height` sai como "estatura" (o título
+  do grupo) e `state.height` como "altura informada".
+- O texto é todo em português.
 
-Decisões deliberadas que **não devem ser "corrigidas" sem pedido explícito**:
+## Cópia para a área de transferência — `copyPrompt()`
 
-- O prompt usa `state.equipment` (a string editável da aba História) e instrui explicitamente
-  *"Não substitua por equipamentos padrão de raça ou classe"*. `class.equipment` fica de fora.
-- As chaves de aparência são listadas **uma a uma, à mão**. Grupos novos em `appearanceGroups`
-  não entram no prompt sozinhos — é preciso editar esta função.
-- Há **dois** dados de altura e o prompt os separa de propósito: `appearance.height` aparece como
-  "estatura (porte na escala baixa/média/alta)" e `state.height` como "altura informada".
-- O texto é todo em português; o modelo lida bem com isso e mantém a coerência com a UI.
+A página costuma ser aberta por `file://`, onde `navigator.clipboard` é bloqueado em vários
+navegadores. Por isso a cópia tem três degraus, nesta ordem:
 
-## A chamada HTTP — [src/main.js:595](../src/main.js#L595)
+1. `navigator.clipboard.writeText()`, só quando `window.isSecureContext` é verdadeiro;
+2. `document.execCommand('copy')` em um `<textarea>` temporário fora da tela;
+3. falhando os dois, o `<textarea class="prompt-box">` visível é selecionado e a mensagem manda
+   o usuário usar Ctrl+C / ⌘+C.
 
-```js
-POST https://api.openai.com/v1/images/generations
-Authorization: Bearer <apiKey>
-Content-Type: application/json
+O prompt aparece na tela nos três casos — serve de conferência e de plano B.
 
-{ model, prompt, size, quality, n: 1 }
+`renderCopyFeedback()` remonta o prompt a cada render e compara com `imageState.prompt`. Se a
+ficha mudou depois da cópia, o `<textarea>` já mostra a versão **atual** (é ele que o usuário
+seleciona no fallback manual) e o aviso troca para "a ficha mudou, copie de novo". Sem isso, o
+plano B entregaria um prompt velho.
+
+## Upload — `importImage()`
+
+Um único `<input type="file" accept="image/*" data-image-input>` fica escondido no cabeçalho;
+os botões dos passos 5 e 6 disparam o mesmo input. A validação é por `file.type`: qualquer coisa
+que não comece com `image/` vira mensagem de erro. Não há limite de tamanho. O `value` do input é
+zerado a cada escolha, para que recarregar o **mesmo** arquivo continue disparando o `change`.
+
+## PDF — `generatePdf()`
+
+Depende das bibliotecas locais em [vendor/](../vendor/README.md) (`window.html2canvas` e
+`window.jspdf.jsPDF`). Se algum global faltar, o botão devolve um erro legível em vez de quebrar.
+
+```
+1. pdfLoading = true; render()
+2. requery de .sheet  <- obrigatório: o render acima descartou o nó anterior
+3. html2canvas(.sheet, { scale: 2, height: scrollHeight, onclone: overflow visible })
+4. loadImageElement(dataUrl) + toJpegDataUrl()  <- reencoda qualquer formato em JPEG
+5. jsPDF A4 retrato, mm
+6. placeInQuadrant(ficha, coluna 0) e placeInQuadrant(retrato, coluna 1)
+7. pdf.save('<nome>.pdf')
 ```
 
-Tratamento de erro em duas etapas:
+### O layout da página
 
-1. `!response.ok` → lança `payload.error?.message` ou a mensagem genérica
-   "A API recusou a solicitação de imagem.";
-2. resposta ok mas sem `data[0].b64_json` → lança "A resposta da API não trouxe uma imagem em
-   base64.".
+A4 retrato (210 x 297 mm), margem de 8 mm:
 
-Qualquer exceção vira `imageState.error = 'Não foi possível gerar a imagem: <mensagem>'`, e o
-`finally` sempre desliga o loader. Falhas comuns em campo: chave inválida (401), modelo sem
-acesso na organização (403/404), CORS/rede, e organização não verificada para modelos GPT Image.
+```
++---------------------------+---------------------------+
+|  ficha (html2canvas)      |  retrato carregado        |   <- ambos começam em y = 8 mm
+|  metade da largura        |  metade da largura        |
+|  metade da altura         |  mesma altura da ficha    |
++---------------------------+---------------------------+
+|                                                       |
+|            metade de baixo em branco                  |   <- proposital
+|                                                       |
++-------------------------------------------------------+
+```
 
-A resposta é sempre tratada como **base64**; a API também pode devolver `url` em alguns modelos —
-se for dar suporte a isso, trate `payload.data[0].url` como alternativa antes de lançar o erro.
+`placeInQuadrant()` encaixa cada imagem no seu quadrante preservando a proporção
+(`Math.min` das escalas), centraliza na horizontal e alinha as duas pelo topo. A metade inferior
+ficar vazia é o pedido original do usuário, não um bug.
 
-## Migrando para um backend
+### Armadilhas do html2canvas
 
-O modo atual expõe a chave a qualquer pessoa que use a página. Para produção:
-
-1. Crie um endpoint próprio (ex.: `POST /api/imagem`) que receba `{ prompt, size, quality }` e
-   guarde a chave no servidor.
-2. Em `generateCharacterImage()`, troque a URL e remova o header `Authorization`.
-3. Em `renderIntegrationGate()`, remova o campo de chave (mantenha modelo/tamanho/qualidade se
-   ainda fizerem sentido) ou elimine o gate inteiro definindo `integration.ready = true` no padrão.
-4. Faça o backend devolver `{ data: [{ b64_json }] }` para não precisar mexer no resto do fluxo.
-
-Nada além dessas linhas precisa mudar: loader, erro e renderização da imagem já são agnósticos à
-origem.
+- `.sheet` tem `overflow: auto`; sem o `onclone` que solta o overflow e a altura, uma ficha longa
+  sairia cortada.
+- Fontes: o `@import` do Google Fonts não carrega offline, então o PDF sai com as fontes de
+  fallback (`serif`). O layout não muda.
+- O `.sheet::before` (o dragão) é um pseudo-elemento; html2canvas o desenha, mas é o primeiro
+  candidato a investigar se o topo da ficha sair estranho.
