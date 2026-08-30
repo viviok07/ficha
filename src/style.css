@@ -688,10 +688,11 @@ button { cursor: pointer; }
   font-size: 13px;
 }
 
-/* Modal do Gemini -----------------------------------------------------------
-   Sobrepõe a página, mas NÃO bloqueia o uso do app: "AGORA NÃO" fecha e todo o
-   fluxo manual (copiar prompt + upload) continua disponível sem chave. */
-.gemini-modal {
+/* Modal das integrações de IA -----------------------------------------------
+   Sobrepõe a página, mas NÃO bloqueia o uso do app: FECHAR sai e todo o fluxo
+   manual (copiar prompt + upload) continua disponível sem chave nenhuma.
+   Ele não abre sozinho: só pelo botão ⚙ INTEGRAÇÕES do passo 5. */
+.ai-modal {
   position: fixed;
   inset: 0;
   z-index: 20;
@@ -703,8 +704,12 @@ button { cursor: pointer; }
   backdrop-filter: blur(5px);
 }
 
-.gemini-card {
+/* Os dois blocos de plataforma ficam à vista ao mesmo tempo, então o cartão pode
+   passar da altura da tela: ele rola por dentro em vez de estourar a janela. */
+.ai-card {
   width: min(720px, 100%);
+  max-height: calc(100vh - 48px);
+  overflow-y: auto;
   padding: clamp(18px, 3vw, 32px);
   border: 2px solid var(--gold);
   border-radius: 18px;
@@ -712,19 +717,19 @@ button { cursor: pointer; }
   box-shadow: 0 24px 80px #0007;
 }
 
-.gemini-card h2 {
+.ai-card h2 {
   margin: 0 0 10px;
   text-align: center;
   font: 800 clamp(19px, 3vw, 26px) Cinzel, serif;
 }
 
-.gemini-card p {
+.ai-card p {
   margin: 0 0 18px;
   line-height: 1.5;
   text-align: center;
 }
 
-.gemini-card small {
+.ai-card small {
   display: block;
   margin-top: 14px;
   color: var(--brown);
@@ -732,7 +737,36 @@ button { cursor: pointer; }
   line-height: 1.45;
 }
 
-.gemini-grid {
+/* Um bloco por plataforma. O escolhido no select ganha borda e fundo mais fortes,
+   porque os dois ficam visíveis e precisa ficar claro qual vai gerar o retrato. */
+.ai-block {
+  margin-top: 16px;
+  padding: 14px;
+  border: 1px dashed var(--line);
+  border-radius: 14px;
+  background: #fffaf199;
+}
+
+.ai-block-active {
+  border: 2px solid var(--gold);
+  border-style: solid;
+  background: #fff8e6;
+  box-shadow: 0 0 0 3px #d9a94533;
+}
+
+.ai-block h3 {
+  margin: 0 0 10px;
+  font: 700 16px Cinzel, serif;
+}
+
+.ai-block h3 small {
+  display: inline;
+  margin: 0;
+  font: 400 13px Lora, Georgia, serif;
+  color: var(--brown);
+}
+
+.ai-grid {
   display: grid;
   grid-template-columns: 1.4fr 0.8fr 0.8fr;
   gap: 12px;
@@ -740,9 +774,9 @@ button { cursor: pointer; }
 
 /* O campo do modelo digitado só existe quando "Outro" está escolhido. O atributo hidden é
    ligado/desligado direto no nó, sem re-render, para não apagar o que já foi digitado. */
-.gemini-custom[hidden] { display: none; }
+.ai-custom[hidden] { display: none; }
 
-.gemini-actions {
+.ai-actions {
   display: flex;
   flex-wrap: wrap;
   gap: 12px;
@@ -788,8 +822,16 @@ button { cursor: pointer; }
 }
 
 @media (max-width: 980px) {
-  .gemini-grid { grid-template-columns: 1fr; }
-  .gemini-modal { place-items: start center; }
+  .ai-grid { grid-template-columns: 1fr; }
+  .ai-modal { place-items: start center; }
+}
+
+/* Com os dois blocos empilhados o modal fica alto no celular: menos respiro nas
+   bordas e mais altura útil para o cartão, que continua rolando por dentro. */
+@media (max-width: 650px) {
+  .ai-modal { padding: 12px; }
+  .ai-card { max-height: calc(100vh - 24px); }
+  .ai-block { padding: 12px 10px; }
 }
 
 /* Layout exclusivo do PDF ---------------------------------------------------
