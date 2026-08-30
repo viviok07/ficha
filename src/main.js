@@ -418,7 +418,7 @@ function renderUploadFeedback() {
 
 function renderOverviewStep() {
   const portrait = imageState.dataUrl
-    ? `<figure class="generated-image"><img src="${imageState.dataUrl}" alt="Retrato de ${escapeHtml(state.name) || 'personagem'}" /><figcaption>Retrato carregado por você.</figcaption></figure>`
+    ? `<figure class="generated-image"><img src="${escapeHtml(imageState.dataUrl)}" alt="Retrato de ${escapeHtml(state.name) || 'personagem'}" /><figcaption>Retrato carregado por você.</figcaption></figure>`
     : '<div class="info empty"><p>Nenhuma imagem carregada ainda. Volte ao passo 5, copie o prompt, gere a imagem na ferramenta de IA que preferir e carregue o arquivo aqui.</p></div>';
   const pdfFeedback = imageState.pdfError ? `<p class="image-error">${escapeHtml(imageState.pdfError)}</p>` : '';
   const pdfDisabled = imageState.dataUrl && !imageState.pdfLoading ? '' : 'disabled';
@@ -440,7 +440,7 @@ function renderSheet() {
   const details = sheetLabels([['IDADE', state.age], ['GÊNERO', state.gender], ['ALTURA', state.height]]);
   const appearanceEntries = Object.entries(state.appearance).filter(([, value]) => String(value ?? '').trim());
   const appearanceBlock = appearanceEntries.length
-    ? `<section><h4>APARÊNCIA</h4>${appearanceEntries.map(([key, value]) => `<p>✹ ${labelForAppearance(key)}: ${escapeHtml(value)}</p>`).join('')}</section>`
+    ? `<section><h4>APARÊNCIA</h4>${appearanceEntries.map(([key, value]) => `<p>✹ ${escapeHtml(labelForAppearance(key))}: ${escapeHtml(value)}</p>`).join('')}</section>`
     : '';
   const equipment = selectedEquipment();
   const personality = selectedPersonality();
@@ -515,7 +515,7 @@ function loadCharacter(data) {
   state.race = normalizeId(data.race, races, state.race);
   state.class = normalizeId(data.class, classes, state.class);
   state.skills = normalizeChoices(data.skills, selectedSkillCatalog()?.options || [], SKILL_LIMIT);
-  state.appearance = { ...state.appearance, ...(data.appearance || {}) };
+  state.appearance = normalizeAppearance(data.appearance);
   state.personality = normalizeChoices(data.personality, personalityCatalog, PERSONALITY_LIMIT);
   state.equipment = normalizeChoices(data.equipment, equipmentOptions(), EQUIPMENT_LIMIT);
   state.story = data.story || state.story;
@@ -542,6 +542,19 @@ function normalizeChoices(value, options, limit) {
 function normalizeId(value, collection, fallback) {
   const id = typeof value === 'string' ? value : value?.id;
   return collection.some((item) => item.id === id) ? id : fallback;
+}
+
+// O JSON importado só pode escrever nas chaves conhecidas de `appearanceGroups`. Uma chave fora
+// do catálogo não tem UI que a edite ou remova, sobreviveria ao round-trip do JSON exportado e
+// chegaria ao innerHTML pelo rótulo de `labelForAppearance()`. Mesma política de
+// `normalizeChoices()`/`normalizeId()`: o desconhecido é descartado em silêncio.
+function normalizeAppearance(value) {
+  const incoming = value && typeof value === 'object' ? value : {};
+  const result = { ...state.appearance };
+  appearanceGroups.forEach((group) => {
+    if (group.key in incoming) result[group.key] = String(incoming[group.key] ?? '');
+  });
+  return result;
 }
 
 function buildImagePrompt() {
@@ -731,7 +744,8 @@ function escapeHtml(value) {
     .replaceAll('&', '&amp;')
     .replaceAll('<', '&lt;')
     .replaceAll('>', '&gt;')
-    .replaceAll('\"', '&quot;');
+    .replaceAll('\"', '&quot;')
+    .replaceAll("'", '&#39;');
 }
 
 function downloadJson() {

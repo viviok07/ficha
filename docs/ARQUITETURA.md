@@ -79,9 +79,9 @@ O arquivo segue uma ordem consistente. Ao adicionar código, respeite o bloco co
 | 3. Derivados | 219–247 | `$`, `selectedRace`, `selectedClass`, `selectedSkillCatalog`, `selectedSkills`, `equipmentOptions`, `selectedEquipment`, `selectedPersonality`, `characterJson` | Leitura derivada do estado |
 | 4. Render | 249–458 | `render`, `focusSelector`, `captureFocus`, `restoreFocus`, `renderStepper`, `renderCurrentStep`, os seis `render*Step`, `renderPickGrid`, `renderPersonalityField`, `renderEquipmentField`, `renderPortraitBlock`, `renderCopyFeedback`, `renderUploadFeedback`, `renderNavButtons`, `renderSheet`, `sheetLabels`, `sheetText`, `modifier`, `labelForAppearance` | HTML como template string |
 | 5. Eventos | 460–477 | `bindEvents` | Único lugar que registra listeners |
-| 6. Domínio e IO | 479–532 | `importJson`, `loadCharacter`, `toggleChoice`, `normalizeChoices`, `normalizeId` | Regras e importação |
-| 7. Retrato e PDF | 534–708 | `buildImagePrompt`, `copyPrompt`, `copyWithExecCommand`, `importImage`, `pdfPage`, `generatePdf`, `placeInQuadrant`, `loadImageElement`, `toJpegDataUrl` | Prompt, upload e PDF |
-| 8. Utilitários e bootstrap | 710–728 | `escapeHtml`, `downloadJson` e a chamada final `render()` | Helpers e inicialização |
+| 6. Domínio e IO | 479–558 | `importJson`, `loadCharacter`, `toggleChoice`, `normalizeChoices`, `normalizeId`, `normalizeAppearance` | Regras e importação |
+| 7. Retrato e PDF | 560–740 | `buildImagePrompt`, `copyPrompt`, `copyWithExecCommand`, `importImage`, `pdfPage`, `generatePdf`, `placeInQuadrant`, `loadImageElement`, `toJpegDataUrl` | Prompt, upload e PDF |
+| 8. Utilitários e bootstrap | 742–761 | `escapeHtml`, `downloadJson` e a chamada final `render()` | Helpers e inicialização |
 
 ## Estrutura visual montada por `render()`
 
@@ -161,6 +161,9 @@ faz para `state.personality`.
 mantém o valor atual. Ele aceita tanto `"elfo"` quanto `{ "id": "elfo", ... }` graças a
 `normalizeId()` e `normalizeChoices()`.
 
+Tolerante não é crédulo: todo dado importado passa por um filtro de catálogo. `appearance` usa
+`normalizeAppearance()` — chave fora de `appearanceGroups` é descartada e o valor vira texto.
+
 > A ordem das atribuições importa. `state.class` precisa ser definido **antes** de
 > `state.skills` e `state.equipment`, porque os dois são validados contra catálogos que dependem
 > da classe atual. Se você reordenar as linhas de `loadCharacter()`, habilidades e equipamentos
@@ -175,8 +178,9 @@ Documentadas para que agentes não as tratem como bugs novos nem as repitam:
 2. ~~HTML não escapado na ficha~~ — **resolvido**. `renderSheet()` escapa todos os valores vindos
    do usuário. Textos de catálogo (nomes de raça, classe, habilidade, personalidade, equipamento)
    não são escapados de propósito: são dados do próprio código.
-3. **`escapeHtml()` não escapa aspas simples** (trata apenas `&`, `<`, `>` e `"`), então não use
-   o retorno dentro de atributos delimitados por `'`.
+3. ~~`escapeHtml()` não escapa aspas simples~~ — **resolvido**. Agora trata `&`, `<`, `>`, `"` e
+   `'`. Nenhum atributo do arquivo usa `'` como delimitador, mas o retorno passou a ser seguro
+   caso algum passe a usar.
 4. **REINICIAR recarrega a página**, o que também descarta o retrato carregado.
 5. **A cópia do prompt falha em `file://` em vários navegadores.** `copyPrompt()` já tem três
    degraus de fallback e o prompt fica visível na tela; não "simplifique" para só
@@ -186,7 +190,7 @@ Documentadas para que agentes não as tratem como bugs novos nem as repitam:
 7. **O upload de imagem não tem limite de tamanho** (decisão do usuário). Só o tipo MIME é
    checado, via `file.type.startsWith('image/')`. Um SVG sem dimensão intrínseca é barrado depois,
    já dentro de `generatePdf()`.
-8. **`renderSheet()` interpola `labelForAppearance(key)` sem `escapeHtml()`** e `loadCharacter()`
-   faz `{ ...state.appearance, ...data.appearance }` sem filtrar as chaves. Um JSON importado com
-   uma chave hostil em `appearance` chega ao `innerHTML` sem escape. **Bug pré-existente, ainda
-   não corrigido** — foi levantado durante a task do passo 6 e ficou fora do escopo acordado.
+8. ~~Chave de `appearance` vinda de JSON chega crua ao `innerHTML`~~ — **resolvido em duas
+   camadas**: `normalizeAppearance()` ([src/main.js:551](../src/main.js#L551)) só aceita as chaves
+   de `appearanceGroups` na importação, e `renderSheet()` escapa `labelForAppearance(key)` no
+   ponto de interpolação. Chave desconhecida é descartada em silêncio, como nos outros catálogos.
