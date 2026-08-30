@@ -86,8 +86,15 @@ horizontal de 6 colunas e colapsa os grids de cards (`.race-grid`, `.class-grid`
 
 [guia.html](../guia.html) tem **CSS próprio embutido**, com tokens e identidade visual
 diferentes (papel claro, `Baloo 2`/`Cinzel`/`Lora`, suporte a tema escuro por
-`prefers-color-scheme`) e regras `@media print` que fecham o guia em 2 folhas A4. Nada em
+`prefers-color-scheme`) e um bloco `@media print`. Nada em
 `src/style.css` o alcança, e mudanças aqui não o afetam — nem o contrário.
+
+**Impressão do guia:** não há nenhuma quebra de página automática — a quebra é feita à mão,
+colando `<div class="pagebreak"></div>` no ponto onde a folha deve virar. O `@media print`
+mantém só `break-inside: avoid`, que impede um bloco de ser partido ao meio. Ressalva: as
+listas por classe (habilidades e equipamento) são geradas por JS, então lá a tag não pode ser
+escrita no HTML — use a constante `NOVA_FOLHA` (`{ skills: [], gear: [] }`, ids das classes que
+devem abrir folha nova).
 
 ## Ao adicionar estilos
 

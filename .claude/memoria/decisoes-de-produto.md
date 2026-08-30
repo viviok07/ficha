@@ -52,8 +52,10 @@ página estática, com CSS e JS próprios; no repositório ele só ganhou o esqu
 **Por quê:** ele é material de leitura/impressão para a criança, não uma tela do app — e precisa
 abrir por `file://`, sem servidor.
 **Como aplicar:** não unifique o CSS dele com `src/style.css` nem o converta em passo do app. As
-quebras de página da impressão (2 folhas A4) dependem de `NOVA_FOLHA` e da ordem das classes:
-qualquer edição no conteúdo do guia exige reconferir o preview de impressão — e esse preview
+quebras de página são **manuais** — tentativas de automatizá-las erraram o alvo e foram
+descartadas; quem edita cola `<div class="pagebreak"></div>` no ponto exato (nas listas geradas
+por JS, usa a constante `NOVA_FOLHA`). Não reintroduza `break-before: page` fixo por seção ou
+por classe. Qualquer edição no conteúdo do guia exige reconferir o preview de impressão — e esse preview
 só vale aberto direto no navegador (`file://` ou pasta servida): nenhum navegador aplica quebra
 de página de conteúdo em `iframe`, então visualizadores embutidos mentem sobre o resultado.
 
