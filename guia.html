@@ -216,21 +216,36 @@
 
     /* nada de bloco partido entre páginas */
     .card, .item, .row, .tip, .end, .look { break-inside: avoid; page-break-inside: avoid; }
-    .head, h3.block, .panel-head { break-after: avoid; page-break-after: avoid; }
+    /* Só os subtítulos grudam no conteúdo seguinte. O título de seção NÃO gruda:
+       com "avoid" aqui, título + conteúdo eram empurrados juntos para a folha
+       seguinte sempre que o resto da página não coubesse os dois — era isso que
+       criava a quebra indesejada depois de Habilidades. */
+    h3.block, .panel-head { break-after: avoid; page-break-after: avoid; }
+    .head { break-after: auto; page-break-after: auto; }
+    section { break-before: auto; page-break-before: auto; }
     /* a lista de uma classe não se parte; o painel NÃO leva break-inside,
        senão o Chrome descarta a quebra forçada que vem antes dele. */
     [data-wrap] > [data-id] > .list { break-inside: avoid; page-break-inside: avoid; }
     #habilidades { break-before: page; page-break-before: always; }
 
-    /* Quebras pedidas: separador real no fluxo — mais confiável que break-before
-       no próprio painel. Patrulheiro (habilidades) e Bárbaro (equipamento) abrem folha. */
+    /* Quebras pedidas: Patrulheiro (habilidades) e Bárbaro (equipamento) abrem folha.
+       Reforçado por dois caminhos, porque um separador de altura zero é descartado
+       pelo Chrome: o separador tem altura real e o painel seguinte pede a quebra. */
     .pagebreak {
       display: block;
-      height: 0;
+      width: 100%;
+      height: 1px;
       margin: 0;
+      padding: 0;
       border: 0;
+      overflow: hidden;
       break-after: page;
       page-break-after: always;
+    }
+    [data-wrap="skills"] > [data-id="patrulheiro"],
+    [data-wrap="gear"] > [data-id="barbaro"] {
+      break-before: page;
+      page-break-before: always;
     }
   }
 </style>
