@@ -36,27 +36,33 @@ o JSON com vários MB. O passo 6 avisa isso em uma linha.
 
 ## `buildImagePrompt()`
 
-Monta um texto em português, **omitindo todo campo vazio** — a ficha não precisa estar completa
-para copiar o prompt. Os blocos, em ordem:
+Monta um **texto corrido em português**, **omitindo todo campo vazio** — a ficha não precisa
+estar completa para copiar o prompt. Não há JSON anexado e não há rótulo campo a campo: a única
+parte rotulada é o bloco final `Informações adicionais:`. Os parágrafos, em ordem:
 
-1. Estilo (sempre presente): ilustração vertical, aquarela, storybook infantojuvenil.
-2. `Personagem:` nome, raça, classe, idade, gênero, altura informada.
-3. `Aparência:` percorre `appearanceGroups` e monta `título: valor` só para os grupos preenchidos.
-4. `Personalidade:` nomes das opções escolhidas no catálogo.
-5. `Talentos que aparecem na pose:` as habilidades escolhidas.
-6. `Equipamentos obrigatórios escolhidos pelo jogador:` com a instrução de não substituir por
-   equipamentos padrão de raça ou classe.
-7. `História e intenção dramática:`.
-8. Composição e negativos.
-9. O JSON completo do personagem, para fidelidade.
+1. Abertura (sempre presente): "Crie uma ilustração de personagem de RPG de fantasia."
+2. Estilo (sempre presente): a constante `IMAGE_STYLE`, com as definições aprovadas pelo usuário
+   (chibi/SD, fantasy storybook, clean linework, isolated character / sticker-like etc.).
+3. Idade, gênero e altura, quando preenchidos.
+4. Raça, classe e equipamento **na mesma frase**, com o equipamento como algo que o personagem
+   "está usando" — sem linguagem de obrigatoriedade.
+5. Aparência: percorre `appearanceGroups` e emite `título valor` para **todos** os preenchidos.
+6. Personalidade, mais a instrução de que a expressão do rosto seja coerente com esses traços.
+7. Enquadramento e negativos (sempre presente): personagem inteiro, centralizado, fundo simples.
+8. `Informações adicionais:` com o conteúdo do campo História, só quando houver texto.
 
 Detalhes deliberados:
 
+- **Nada de JSON.** O `JSON.stringify(characterJson())` saiu do prompt: é só prosa.
+- **Nem todo campo entra.** Ficam de fora `player`, o **nome** do personagem e as **habilidades**.
+- `listar()` junta enumerações como "a, b e c" e devolve string vazia para lista vazia — é o que
+  permite descartar a frase inteira em vez de emitir texto truncado numa ficha pela metade.
 - O bloco de aparência é **genérico**: um grupo novo em `appearanceGroups` entra no prompt
   sozinho, sem editar esta função (antes as chaves eram escritas à mão).
 - Os dois dados de altura continuam separados: `appearance.height` sai como "estatura" (o título
-  do grupo) e `state.height` como "altura informada".
-- O texto é todo em português.
+  do grupo) e `state.height` na frase de idade/gênero/altura.
+- Idade e altura são digitadas com a unidade ("12 anos", "1,45 m"), então o prompt não acrescenta.
+- O texto é português; só os termos técnicos de estilo ficam em inglês.
 
 ## Cópia para a área de transferência — `copyPrompt()`
 

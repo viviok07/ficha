@@ -80,7 +80,7 @@ capa: '',
 
 O passo 4, a ficha (que omite a linha enquanto o valor for `''`), a exportação **e o prompt do
 retrato** passam a incluir o grupo automaticamente: `buildImagePrompt()`
-([src/main.js:534](../src/main.js#L534)) percorre `appearanceGroups` e ignora os vazios. Nada mais
+([src/main.js:577](../src/main.js#L577)) percorre `appearanceGroups` e ignora os vazios. Nada mais
 a fazer.
 
 ## 6. Adicionar um campo de texto ao personagem
@@ -100,8 +100,8 @@ Exemplo: um campo `motivacao`.
 5. `renderSheet()` ([src/main.js:420](../src/main.js#L420)) — se o campo deve aparecer na ficha,
    use `${sheetText('MOTIVAÇÃO', state.motivacao)}`, que já escapa o valor e omite a seção quando
    ela está vazia.
-6. Opcional: incluir no prompt em `buildImagePrompt()` — lembrando que lá todo campo vazio é
-   omitido, então trate a string vazia.
+6. Opcional: incluir no prompt em `buildImagePrompt()` — lá o texto é corrido, então monte a frase
+   com `listar()` e só a acrescente quando tiver conteúdo; todo campo vazio é omitido.
 
 ## 7. Adicionar um passo novo ao wizard
 
@@ -173,8 +173,8 @@ Hoje não há persistência (`REINICIAR` apenas recarrega a página). Se o usuá
 
 Ver [INTEGRACAO_IMAGEM.md](INTEGRACAO_IMAGEM.md). Em resumo:
 
-- **Prompt**: `buildImagePrompt()` ([src/main.js:534](../src/main.js#L534)) monta blocos e **omite
-  todo campo vazio** — qualquer bloco novo precisa do mesmo cuidado.
+- **Prompt**: `buildImagePrompt()` ([src/main.js:577](../src/main.js#L577)) monta frases corridas
+  e **omite todo campo vazio** — qualquer frase nova precisa do mesmo cuidado.
 - **Cópia**: `copyPrompt()` tem três degraus (`navigator.clipboard` → `execCommand` → textarea
   selecionado). Não reduza para um só: a página roda por `file://`.
 - **PDF**: `generatePdf()` depende de `window.html2canvas` e `window.jspdf`, carregados de

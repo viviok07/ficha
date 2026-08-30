@@ -557,35 +557,64 @@ function normalizeAppearance(value) {
   return result;
 }
 
+// Bloco de estilo do retrato: texto fixo, presente em toda ficha, inclusive na vazia. Os termos
+// técnicos ficam em inglês de propósito (é o jargão que os geradores reconhecem); o resto do
+// prompt é português. Alterar isto muda o traço de todos os retratos.
+const IMAGE_STYLE = 'Chibi / super-deformed (SD) — cabeça grande em relação ao corpo e proporções infantis. Fantasy storybook — estética de ilustração de livros de fantasia e aventura. Digital character illustration — acabamento digital polido. Cute fantasy RPG — personagens inspirados em classes tradicionais de RPG. Anime ocidentalizado / anime-inspired — olhos grandes e expressivos, mas com anatomia e figurino mais próximos de ilustração ocidental. Pixar/Disney-like appeal, no sentido de expressividade e formas arredondadas. Soft rendering — sombras suaves, iluminação delicada e pouca textura agressiva. Clean linework — contornos relativamente limpos e definidos. Rich fantasy costume design — roupas com muitas camadas, cintos, botas, armaduras, capas e pequenos acessórios. Expressive oversized eyes — olhos muito grandes, brilhantes e extremamente expressivos. Soft watercolor-like color treatment — cores suaves, com pequenas variações e aparência levemente pintada. Isolated character / sticker-like presentation — personagem inteiro, centralizado e com fundo simples ou transparente.';
+
+// Junta itens em português natural: "a", "a e b", "a, b e c". Lista vazia devolve string vazia,
+// e quem chama descarta a frase inteira — é isso que impede o prompt de sair truncado quando a
+// ficha está pela metade.
+function listar(itens) {
+  const validos = itens.filter(Boolean);
+  if (validos.length <= 1) return validos[0] || '';
+  return `${validos.slice(0, -1).join(', ')} e ${validos[validos.length - 1]}`;
+}
+
+// Texto corrido: sem o JSON da ficha anexado e sem rótulos campo a campo. A única parte rotulada
+// é o bloco final "Informações adicionais:", que carrega a História. Cada frase só entra se tiver
+// conteúdo, então a ficha vazia ainda produz um prompt válido (estilo + enquadramento).
 function buildImagePrompt() {
   const race = selectedRace();
   const klass = selectedClass();
   // Um JSON importado pode trazer número no lugar de texto, então nada de `.trim()` direto.
   const text = (value) => String(value ?? '').trim();
-  const identity = [
-    text(state.name) && `nome ${text(state.name)}`,
-    race && `raça ${race.name}`,
-    klass && `classe ${klass.name}`,
-    text(state.age) && `idade ${text(state.age)}`,
-    text(state.gender) && `gênero ${text(state.gender)}`,
-    text(state.height) && `altura informada ${text(state.height)}`,
-  ].filter(Boolean);
-  const appearance = appearanceGroups
-    .filter((group) => String(state.appearance[group.key] ?? '').trim())
-    .map((group) => `${group.title.toLowerCase()}: ${String(state.appearance[group.key]).toLowerCase()}`);
-  const personality = selectedPersonality().map((item) => item.name.toLowerCase());
-  const equipment = selectedEquipment().map((item) => item.name.toLowerCase());
-  const skills = selectedSkills().map((item) => item.name.toLowerCase());
+  const lower = (value) => text(value).toLowerCase();
 
-  const blocks = ['Crie uma ilustração vertical de personagem de RPG em fantasia clássica, aquarela delicada, pintura de storybook e desenho de livro infantil/juvenil de aventura.'];
-  if (identity.length) blocks.push(`Personagem: ${identity.join(', ')}.`);
-  if (appearance.length) blocks.push(`Aparência: ${appearance.join(', ')}.`);
-  if (personality.length) blocks.push(`Personalidade: ${personality.join(', ')}.`);
-  if (skills.length) blocks.push(`Talentos que aparecem na pose: ${skills.join(', ')}.`);
-  if (equipment.length) blocks.push(`Equipamentos obrigatórios escolhidos pelo jogador: ${equipment.join(' e ')}. Não substitua por equipamentos padrão de raça ou classe.`);
-  if (text(state.story)) blocks.push(`História e intenção dramática: ${text(state.story)}`);
-  blocks.push('Composição: pose dinâmica e heroica em três quartos, corpo inteiro visível, expressão carismática coerente com a personalidade, cenário de fantasia suave relacionado à história, luz dourada cinematográfica, pinceladas de aquarela, contornos finos, textura de papel, cores harmoniosas, detalhes nos equipamentos, atmosfera mágica e acolhedora. Evite texto, assinatura, logotipos, marcas de água, moldura, aparência fotorealista ou estilo sombrio adulto.');
-  blocks.push(`JSON do personagem para fidelidade:\n${JSON.stringify(characterJson(), null, 2)}`);
+  const blocks = [
+    'Crie uma ilustração de personagem de RPG de fantasia.',
+    `Use exatamente este estilo. ${IMAGE_STYLE}`,
+  ];
+
+  const identity = listar([
+    // Idade e altura já são digitadas com a unidade ("12 anos", "1,45 m"): nada de acrescentar.
+    text(state.age) && `tem ${text(state.age)}`,
+    text(state.gender) && `é do gênero ${text(state.gender)}`,
+    text(state.height) && `sua altura é ${text(state.height)}`,
+  ]);
+  if (identity) blocks.push(`O personagem ${identity}.`);
+
+  // Raça, classe e equipamento ficam juntos na mesma frase, e o equipamento aparece como algo que
+  // o personagem está usando — sem linguagem de "obrigatório" e sem proibir substituições.
+  const origin = listar([race && `da raça ${race.name}`, klass && `da classe ${klass.name}`]);
+  const equipment = listar(selectedEquipment().map((item) => lower(item.name)));
+  if (origin && equipment) blocks.push(`É ${origin}, e está usando ${equipment}.`);
+  else if (origin) blocks.push(`É ${origin}.`);
+  else if (equipment) blocks.push(`Está usando ${equipment}.`);
+
+  // Percorre `appearanceGroups` genericamente: um grupo novo entra no prompt sozinho, sem editar
+  // esta função. Todos os grupos preenchidos entram — aparência não é resumida.
+  const appearance = listar(appearanceGroups
+    .filter((group) => text(state.appearance[group.key]))
+    .map((group) => `${lower(group.title)} ${lower(state.appearance[group.key])}`));
+  if (appearance) blocks.push(`Na aparência, tem ${appearance}.`);
+
+  const personality = listar(selectedPersonality().map((item) => lower(item.name)));
+  if (personality) blocks.push(`Tem personalidade ${personality}, e a expressão do rosto deve ser coerente com esses traços.`);
+
+  blocks.push('Mostre o personagem inteiro, centralizado, com fundo simples ou transparente. Evite texto, assinatura, logotipos, marcas de água, moldura, aparência fotorrealista e estilo sombrio adulto.');
+
+  if (text(state.story)) blocks.push(`Informações adicionais: ${text(state.story)}`);
 
   return blocks.join('\n\n');
 }

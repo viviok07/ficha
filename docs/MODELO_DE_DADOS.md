@@ -84,13 +84,13 @@ quantidade de opções, ajuste também essa frase.
 - `key` é a chave dentro de `state.appearance`.
 - As `options` são **strings exibidas diretamente** — o valor salvo é o próprio rótulo, não um id.
 - `labelForAppearance(key)` faz o caminho inverso (chave → título) para a ficha.
-- `buildImagePrompt()` percorre `appearanceGroups` genericamente e monta `título: valor` para cada
-  grupo preenchido, ignorando os vazios. **Um grupo novo entra no prompt sozinho**, sem editar a
-  função.
+- `buildImagePrompt()` percorre `appearanceGroups` genericamente e emite `título valor`, em texto
+  corrido, para cada grupo preenchido, ignorando os vazios. **Um grupo novo entra no prompt
+  sozinho**, sem editar a função.
 
 > **Estatura ≠ Altura.** O grupo `height` se chama **"Estatura"** (Baixa/Média/Alta) e é diferente
 > do campo de texto livre `state.height` ("Altura", aba História). A chave continua `height` para
-> não quebrar fichas antigas, e `buildImagePrompt()` cita os dois com rótulos distintos.
+> não quebrar fichas antigas, e `buildImagePrompt()` cita os dois em frases diferentes.
 
 ## `personalityCatalog` — [src/main.js:113](../src/main.js#L113)
 
