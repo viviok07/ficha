@@ -10,7 +10,8 @@ features novas sem quebrar o que já funciona.
 ou jogador por 6 passos (Raça → Classe → Habilidades → Aparência → História → Visão geral) para
 montar uma ficha de RPG estilo D&D, exibe a ficha em tempo real ao lado do formulário, permite
 salvar/importar a ficha em JSON, copiar um prompt para gerar o retrato na ferramenta de IA que o
-usuário preferir, carregar essa imagem e gerar um PDF com a ficha e o retrato lado a lado.
+usuário preferir, carregar essa imagem e gerar um PDF de uma página com a ficha inteira e o
+retrato dentro dela.
 
 ## Fatos essenciais (memorize antes de codar)
 
@@ -18,7 +19,7 @@ usuário preferir, carregar essa imagem e gerar um PDF com a ficha e o retrato l
 | --- | --- |
 | Stack | HTML + CSS + **JavaScript puro (ES2021+)**. Zero frameworks. |
 | Dependências | Nenhuma via npm. Duas bibliotecas locais em [vendor/](vendor/README.md), só para o PDF — ver regra 1. |
-| Arquivos de código | [index.html](index.html), [src/main.js](src/main.js) (~840 linhas), [src/style.css](src/style.css) (~635 linhas). É tudo. |
+| Arquivos de código | [index.html](index.html), [src/main.js](src/main.js) (~900 linhas), [src/style.css](src/style.css) (~710 linhas). É tudo. |
 | Build | Não existe bundler. `npm run build` roda apenas `node --check src/main.js` (checagem de sintaxe). |
 | Como rodar | Abrir `index.html` no navegador, ou servir a pasta (`python -m http.server`). |
 | Módulos | **Não há `import`/`export`.** `src/main.js` é um script clássico (`<script defer>`); todo o escopo é um único arquivo. |

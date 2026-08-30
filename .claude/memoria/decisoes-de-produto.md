@@ -24,9 +24,16 @@ passo 4; Altura é texto livre da aba História. O campo Gênero **não tem plac
 pediu que nada fosse sugerido ali.
 **Como aplicar:** não "unifique" os dois campos nem renomeie a chave `height`.
 
-**O PDF é uma página A4 retrato com a metade de baixo em branco.** Ficha no quadrante superior
-esquerdo, retrato no superior direito, os dois alinhados pelo topo.
-**Por quê:** foi exatamente o que o usuário descreveu. Não é bug nem desperdício a "corrigir".
+**O PDF é uma ficha só, ocupando a página A4 inteira** (2026-08-30). Faixa no topo, conteúdo do
+personagem à esquerda (58%), retrato **dentro** da moldura à direita (42%) e a história numa faixa
+de largura inteira embaixo. O layout antigo, de quadrantes com a metade de baixo em branco, foi
+abandonado a pedido do usuário.
+**Regras que vieram junto:** a história cresce até um teto e as colunas de cima ficam com a altura
+restante (curta não deixa buraco, longa não empurra nada para fora); conteúdo demais **reduz a
+ficha inteira proporcionalmente**, nunca trunca texto e nunca vira uma segunda página; retrato com
+outra proporção é encaixado inteiro e centralizado, sem cortar as bordas; GERAR PDF continua
+exigindo imagem carregada — não existe estado "sem retrato".
+**Como aplicar:** tudo isso vive no clone montado por `buildPdfSheet()`; a ficha da tela não muda.
 
 **O prompt do retrato é texto corrido, e o estilo é escolha literal do usuário.** Sem JSON
 anexado, sem rótulos campo a campo — a única parte rotulada é o bloco final

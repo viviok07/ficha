@@ -473,7 +473,7 @@ function renderSheet() {
   const personality = selectedPersonality();
   const equipmentBlock = equipment.length ? `<section><h4>EQUIPAMENTOS</h4>${equipment.map((item) => `<p>${item.icon} ${item.name}</p>`).join('')}</section>` : '';
 
-  return `<aside class="sheet"><div class="ribbon">FICHA DO AVENTUREIRO</div>${identity ? `<div class="row">${identity}</div>` : ''}${details ? `<div class="row details">${details}</div>` : ''}${race || klass ? `<div class="badges">${race ? `<div>${race.icon}<span>RAÇA<b>${race.name}</b></span></div>` : ''}${klass ? `<div>${klass.icon}<span>CLASSE<b>${klass.name}</b></span></div>` : ''}</div>` : ''}${attributes ? `<h3>✧ ATRIBUTOS ✧</h3><div class="attrs"><div><span>✊</span><small>FORÇA</small><b>${attributes.forca}</b><em>MOD. ${modifier(attributes.forca)}</em></div><div><span>🍃</span><small>DESTREZA</small><b>${attributes.destreza}</b><em>MOD. ${modifier(attributes.destreza)}</em></div><div><span>📖</span><small>INTELIGÊNCIA</small><b>${attributes.inteligencia}</b><em>MOD. ${modifier(attributes.inteligencia)}</em></div><div><span>👁️</span><small>SABEDORIA</small><b>${attributes.sabedoria}</b><em>MOD. ${modifier(attributes.sabedoria)}</em></div></div>` : ''}${race ? `<h3>CARACTERÍSTICAS DA RAÇA</h3><p class="center">${race.traits.map((trait) => `• ${trait}`).join(' &nbsp; ')}</p>` : ''}${klass ? `<h3>CARACTERÍSTICAS DA CLASSE</h3><p class="center">${klass.traits.map((trait) => `• ${trait}`).join(' &nbsp; ')}</p>` : ''}${appearanceBlock || equipmentBlock ? `<div class="cols">${appearanceBlock}${equipmentBlock}</div>` : ''}${skills.length && catalog ? `<h3>${catalog.type.toUpperCase()}</h3><div class="chips">${skills.map((item) => `<span>${item.icon} ${item.name}</span>`).join('')}</div>` : ''}${personality.length ? `<h3>PERSONALIDADE</h3><div class="chips">${personality.map((item) => `<span>${item.icon} ${item.name}</span>`).join('')}</div>` : ''}${sheetText('HISTÓRIA', state.story)}</aside>`;
+  return `<aside class="sheet"><div class="ribbon">FICHA DO AVENTUREIRO</div>${identity ? `<div class="row">${identity}</div>` : ''}${details ? `<div class="row details">${details}</div>` : ''}${race || klass ? `<div class="badges">${race ? `<div>${race.icon}<span>RAÇA<b>${race.name}</b></span></div>` : ''}${klass ? `<div>${klass.icon}<span>CLASSE<b>${klass.name}</b></span></div>` : ''}</div>` : ''}${attributes ? `<h3>✧ ATRIBUTOS ✧</h3><div class="attrs"><div><span>✊</span><small>FORÇA</small><b>${attributes.forca}</b><em>MOD. ${modifier(attributes.forca)}</em></div><div><span>🍃</span><small>DESTREZA</small><b>${attributes.destreza}</b><em>MOD. ${modifier(attributes.destreza)}</em></div><div><span>📖</span><small>INTELIGÊNCIA</small><b>${attributes.inteligencia}</b><em>MOD. ${modifier(attributes.inteligencia)}</em></div><div><span>👁️</span><small>SABEDORIA</small><b>${attributes.sabedoria}</b><em>MOD. ${modifier(attributes.sabedoria)}</em></div></div>` : ''}${race ? `<h3>CARACTERÍSTICAS DA RAÇA</h3><p class="center">${race.traits.map((trait) => `• ${trait}`).join(' &nbsp; ')}</p>` : ''}${klass ? `<h3>CARACTERÍSTICAS DA CLASSE</h3><p class="center">${klass.traits.map((trait) => `• ${trait}`).join(' &nbsp; ')}</p>` : ''}${appearanceBlock || equipmentBlock ? `<div class="cols">${appearanceBlock}${equipmentBlock}</div>` : ''}${skills.length && catalog ? `<h3>${catalog.type.toUpperCase()}</h3><div class="chips">${skills.map((item) => `<span>${item.icon} ${item.name}</span>`).join('')}</div>` : ''}${personality.length ? `<h3>PERSONALIDADE</h3><div class="chips">${personality.map((item) => `<span>${item.icon} ${item.name}</span>`).join('')}</div>` : ''}${sheetStory(state.story)}</aside>`;
 }
 
 function sheetLabels(pairs) {
@@ -483,8 +483,13 @@ function sheetLabels(pairs) {
     .join('');
 }
 
-function sheetText(title, value) {
-  return String(value ?? '').trim() ? `<h3>${title}</h3><p>${escapeHtml(value)}</p>` : '';
+// `data-story` marca os dois nós da história. É por ele que o layout do PDF os retira da coluna
+// da esquerda e os leva para a faixa de largura inteira no rodapé da ficha; na tela o atributo
+// não muda nada.
+function sheetStory(value) {
+  return String(value ?? '').trim()
+    ? `<h3 data-story>HISTÓRIA</h3><p data-story>${escapeHtml(value)}</p>`
+    : '';
 }
 
 function modifier(value) {
@@ -713,6 +718,19 @@ function importImage(event) {
 
 const pdfPage = { width: 210, height: 297, margin: 8 };
 
+// A página do PDF é uma ficha só, montada fora da tela: faixa no topo, conteúdo à esquerda,
+// retrato à direita e a história numa faixa de largura inteira embaixo. Ver
+// docs/INTEGRACAO_IMAGEM.md.
+const pdfLayout = {
+  // Largura inicial do clone, em px. As fontes da ficha são fixas em px, então alargar a moldura
+  // equivale a reduzir a ficha inteira proporcionalmente dentro da página.
+  minWidth: 820,
+  maxWidth: 2600,
+  step: 1.08,
+  // Largura desejada da imagem rasterizada: ~300 DPI para os 194 mm úteis do A4.
+  rasterWidth: 2300,
+};
+
 async function generatePdf() {
   if (!imageState.dataUrl || imageState.pdfLoading) return;
   if (!window.html2canvas || !window.jspdf?.jsPDF) {
@@ -725,74 +743,129 @@ async function generatePdf() {
   imageState.pdfError = '';
   render();
 
+  let pdfSheet = null;
   try {
     // A ficha é buscada depois do render acima: o nó anterior já foi descartado.
     const sheet = $('.sheet');
     if (!sheet) throw new Error('a ficha não está na tela');
-    const sheetCanvas = await window.html2canvas(sheet, {
-      scale: 2,
-      backgroundColor: '#ffffff',
-      height: sheet.scrollHeight,
-      windowHeight: sheet.scrollHeight,
-      onclone: (clonedDocument) => {
-        applyPrintTheme(clonedDocument);
-        const clone = clonedDocument.querySelector('.sheet');
-        if (!clone) return;
-        clone.style.overflow = 'visible';
-        clone.style.height = 'auto';
-        clone.style.maxHeight = 'none';
-      },
-    });
     const portrait = await loadImageElement(imageState.dataUrl);
-    // Um SVG sem largura/altura intrínsecas chega aqui com 0x0 e viraria NaN no addImage.
+    // Um SVG sem largura/altura intrínsecas chega aqui com 0x0 e sairia esticado na moldura.
     if (!portrait.naturalWidth || !portrait.naturalHeight) {
       throw new Error('a imagem carregada não tem tamanho definido; use um PNG, JPG ou WEBP');
     }
+    pdfSheet = buildPdfSheet(sheet, imageState.dataUrl);
+    const width = fitPdfSheet(pdfSheet);
+    const canvas = await window.html2canvas(pdfSheet.node, {
+      scale: Math.min(3, Math.max(1, pdfLayout.rasterWidth / width)),
+      backgroundColor: '#ffffff',
+      onclone: applyPrintTheme,
+    });
     const { jsPDF } = window.jspdf;
     const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
-    placeInQuadrant(pdf, sheetCanvas.toDataURL('image/jpeg', 0.95), sheetCanvas.width, sheetCanvas.height, 0);
-    placeInQuadrant(pdf, toJpegDataUrl(portrait), portrait.naturalWidth, portrait.naturalHeight, 1);
+    // Uma imagem só, ocupando toda a área útil da página.
+    pdf.addImage(
+      canvas.toDataURL('image/jpeg', 0.95),
+      'JPEG',
+      pdfPage.margin,
+      pdfPage.margin,
+      pdfPage.width - pdfPage.margin * 2,
+      pdfPage.height - pdfPage.margin * 2,
+    );
     pdf.save(`${state.name.trim() || 'personagem'}.pdf`);
   } catch (error) {
     imageState.pdfError = `Não consegui gerar o PDF: ${error.message}`;
   } finally {
+    pdfSheet?.stage.remove();
     imageState.pdfLoading = false;
     render();
   }
 }
 
+// Monta o nó que vira a página do PDF, dentro de um palco fixo fora da viewport (`.pdf-stage`,
+// 0x0, sem afetar rolagem nem layout). Trabalhamos sempre sobre um clone: a ficha da tela não é
+// tocada. A faixa continua absoluta no topo; todo o resto do conteúdo vai para a coluna da
+// esquerda, menos a história, que desce para o bloco de largura inteira.
+function buildPdfSheet(sheet, portraitDataUrl) {
+  const stage = document.createElement('div');
+  stage.className = 'pdf-stage';
+  const node = sheet.cloneNode(true);
+  node.classList.add('pdf-sheet');
+
+  const ribbon = node.querySelector('.ribbon');
+  const storyNodes = new Set(node.querySelectorAll('[data-story]'));
+  const body = document.createElement('div');
+  body.className = 'pdf-body';
+  const row = document.createElement('div');
+  row.className = 'pdf-row';
+  const main = document.createElement('div');
+  main.className = 'pdf-main';
+  const portrait = document.createElement('div');
+  portrait.className = 'pdf-portrait';
+  // Fundo em vez de <img>: o html2canvas ignora `object-fit` e esticaria o retrato, enquanto
+  // `background-size: contain` encaixa a imagem inteira e centraliza, sem cortar as bordas.
+  portrait.style.backgroundImage = `url("${portraitDataUrl}")`;
+
+  [...node.childNodes].forEach((child) => {
+    if (child === ribbon) return;
+    node.removeChild(child);
+    if (!storyNodes.has(child)) main.appendChild(child);
+  });
+  row.append(main, portrait);
+  body.appendChild(row);
+
+  let story = null;
+  if (storyNodes.size) {
+    story = document.createElement('div');
+    story.className = 'pdf-story';
+    storyNodes.forEach((element) => story.appendChild(element));
+    body.appendChild(story);
+  }
+  node.appendChild(body);
+  stage.appendChild(node);
+  document.body.appendChild(stage);
+  return { stage, node, main, story };
+}
+
+// A moldura mantém sempre a proporção da área útil do A4, então a imagem rasterizada preenche a
+// página inteira. Quando o conteúdo não cabe, a moldura cresce em px: como as fontes são fixas em
+// px, isso é a ficha inteira reduzida — letra menor, nada cortado, sempre uma página só.
+function fitPdfSheet({ node, main, story }) {
+  const ratio = (pdfPage.height - pdfPage.margin * 2) / (pdfPage.width - pdfPage.margin * 2);
+  let width = pdfLayout.minWidth;
+  for (;;) {
+    node.style.width = `${width}px`;
+    node.style.height = `${Math.round(width * ratio)}px`;
+    if ((fitsInBox(main) && fitsInBox(story)) || width >= pdfLayout.maxWidth) return width;
+    width = Math.min(pdfLayout.maxWidth, Math.round(width * pdfLayout.step));
+  }
+}
+
+function fitsInBox(element) {
+  return !element || element.scrollHeight <= element.clientHeight + 1;
+}
+
 // Tema de impressão da ficha: fundo branco, texto preto e a faixa "FICHA DO AVENTUREIRO" sem o
 // gradiente escuro, para gastar menos tinta. Vive só no clone que o html2canvas rasteriza, então
 // a tela nunca muda. Os emojis continuam coloridos de propósito: a fonte de emoji é colorida e
-// ignora `color`, e são eles que deixam a ficha reconhecível para a criança. O retrato não passa
-// por aqui — ele entra no PDF direto de `imageState.dataUrl`, sempre colorido.
+// ignora `color`, e são eles que deixam a ficha reconhecível para a criança. O retrato é a única
+// exceção ao fundo branco — `.pdf-portrait` guarda a imagem em `background-image` e sai colorido.
 function applyPrintTheme(clonedDocument) {
   const style = clonedDocument.createElement('style');
   style.textContent = `
     .sheet, .sheet * {
-      background: #fff !important;
-      background-image: none !important;
       color: #000 !important;
       border-color: #777 !important;
       box-shadow: none !important;
       text-shadow: none !important;
     }
+    .sheet, .sheet *:not(.pdf-portrait) {
+      background: #fff !important;
+      background-image: none !important;
+    }
+    .sheet .pdf-portrait { background-color: #fff !important; }
     .sheet, .sheet::before, .ribbon { border-color: #000 !important; color: #000 !important; }
   `;
   clonedDocument.head.appendChild(style);
-}
-// Coluna 0 = quadrante superior esquerdo (ficha); coluna 1 = quadrante superior direito (retrato).
-// Os dois começam na mesma altura e a metade de baixo da página fica em branco, como combinado.
-function placeInQuadrant(pdf, dataUrl, naturalWidth, naturalHeight, column) {
-  const halfWidth = pdfPage.width / 2;
-  const halfHeight = pdfPage.height / 2;
-  const boxWidth = halfWidth - pdfPage.margin * 1.5;
-  const boxHeight = halfHeight - pdfPage.margin * 2;
-  const scale = Math.min(boxWidth / naturalWidth, boxHeight / naturalHeight);
-  const width = naturalWidth * scale;
-  const height = naturalHeight * scale;
-  const boxLeft = column === 0 ? pdfPage.margin : halfWidth + pdfPage.margin / 2;
-  pdf.addImage(dataUrl, 'JPEG', boxLeft + (boxWidth - width) / 2, pdfPage.margin, width, height);
 }
 
 function loadImageElement(source) {
@@ -802,18 +875,6 @@ function loadImageElement(source) {
     image.addEventListener('error', () => reject(new Error('não consegui abrir a imagem carregada')));
     image.src = source;
   });
-}
-
-// Reencoda em JPEG para que qualquer formato aceito pelo navegador (WEBP, GIF...) entre no PDF.
-function toJpegDataUrl(image) {
-  const canvas = document.createElement('canvas');
-  canvas.width = image.naturalWidth;
-  canvas.height = image.naturalHeight;
-  const context = canvas.getContext('2d');
-  context.fillStyle = '#ffffff';
-  context.fillRect(0, 0, canvas.width, canvas.height);
-  context.drawImage(image, 0, 0);
-  return canvas.toDataURL('image/jpeg', 0.95);
 }
 
 function escapeHtml(value) {

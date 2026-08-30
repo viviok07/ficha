@@ -3,7 +3,8 @@
 Aplicação web de página única (pt-BR) para montar uma ficha de personagem de RPG em 6 passos —
 Raça, Classe, Habilidades, Aparência, História e Visão geral — com a ficha sendo atualizada em
 tempo real ao lado do formulário, exportação/importação em JSON, um prompt pronto para gerar o
-retrato na ferramenta de IA que você preferir e um PDF com a ficha e o retrato lado a lado.
+retrato na ferramenta de IA que você preferir e um PDF de uma página com a ficha inteira e o
+retrato dentro dela.
 
 ## Como rodar
 

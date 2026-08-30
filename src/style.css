@@ -634,3 +634,75 @@ button { cursor: pointer; }
   color: #5b2c17;
   font-size: 13px;
 }
+
+/* Layout exclusivo do PDF ---------------------------------------------------
+   Nenhum elemento da tela usa estas classes: elas valem só para o clone que
+   generatePdf() monta fora da viewport, rasteriza e descarta. A ficha da tela
+   continua exatamente como está. */
+
+.pdf-stage {
+  position: fixed;
+  top: 0;
+  left: -10000px;
+  width: 0;
+  height: 0;
+}
+
+.sheet.pdf-sheet {
+  min-height: 0;
+  overflow: hidden;
+}
+
+/* O clone é medido fora da viewport e não pode obedecer às media queries de
+   largura da tela; a especificidade extra fixa as colunas em qualquer janela. */
+.pdf-sheet .ribbon { font-size: 26px; }
+.pdf-sheet .row { grid-template-columns: 1fr 1fr; }
+.pdf-sheet .row.details { grid-template-columns: repeat(3, 1fr); }
+.pdf-sheet .badges { grid-template-columns: 1fr 1fr; }
+.pdf-sheet .cols { grid-template-columns: 1fr 1fr; }
+.pdf-sheet .attrs { grid-template-columns: repeat(4, 1fr); }
+
+.pdf-body {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  height: 100%;
+}
+
+/* A linha do personagem come toda a altura que a história não usar: história
+   curta não deixa buraco no meio da página. */
+.pdf-row {
+  display: flex;
+  flex: 1 1 auto;
+  gap: 18px;
+  min-height: 0;
+}
+
+.pdf-main {
+  flex: 0 0 calc(58% - 9px);
+  min-width: 0;
+  overflow: hidden;
+}
+
+/* O retrato entra por background-image: contain encaixa a imagem inteira e
+   centraliza, com folga em cima/embaixo, sem cortar as bordas do desenho. */
+.pdf-portrait {
+  flex: 0 0 calc(42% - 9px);
+  min-width: 0;
+  border: 1px solid #d0b68e;
+  background-color: #fff;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+}
+
+/* Teto de 40%: história longa cresce até aqui e nunca empurra o resto para fora. */
+.pdf-story {
+  flex: 0 1 auto;
+  max-height: 40%;
+  overflow: hidden;
+  border-top: 1px solid #d5bf98;
+}
+
+.pdf-sheet .pdf-story h3 { margin-top: 10px; }
+.pdf-sheet .pdf-story p { margin: 0; font-size: 13px; line-height: 1.55; }
