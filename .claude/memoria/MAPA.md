@@ -10,6 +10,7 @@ Manutenção pela skill `memoria-do-projeto`.
 
 - [ambiente.md](ambiente.md) — remote SSH, `gh` ausente, como a PR é aberta aqui
 - [decisoes-tecnicas.md](decisoes-tecnicas.md) — zero dependências, sem build, chave da OpenAI só em memória
+- [decisoes-de-produto.md](decisoes-de-produto.md) — ficha começa vazia, imagem só com tudo preenchido, Estatura x Altura
 - [processo.md](processo.md) — combinados de fluxo de trabalho com o usuário
 
 ## Onde está o resto

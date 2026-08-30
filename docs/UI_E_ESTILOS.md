@@ -36,7 +36,7 @@ massa.
 .workspace grid 3 colunas: steps (0.16fr) | painel (1.08fr) | ficha (0.92fr)
 ```
 
-Ponto de quebra único: `@media (max-width: 980px)` ([src/style.css:500](../src/style.css#L500)),
+Ponto de quebra único: `@media (max-width: 980px)` ([src/style.css:556](../src/style.css#L556)),
 que empilha `.hero-head` e `.workspace` em uma coluna, transforma `.steps` em uma faixa
 horizontal de 5 colunas e colapsa os grids de cards, `.row`, `.badges`, `.cols` e `.attrs` para
 uma coluna. **Se você adicionar um grid novo, avalie incluí-lo nessa lista.**
@@ -53,7 +53,10 @@ uma coluna. **Se você adicionar um grid novo, avalie incluí-lo nessa lista.**
 | `.option-grid` + `.race-grid` / `.class-grid` / `.skill-grid` | passos 1–3 | Grids de escolha (3, 2 e 2 colunas) |
 | `.choice-card`, `.choice-art`, `.p0`–`.p6`, `.skill-card` | passos 1–3 | Card selecionável |
 | `.appearance-list`, `.group`, `.opts`, `.pill-choice` | passo 4 | Grupos de aparência |
-| `.field` | passo 5 e gate | `<label>` com input/textarea/select |
+| `.field` | passo 5 e gate | `<label>` (ou `<div>`) com input/textarea/select |
+| `.traits`, `.trait`, `.trait-remove`, `.traits-empty` | `renderPersonalityField()` | Badges de personalidade e o "×" que remove cada uma |
+| `.info.empty` | passos 1–3 | Texto de espera quando nada foi escolhido |
+| `.row.details` | `renderSheet()` | Linha de 3 colunas com idade, gênero e altura |
 | `.image-generator`, `.loader`, `.image-error`, `.generated-image` | passo 5 | Bloco de geração de imagem |
 | `.sheet`, `.ribbon`, `.badges`, `.attrs`, `.cols`, `.chips`, `.center` | `renderSheet()` | Ficha lateral |
 | `.info` | passos 1–3 | Bloco de detalhe abaixo do grid |
