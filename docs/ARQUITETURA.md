@@ -74,7 +74,7 @@ O arquivo segue uma ordem consistente. Ao adicionar código, respeite o bloco co
 
 | Bloco | Linhas aprox. | Conteúdo | Responsabilidade |
 | --- | --- | --- | --- |
-| 1. Catálogos | 1–189 | `races`, `classes`, `skillCatalog`, `appearanceGroups`, `personalityCatalog`, `equipmentCatalog`, `steps`, os três `*_LIMIT` | Dados estáticos do jogo |
+| 1. Catálogos | 1–217 | `races`, `classes`, `skillCatalog`, `appearanceGroups`, `personalityCatalog`, `equipmentCatalog`, `steps`, os três `*_LIMIT` | Dados estáticos do jogo |
 | 2. Estado | 191–217 | `imageState`, `state` | Estado mutável |
 | 3. Derivados | 219–247 | `$`, `selectedRace`, `selectedClass`, `selectedSkillCatalog`, `selectedSkills`, `equipmentOptions`, `selectedEquipment`, `selectedPersonality`, `characterJson` | Leitura derivada do estado |
 | 4. Render | 249–458 | `render`, `focusSelector`, `captureFocus`, `restoreFocus`, `renderStepper`, `renderCurrentStep`, os seis `render*Step`, `renderPickGrid`, `renderPersonalityField`, `renderEquipmentField`, `renderPortraitBlock`, `renderCopyFeedback`, `renderUploadFeedback`, `renderNavButtons`, `renderSheet`, `sheetLabels`, `sheetText`, `modifier`, `labelForAppearance` | HTML como template string |
@@ -145,11 +145,11 @@ faz para `state.personality`.
   `buildImagePrompt()` simplesmente omite os campos vazios. O único pré-requisito do botão GERAR
   PDF é haver uma imagem carregada.
 - **Os atributos vêm da classe, não da raça.** `renderSheet()` lê `selectedClass().attributes`;
-  os traços de raça (`race.traits`) são texto livre e não afetam números.
+  `race.traits` e `class.traits` são texto livre, nunca bônus, e não afetam número nenhum.
 - **Modificador**: `modifier(score) = max(-1, score - 2)`, formatado com sinal
   ([src/main.js:450](../src/main.js#L450)). A escala esperada de atributo é 1–5.
 - **Um conceito de equipamento só.** `equipmentCatalog[classeId]` é a única fonte: o passo 2 mostra
-  as 5 opções como "o que essa classe costuma usar", o passo 5 deixa escolher até 2, e a ficha e o
+  as 9 opções como "o que essa classe costuma usar", o passo 5 deixa escolher até 2, e a ficha e o
   prompt exibem apenas as escolhidas. (Até a PR #9 havia dois conceitos concorrentes,
   `class.equipment` e um `state.equipment` de texto livre; ambos foram removidos.)
 

@@ -94,7 +94,7 @@ Depende das bibliotecas locais em [vendor/](../vendor/README.md) (`window.html2c
 `window.jspdf.jsPDF`). Se algum global faltar, o botão devolve um erro legível em vez de quebrar.
 
 ```
-1. pdfLoading = true; render()
+1. pdfLoading = true; render()  <- ficha em P&B só no clone (applyPrintTheme)
 2. requery de .sheet  <- obrigatório: o render acima descartou o nó anterior
 3. html2canvas(.sheet, { scale: 2, height: scrollHeight, onclone: overflow visible })
 4. loadImageElement(dataUrl) + toJpegDataUrl()  <- reencoda qualquer formato em JPEG
@@ -127,6 +127,12 @@ ficar vazia é o pedido original do usuário, não um bug.
 
 - `.sheet` tem `overflow: auto`; sem o `onclone` que solta o overflow e a altura, uma ficha longa
   sairia cortada.
+- **A ficha sai em preto e branco, o retrato não.** `applyPrintTheme()` injeta um `<style>` no
+  `clonedDocument` do `onclone`: fundo branco, texto preto e a faixa "FICHA DO AVENTUREIRO" sem o
+  gradiente escuro, para gastar menos tinta. Como vive só no clone, **a tela nunca muda**. Não há
+  `filter: grayscale`: emoji é fonte colorida e ignora `color`, então os ícones continuam
+  coloridos de propósito. O retrato é adicionado direto de `imageState.dataUrl` e não passa por
+  aqui — ele sempre sai colorido.
 - Fontes: o `@import` do Google Fonts não carrega offline, então o PDF sai com as fontes de
   fallback (`serif`). O layout não muda.
 - O `.sheet::before` (o dragão) é um pseudo-elemento; html2canvas o desenha, mas é o primeiro

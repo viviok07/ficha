@@ -21,9 +21,10 @@ Checklist final, válido para toda receita:
 ```js
 { id: 'orc', name: 'Orc', icon: '🪓',
   description: 'Grandalhão de coração valente, forte como um urso e leal aos amigos.',
-  traits: ['+2 Força', 'Pele grossa', 'Grito de guerra'] },
+  traits: ['Força de urso', 'Pele grossa', 'Grito de guerra', 'Leal até o fim'] },
 ```
 
+São **4 `traits`**, sempre característica descrita — nunca bônus de atributo.
 Nada mais é necessário: o grid, o bloco de informações e a ficha leem do array.
 Opcional: adicionar `.p7 .choice-art { background: linear-gradient(...); }` em
 [src/style.css:237](../src/style.css#L237) para dar cor própria ao card (o índice da classe CSS
@@ -33,12 +34,12 @@ Opcional: adicionar `.p7 .choice-art { background: linear-gradient(...); }` em
 
 **Toque em dois lugares, nesta ordem:**
 
-1. `classes` ([src/main.js:11](../src/main.js#L11)) — só `id`, `name`, `icon`, `description` e
-   `attributes` com as quatro chaves `forca`, `destreza`, `inteligencia`, `sabedoria` (escala 1–5).
+1. `classes` ([src/main.js:11](../src/main.js#L11)) — `id`, `name`, `icon`, `description`,
+   `attributes` (4 chaves, escala 1–5) e **4 `traits`** (descritos, nunca bônus de atributo).
 2. `skillCatalog` ([src/main.js:21](../src/main.js#L21)) — **obrigatório**, com a mesma chave do
    `id` da classe, `type` (`'manobras'` ou `'magias'`), `singular` e **5 `options`**.
 3. `equipmentCatalog` ([src/main.js:126](../src/main.js#L126)) — **obrigatório**, mesma chave do
-   `id`, um array de **5 opções** misturando vestimenta e equipamento principal.
+   `id`, um array de **9 opções** misturando vestimenta e equipamento principal.
 
 Sem o passo 2 a aplicação quebra no passo 3 (`selectedSkillCatalog()` retorna `undefined`); sem o
 passo 3 o campo de equipamento do passo 5 fica preso no texto de espera.
