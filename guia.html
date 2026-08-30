@@ -226,11 +226,11 @@
     /* a lista de uma classe não se parte; o painel NÃO leva break-inside,
        senão o Chrome descarta a quebra forçada que vem antes dele. */
     [data-wrap] > [data-id] > .list { break-inside: avoid; page-break-inside: avoid; }
-    #habilidades { break-before: page; page-break-before: always; }
 
-    /* Quebras pedidas: Patrulheiro (habilidades) e Bárbaro (equipamento) abrem folha.
-       Reforçado por dois caminhos, porque um separador de altura zero é descartado
-       pelo Chrome: o separador tem altura real e o painel seguinte pede a quebra. */
+    /* ÚNICA quebra forçada do arquivo, e só onde VOCÊ colocar a tag.
+       Uso:  <div class="pagebreak"></div>
+       Tudo o que vier depois dela começa numa folha nova. Na tela ela é invisível.
+       A altura de 1px é proposital: o Chrome ignora break-after em bloco sem altura. */
     .pagebreak {
       display: block;
       width: 100%;
@@ -242,15 +242,24 @@
       break-after: page;
       page-break-after: always;
     }
-    [data-wrap="skills"] > [data-id="patrulheiro"],
-    [data-wrap="gear"] > [data-id="barbaro"] {
-      break-before: page;
-      page-break-before: always;
-    }
   }
 </style>
 </head>
 <body>
+<!--
+  QUEBRA DE PÁGINA MANUAL
+  Não há nenhuma quebra forçada neste arquivo. Para criar uma, cole a tag abaixo
+  no ponto exato onde a folha deve virar — o que vier depois começa em página nova:
+
+      <div class="pagebreak"></div>
+
+  Ela só age na impressão; na tela é invisível. Pode ser usada quantas vezes quiser,
+  entre qualquer par de blocos (entre duas <section>, entre um título e uma grade, etc).
+
+  Exceção: as listas por classe (habilidades e equipamento) são geradas por JavaScript,
+  então lá a tag não pode ser escrita à mão. Para quebrar dentro delas, use a constante
+  NOVA_FOLHA no <script> no fim do arquivo.
+-->
 <div class="wrap">
   <div class="hero">
     <div>
@@ -415,8 +424,10 @@
     bardo: [['🪕','Alaúde de cordas brilhantes'],['🪈','Flauta encantada'],['📓','Caderno de canções'],['🧥','Casaco de artista'],['🪶','Chapéu com pluma'],['🤺','Rapieira elegante'],['🗡️','Adaga escondida no alaúde'],['👢','Botas de veludo'],['🧣','Capa de cetim']],
   };
 
-  // Classe que abre folha nova na impressão (a anterior fecha a folha).
-  const NOVA_FOLHA = { skills: 'patrulheiro', gear: 'barbaro' };
+  // Quebra de página dentro das listas por classe (que são geradas aqui, então não dá
+  // para escrever a tag no HTML). Ponha o id da classe que deve ABRIR folha nova.
+  // Ex.: { skills: ['patrulheiro'], gear: ['barbaro'] }.  Vazio = nenhuma quebra.
+  const NOVA_FOLHA = { skills: [], gear: [] };
 
   function panelHtml(group, klass) {
     if (group === 'skills') {
@@ -448,7 +459,7 @@
     // Todos os painéis ficam no documento: na tela mostramos um, na impressão todos.
     // Antes da classe marcada em NOVA_FOLHA entra um separador que força a quebra no papel.
     host.innerHTML = CLASSES.map((klass, index) =>
-      (NOVA_FOLHA[group] === klass.id ? '<div class="pagebreak" aria-hidden="true"></div>' : '')
+      (NOVA_FOLHA[group].includes(klass.id) ? '<div class="pagebreak" aria-hidden="true"></div>' : '')
       + '<div data-id="' + klass.id + '" class="' + (index === 0 ? '' : 'is-off') + '">'
       + panelHtml(group, klass) + '</div>'
     ).join('');
