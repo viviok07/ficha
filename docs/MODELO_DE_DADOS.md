@@ -22,12 +22,19 @@ sempre, apenas editar esses literais** — a UI é gerada por `map()` sobre eles
   name: 'Elfo',                 // exibido nos cards e na ficha
   icon: '🌿',                    // 1 emoji; vira a arte do card
   description: '...',           // 1 frase, linguagem infantil
-  traits: ['Visão no escuro', ...], // 4 itens; característica descrita, sem efeito mecânico
+  traits: ['Ouve passos bem de longe', ...], // 4 itens; cena concreta, sem efeito mecânico
 }
 ```
 
 Consumido por: `renderRaceStep()` (grid + bloco de informações) e `renderSheet()` (badge de raça
 e a linha "CARACTERÍSTICAS DA RAÇA").
+
+> **Como se escreve um `trait`:** uma cena que a criança consiga imaginar, com verbo de ação e
+> até ~27 caracteres. "Escala parede com as garras", sim; "Talento para qualquer coisa" ou
+> "Aprende uma perícia extra", não — qualidade vaga e jargão de regra foram removidos em
+> 2026-08-30. O limite de tamanho não é estético: `renderSheet()` imprime os 4 traços em **uma
+> linha só** (`<p class="center">`, separados por `•`) e essa linha ainda precisa caber no
+> quadrante da ficha dentro do PDF.
 
 > **Nenhum `trait` é bônus de atributo.** Nem numérico (`+1 Força`) nem por extenso ("bônus em um
 > atributo"): os números vivem só em `class.attributes`. Traço é característica descrita.
