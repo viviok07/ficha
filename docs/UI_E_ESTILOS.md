@@ -36,11 +36,20 @@ massa.
 .workspace grid 3 colunas: steps (0.16fr) | painel (1.08fr) | ficha (0.92fr)
 ```
 
-Ponto de quebra único: `@media (max-width: 980px)` ([src/style.css:532](../src/style.css#L532)),
-que empilha `.hero-head` e `.workspace` em uma coluna, transforma `.steps` em uma faixa
-horizontal de 6 colunas e colapsa os grids de cards (`.race-grid`, `.class-grid`, `.skill-grid`,
-`.trait-grid`, `.equipment-grid`), `.row`, `.badges`, `.cols` e `.attrs` para uma coluna.
-**Se você adicionar um grid novo, inclua-o nessa lista.**
+Dois pontos de quebra, nesta ordem:
+
+1. `@media (max-width: 980px)` ([src/style.css:537](../src/style.css#L537)) — empilha
+   `.hero-head` e `.workspace` em uma coluna, transforma `.steps` em uma faixa horizontal de 6
+   colunas e colapsa os grids de cards (`.race-grid`, `.class-grid`, `.skill-grid`,
+   `.trait-grid`, `.equipment-grid`), `.row`, `.badges`, `.cols` e `.attrs` para uma coluna.
+   **Se você adicionar um grid novo, inclua-o nessa lista.**
+2. `@media (max-width: 650px)` ([src/style.css:572](../src/style.css#L572)) — **toca só o
+   stepper**: a faixa de 6 colunas vira uma grade de 3 x 2 com número e título lado a lado e o
+   subtítulo (`.step p`) escondido. Motivo: com 6 colunas a célula mede `(largura - 110) / 6`,
+   então o círculo de 34px do número transborda abaixo de 434px e o alvo de toque cai abaixo de
+   44px em telas de 374px ou menos. Com 3 colunas a célula é `(largura - 60) / 3` — 100px num
+   celular de 360px. **Não acrescente aqui regras que não sejam do stepper**: o combinado é que
+   nada mude de 651px para cima.
 
 ## Classes por área
 

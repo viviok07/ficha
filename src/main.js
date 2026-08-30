@@ -504,7 +504,9 @@ function labelForAppearance(key) {
 }
 
 function bindEvents() {
-  document.querySelectorAll('[data-step]').forEach((button) => button.addEventListener('click', () => { state.step = button.dataset.step; render(); }));
+  // O scrollTo vem DEPOIS do render(): a página é reconstruída inteira e a rolagem da
+  // janela é a única que sobrevive à troca, então a criança começa o passo novo no topo.
+  document.querySelectorAll('[data-step]').forEach((button) => button.addEventListener('click', () => { state.step = button.dataset.step; render(); window.scrollTo(0, 0); }));
   document.querySelectorAll('[data-race]').forEach((button) => button.addEventListener('click', () => { state.race = button.dataset.race; render(); }));
   document.querySelectorAll('[data-class]').forEach((button) => button.addEventListener('click', () => { state.class = button.dataset.class; state.skills = []; state.equipment = []; render(); }));
   document.querySelectorAll('[data-skill]').forEach((button) => button.addEventListener('click', () => toggleChoice('skills', button.dataset.skill, SKILL_LIMIT)));
