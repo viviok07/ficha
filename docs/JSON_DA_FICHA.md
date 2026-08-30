@@ -82,4 +82,4 @@ ficam vazios. `otherCharacteristics` deixou de existir e é simplesmente ignorad
 **Ao adicionar um campo novo ao personagem, atualize os três pontos:** `state` (valor padrão),
 `characterJson()` (exportação) e `loadCharacter()` (importação). Esquecer um deles gera perda
 silenciosa de dados. Se o campo deve aparecer no prompt do retrato, acrescente-o também a
-`buildImagePrompt()` — lembrando que lá todo campo vazio é omitido.
+`buildImagePrompt()` — lembrando que lá o texto é corrido e todo campo vazio é omitido.

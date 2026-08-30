@@ -28,4 +28,15 @@ pediu que nada fosse sugerido ali.
 esquerdo, retrato no superior direito, os dois alinhados pelo topo.
 **Por quê:** foi exatamente o que o usuário descreveu. Não é bug nem desperdício a "corrigir".
 
+**O prompt do retrato é texto corrido, e o estilo é escolha literal do usuário.** Sem JSON
+anexado, sem rótulos campo a campo — a única parte rotulada é o bloco final
+`Informações adicionais:`, que carrega a História. O bloco `IMAGE_STYLE` reproduz as definições
+que o usuário passou, **com os nomes de estúdio** ("Pixar/Disney-like appeal"): ele escolheu
+mantê-los; a ressalva "eu evitaria colocar nomes de estúdios" era comentário dele para quem
+monta o prompt, não texto a enviar ao gerador.
+**Ficam de fora de propósito:** `player`, o nome do personagem e as habilidades. Aparência entra
+**inteira** (todos os grupos), por ordem explícita.
+**Como aplicar:** não "melhore" o estilo nem reintroduza o JSON sem pedido; ao criar campo novo,
+decida conscientemente se ele entra no prompt.
+
 Relacionado: `docs/MODELO_DE_DADOS.md`, `docs/INTEGRACAO_IMAGEM.md`.

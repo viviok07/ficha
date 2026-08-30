@@ -80,8 +80,8 @@ O arquivo segue uma ordem consistente. Ao adicionar código, respeite o bloco co
 | 4. Render | 249–458 | `render`, `focusSelector`, `captureFocus`, `restoreFocus`, `renderStepper`, `renderCurrentStep`, os seis `render*Step`, `renderPickGrid`, `renderPersonalityField`, `renderEquipmentField`, `renderPortraitBlock`, `renderCopyFeedback`, `renderUploadFeedback`, `renderNavButtons`, `renderSheet`, `sheetLabels`, `sheetText`, `modifier`, `labelForAppearance` | HTML como template string |
 | 5. Eventos | 460–477 | `bindEvents` | Único lugar que registra listeners |
 | 6. Domínio e IO | 479–558 | `importJson`, `loadCharacter`, `toggleChoice`, `normalizeChoices`, `normalizeId`, `normalizeAppearance` | Regras e importação |
-| 7. Retrato e PDF | 560–740 | `buildImagePrompt`, `copyPrompt`, `copyWithExecCommand`, `importImage`, `pdfPage`, `generatePdf`, `placeInQuadrant`, `loadImageElement`, `toJpegDataUrl` | Prompt, upload e PDF |
-| 8. Utilitários e bootstrap | 742–761 | `escapeHtml`, `downloadJson` e a chamada final `render()` | Helpers e inicialização |
+| 7. Retrato e PDF | 560–769 | `IMAGE_STYLE`, `listar`, `buildImagePrompt`, `copyPrompt`, `copyWithExecCommand`, `importImage`, `pdfPage`, `generatePdf`, `placeInQuadrant`, `loadImageElement`, `toJpegDataUrl` | Prompt, upload e PDF |
+| 8. Utilitários e bootstrap | 771–790 | `escapeHtml`, `downloadJson` e a chamada final `render()` | Helpers e inicialização |
 
 ## Estrutura visual montada por `render()`
 
